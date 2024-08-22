@@ -34,6 +34,7 @@ AudioMixerGroupController:
   m_Children: []
   m_Volume: c54354a2764a7404e8902104147b7d47
   m_Pitch: 8d5b5f5bfb90a024bae416314e0771d3
+  m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 24400002}
   m_UserColorIndex: 0
@@ -46,10 +47,10 @@ AudioMixerEffectController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name:
+  m_Name: 
   m_EffectID: 974b5ebdf54f560428e5afe8edb00fed
   m_EffectName: Attenuation
-  m_MixLevel: 00000000000000000000000000000000
+  m_MixLevel: 487b2b0d1df29db46ab8be73c3fb9cf5
   m_Parameters: []
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
