@@ -1,0 +1,88 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using System.IO;
+
+[Serializable]
+public class StageSaveData {
+    public bool[] stage = new bool[3];
+}
+
+public class Save : MonoBehaviour
+{
+    public static Save instance = null;
+
+    private void Awake() {
+        if(instance == null) {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            InitSave();
+        }
+        else {
+            Destroy(gameObject);
+        }
+
+        SaveJsonFilePath = Path.Combine(Application.persistentDataPath, "Save/SaveData.json");
+        if (!Directory.Exists(Path.GetDirectoryName(SaveJsonFilePath))) {
+            Directory.CreateDirectory(Path.GetDirectoryName(SaveJsonFilePath));
+        }
+        Debug.Log("single file path :" + SaveJsonFilePath);
+    }
+
+
+    public StageSaveData SaveData = new StageSaveData();
+
+    private string SaveJsonFilePath;
+
+    //TODO:new play 클릭시 확인
+    public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
+        if (File.Exists(SaveJsonFilePath)) return true;
+        return false;
+    }
+    
+    //TODO: stage 클리어시 해당하는 stage의 뼈다귀 개수 
+    
+
+    public void MakeSave() {
+        if (SaveData == null) {
+            SaveData = new StageSaveData();
+        }
+
+        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveData));  // 덮어쓰기
+    }
+
+    public StageSaveData Load() {
+        if (GetSaveExist()) {
+            return JsonUtility.FromJson<StageSaveData>(File.ReadAllText(SaveJsonFilePath));
+        }
+        return null;
+    }
+
+    public void InitSave() {
+        for (int i = 0; i < SaveData.stage.Length; i++) {
+            SaveData.stage[i] = false;
+            //TODO: 각 스테이지 별 뼈다귀 개수 init 추가
+        }
+    }
+}
+
+/*
+ 1. 목적 : 저장
+
+ 2. 저장 내용 
+    - 스테이지 클리어 여부
+    - //TODO: 각 스테이지 별 뼈다귀 개수 
+
+    - //TODO: 각 스테이지 별 클리어 점수 기준
+
+ 3. 해야하는 내용
+    - 싱글톤
+    - 자동 저장
+
+ 4. 순서
+    - 로컬에 저장 폴더 생성
+    - 저장 파일 생성=> 스테이지 클리어시
+    - new game 할 경우 파일 있는 지 확인
+    - Load -> stage 선택에서 깬 스테이지 다음 거에 플레이어가 서 있음
+ */
