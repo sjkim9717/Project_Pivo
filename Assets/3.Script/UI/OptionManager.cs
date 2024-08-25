@@ -9,7 +9,7 @@ public class OptionManager : MonoBehaviour {
         mainGroup = transform.parent.GetChild(0).gameObject;
     }
 
-    //TODO: Ã¢¸ðµå È­¸é »çÀÌÁî °áÁ¤ ÇØ¼­ ¹öÆ° ´­¸± °æ¿ì º¯°æµÇ¾î¾ßÇÔ
+    //TODO: ì°½ëª¨ë“œ í™”ë©´ ì‚¬ì´ì¦ˆ ê²°ì • í•´ì„œ ë²„íŠ¼ ëˆŒë¦´ ê²½ìš° ë³€ê²½ë˜ì–´ì•¼í•¨
     public void ButtonOnClick_LeftArrow() {
 
     }
@@ -24,7 +24,7 @@ public class OptionManager : MonoBehaviour {
     }
 
     public void ButtonOnClick_Apply() {
-        //TODO: Ã¢¸ðµå, »ç¿îµå Á¶Á¤ÇÏ´Â ¸Þ¼Òµå
+        //TODO: ì°½ëª¨ë“œ, ì‚¬ìš´ë“œ ì¡°ì •í•˜ëŠ” ë©”ì†Œë“œ
     }
 
 
@@ -33,19 +33,19 @@ public class OptionManager : MonoBehaviour {
 /*
  1. UI Title - Option
 
- 2. ³»¿ë
-    - Ã¢ Á¶Àý
-    - ¼±ÅÃ ½Ã ÀÌ¹ÌÁö À§Ä¡ ¼öÁ¤
-    - »ç¿îµå Á¶Àý
+ 2. ë‚´ìš©
+    - ì°½ ì¡°ì ˆ
+    - ì„ íƒ ì‹œ ì´ë¯¸ì§€ ìœ„ì¹˜ ìˆ˜ì •
+    - ì‚¬ìš´ë“œ ì¡°ì ˆ
 
-    - Apply : º¯°æ»çÇ× ¾øÀ¸¸é È°¼ºÈ­ µÇÁö¸»°Í
+    - Apply : ë³€ê²½ì‚¬í•­ ì—†ìœ¼ë©´ í™œì„±í™” ë˜ì§€ë§ê²ƒ
 
  3. Button On Click
-    - Cancle : Option Ã¢ ´Ý°í Main Ã¢ ¿­±â
-    - Apply : Setting Àû¿ë ( Ã¢ ¸ðµå / »ç¿îµå ) //TODO: Ã¢¸ðµå, »ç¿îµå Á¶Á¤ ÇÊ¿äÇÔ
-    - Arrow : ±ÛÀÚ º¯°æµÇ¾ßÇÔ => Ã¢ ¸ðµå¿¡ µû¶ó Arrow°¡ ´­¸±Áö ¾È´­¸±Áö °áÁ¤µÇ¾î¾ßÇÔ
+    - Cancle : Option ì°½ ë‹«ê³  Main ì°½ ì—´ê¸°
+    - Apply : Setting ì ìš© ( ì°½ ëª¨ë“œ / ì‚¬ìš´ë“œ ) //TODO: ì°½ëª¨ë“œ, ì‚¬ìš´ë“œ ì¡°ì • í•„ìš”í•¨
+    - Arrow : ê¸€ìž ë³€ê²½ë˜ì•¼í•¨ => ì°½ ëª¨ë“œì— ë”°ë¼ Arrowê°€ ëˆŒë¦´ì§€ ì•ˆëˆŒë¦´ì§€ ê²°ì •ë˜ì–´ì•¼í•¨
 
-4. Button On Enter //TODO: È°¼ºÈ­ ÇØ¾ßÇÔ
+4. Button On Enter //TODO: í™œì„±í™” í•´ì•¼í•¨
     - Cancle 
     - Apply 
  */

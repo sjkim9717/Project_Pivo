@@ -35,13 +35,13 @@ public class Save : MonoBehaviour
 
     private string SaveJsonFilePath;
 
-    //TODO:new play Å¬¸¯½Ã È®ÀÎ
-    public bool GetSaveExist() {                            // saveData ÀÖ´ÂÁö È®ÀÎÇÏ´Â ¿ëµµ
+    //TODO:new play í´ë¦­ì‹œ í™•ì¸
+    public bool GetSaveExist() {                            // saveData ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” ìš©ë„
         if (File.Exists(SaveJsonFilePath)) return true;
         return false;
     }
     
-    //TODO: stage Å¬¸®¾î½Ã ÇØ´çÇÏ´Â stageÀÇ »À´Ù±Í °³¼ö 
+    //TODO: stage í´ë¦¬ì–´ì‹œ í•´ë‹¹í•˜ëŠ” stageì˜ ë¼ˆë‹¤ê·€ ê°œìˆ˜ 
     
 
     public void MakeSave() {
@@ -49,7 +49,7 @@ public class Save : MonoBehaviour
             SaveData = new StageSaveData();
         }
 
-        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveData));  // µ¤¾î¾²±â
+        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveData));  // ë®ì–´ì“°ê¸°
     }
 
     public StageSaveData Load() {
@@ -62,27 +62,27 @@ public class Save : MonoBehaviour
     public void InitSave() {
         for (int i = 0; i < SaveData.stage.Length; i++) {
             SaveData.stage[i] = false;
-            //TODO: °¢ ½ºÅ×ÀÌÁö º° »À´Ù±Í °³¼ö init Ãß°¡
+            //TODO: ê° ìŠ¤í…Œì´ì§€ ë³„ ë¼ˆë‹¤ê·€ ê°œìˆ˜ init ì¶”ê°€
         }
     }
 }
 
 /*
- 1. ¸ñÀû : ÀúÀå
+ 1. ëª©ì  : ì €ì¥
 
- 2. ÀúÀå ³»¿ë 
-    - ½ºÅ×ÀÌÁö Å¬¸®¾î ¿©ºÎ
-    - //TODO: °¢ ½ºÅ×ÀÌÁö º° »À´Ù±Í °³¼ö 
+ 2. ì €ì¥ ë‚´ìš© 
+    - ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ ì—¬ë¶€
+    - //TODO: ê° ìŠ¤í…Œì´ì§€ ë³„ ë¼ˆë‹¤ê·€ ê°œìˆ˜ 
 
-    - //TODO: °¢ ½ºÅ×ÀÌÁö º° Å¬¸®¾î Á¡¼ö ±âÁØ
+    - //TODO: ê° ìŠ¤í…Œì´ì§€ ë³„ í´ë¦¬ì–´ ì ìˆ˜ ê¸°ì¤€
 
- 3. ÇØ¾ßÇÏ´Â ³»¿ë
-    - ½Ì±ÛÅæ
-    - ÀÚµ¿ ÀúÀå
+ 3. í•´ì•¼í•˜ëŠ” ë‚´ìš©
+    - ì‹±ê¸€í†¤
+    - ìë™ ì €ì¥
 
- 4. ¼ø¼­
-    - ·ÎÄÃ¿¡ ÀúÀå Æú´õ »ı¼º
-    - ÀúÀå ÆÄÀÏ »ı¼º=> ½ºÅ×ÀÌÁö Å¬¸®¾î½Ã
-    - new game ÇÒ °æ¿ì ÆÄÀÏ ÀÖ´Â Áö È®ÀÎ
-    - Load -> stage ¼±ÅÃ¿¡¼­ ±ü ½ºÅ×ÀÌÁö ´ÙÀ½ °Å¿¡ ÇÃ·¹ÀÌ¾î°¡ ¼­ ÀÖÀ½
+ 4. ìˆœì„œ
+    - ë¡œì»¬ì— ì €ì¥ í´ë” ìƒì„±
+    - ì €ì¥ íŒŒì¼ ìƒì„±=> ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ì‹œ
+    - new game í•  ê²½ìš° íŒŒì¼ ìˆëŠ” ì§€ í™•ì¸
+    - Load -> stage ì„ íƒì—ì„œ ê¹¬ ìŠ¤í…Œì´ì§€ ë‹¤ìŒ ê±°ì— í”Œë ˆì´ì–´ê°€ ì„œ ìˆìŒ
  */

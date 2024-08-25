@@ -19,7 +19,7 @@ public class TitleManager : MonoBehaviour
     }
 
     private void Start() {
-        //TODO: ÆÄÀÏÀÖ´ÂÁö È®ÀÎÇØ¼­ ¾øÀ¸¸é Load Game button Àá±Ý
+        //TODO: íŒŒì¼ìžˆëŠ”ì§€ í™•ì¸í•´ì„œ ì—†ìœ¼ë©´ Load Game button ìž ê¸ˆ
         /*
         if (!Save.instance.GetSaveExist()) {
             Default.transform.GetChild(1).gameObject.SetActive(false);
@@ -31,7 +31,7 @@ public class TitleManager : MonoBehaviour
 
     }
 
-    //TODO: escape ½Ã °¢Á¾ UI ¿øÀ§Ä¡
+    //TODO: escape ì‹œ ê°ì¢… UI ì›ìœ„ì¹˜
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) Escape();
     }
@@ -56,12 +56,13 @@ public class TitleManager : MonoBehaviour
             newGameGroup.SetActive(true);
         }
         else {
-            //TODO: play ½ÃÀÛ
+            //TODO: play ì‹œìž‘
+            gameObject.SetActive(false);
         }
     }
     public void ButtonOnClick_LoadGame() {
         SceneManager.LoadScene("StageSelect_Grass");
-        //TODO: StageSelect_Grass¿¡¼­ ÇÃ·¹ÀÌ¾î°¡ ¼­ÀÖ´Â À§Ä¡ Á¶Á¤ ÇÊ¿äÇÔ
+        //TODO: StageSelect_Grassì—ì„œ í”Œë ˆì´ì–´ê°€ ì„œìžˆëŠ” ìœ„ì¹˜ ì¡°ì • í•„ìš”í•¨
     }
 
     public void ButtonOnClick_Option() {
@@ -77,7 +78,7 @@ public class TitleManager : MonoBehaviour
 #endif
     }
 
-    // escape => Option, new Game µî ÇÑ ¹ø¿¡ Á¶Á¤
+    // escape => Option, new Game ë“± í•œ ë²ˆì— ì¡°ì •
     public void Escape() {
         if (optionGroup.activeSelf || newGameGroup.activeSelf) {
             optionGroup.SetActive(false);
@@ -93,15 +94,15 @@ public class TitleManager : MonoBehaviour
 
 /*
  1. UI_Title
- 2. ¹öÆ° Å¬¸¯ ÀÌº¥Æ®
- 3. ³»¿ë
+ 2. ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸
+ 3. ë‚´ìš©
     - New Game
-        1. ÆÄÀÏÀÖ´ÂÁö È®ÀÎ
+        1. íŒŒì¼ìžˆëŠ”ì§€ í™•ì¸
     - Load Game
     - Option
-        1. Option Ã¢ ¿­±â
+        1. Option ì°½ ì—´ê¸°
     - Exit
- 4. Ãß°¡ÇØ¾ßÇÏ´Â »çÇ× 
-    - ¸¶¿ì½º°¡ ºüÁ®³ª°¬À» °æ¿ì È®ÀÎÇØ¼­ off ½ÃÅ³ °Í
-    - Å°º¸µå·Î SelectÈ°¼ºÈ­ µÉ ¼ö ÀÖ´Â °Í ¸¸µé °Í
+ 4. ì¶”ê°€í•´ì•¼í•˜ëŠ” ì‚¬í•­ 
+    - ë§ˆìš°ìŠ¤ê°€ ë¹ ì ¸ë‚˜ê°”ì„ ê²½ìš° í™•ì¸í•´ì„œ off ì‹œí‚¬ ê²ƒ
+    - í‚¤ë³´ë“œë¡œ Selectí™œì„±í™” ë  ìˆ˜ ìžˆëŠ” ê²ƒ ë§Œë“¤ ê²ƒ
  */
