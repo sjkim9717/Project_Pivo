@@ -51,7 +51,8 @@ public class TitleManager : MonoBehaviour
     // on click event
 
     public void ButtonOnClick_NewGame() {
-        if (Save.instance.GetSaveExist()) {
+        /*
+                 if (Save.instance.GetSaveExist()) {
             mainGroup.SetActive(false);
             newGameGroup.SetActive(true);
         }
@@ -59,6 +60,9 @@ public class TitleManager : MonoBehaviour
             //TODO: play 시작
             gameObject.SetActive(false);
         }
+         
+         */
+
     }
     public void ButtonOnClick_LoadGame() {
         SceneManager.LoadScene("StageSelect_Grass");
