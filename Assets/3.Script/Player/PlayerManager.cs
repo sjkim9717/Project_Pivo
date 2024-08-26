@@ -12,6 +12,8 @@ public class PlayerManager : MonoBehaviour {
     public bool IsClimb { get; private set; }
     public bool IsTryToUseSkill { get; private set; }     // skill 사용하려고 할 경우 섹션 표시 및 사용 가능인지 불가능인지 확인
 
+    private bool isSkillButtonPressed = false;
+
     private GameObject player3D;
     private GameObject player2D;
 
@@ -30,7 +32,7 @@ public class PlayerManager : MonoBehaviour {
     }
 
     private void Update() {
-        if(!IsClimb) Move(Is3DPlayer);
+        if (!IsClimb) Move(Is3DPlayer);
 
         if (!IsMove) Climb(Is3DPlayer);
         /*
@@ -83,8 +85,8 @@ public class PlayerManager : MonoBehaviour {
             else ani3D.SetBool("IsMove", false);
         }
         else {
-            IsMove = (horizontalInput != 0 );
-            
+            IsMove = (horizontalInput != 0);
+
             if (horizontalInput != 0) {       // 오른쪽 키를 입력받아 2D에서는 앞 뒤로만 이동
                 float moveDirection = horizontalInput > 0 ? 1f : -1f;
                 transform.localScale = new Vector3(moveDirection, 1f, 1f);
@@ -147,51 +149,65 @@ public class PlayerManager : MonoBehaviour {
     }
 
     // 3D player 상태에서 skill 키를 사용했을 경우
+    //TODO: 스킬 사용 구간과 플레이어가 겹치는지 확인해야함
+
+    //TODO: [기억] 스킬 사용해서 2D로 변경됨
     private void Skill(bool Is3DPlayer) {
-        float skillSectionInput = Input.GetAxis("SkillSection"); // 
+        float skillSectionInput = Input.GetAxis("SkillSection");
 
         if (Is3DPlayer) {
-            if (skillSectionInput != 0) {
-                skillSectionInput = 0;
+            // 스킬 버튼이 눌렸는지 감지
+            if (skillSectionInput != 0 && !isSkillButtonPressed) {
+                isSkillButtonPressed = true; // 버튼이 눌린 상태로 표시
                 skillCount++;
                 IsTryToUseSkill = true;
-                Debug.Log("아니 왜지?");
+                Debug.Log("스킬 시도 등록. 현재 스킬 횟수: " + skillCount);
             }
 
+            // 스킬 사용 시도 횟수가 2회 이상인지 확인
             if (skillCount >= 2) {
-                if (true) {                                         //TODO: 스킬 사용 구간과 플레이어가 겹치는지 확인해야함
-                    Is3DPlayer = false;
-                    player3D.SetActive(false);
-                    player2D.SetActive(true);
-                    //TODO: [기억] 스킬 사용해서 2D로 변경됨
-                    Debug.Log("2D로 변경되어야하는 시점");
+                if (/* 스킬을 사용할 수 있는지 조건을 체크 */ true) {                  // 2D 모드로 전환
+                    SwichTo2DMode();
+                    Debug.Log("2D 모드로 전환됨");
                 }
-                else {                                                 // 스킬 꺼짐                
-                    Is3DPlayer = true;
-                    player3D.SetActive(true);
-                    player2D.SetActive(false);
+                else {                                                                  // 3D 모드 유지
+                    SwitchTo3DMode();
                 }
-                skillCount = 0;
+                skillCount = 0;  // 스킬 시도 후 시도 횟수 초기화
                 IsTryToUseSkill = false;
             }
 
-            // Animation
-            if (IsTryToUseSkill) ani3D.SetBool("IsTryUseSkill", true);
-            else ani3D.SetBool("IsTryUseSkill", false);
-        }
-        else {
+            // 애니메이션 상태 처리
+            ani3D.SetBool("IsTryUseSkill", IsTryToUseSkill);
 
-            if (skillSectionInput != 0) {
-                Debug.Log("3D로 변경되어야하는 시점");
-                skillCount = 0;
-                Is3DPlayer = true;
-                player3D.SetActive(true);
-                player2D.SetActive(false);
+        }
+        else {  // 플레이어가 2D 모드인 경우
+            if (skillSectionInput != 0) { // 2D 모드에서 스킬 버튼 입력 감지
+                Debug.Log("3D 모드로 전환됨");
+                skillCount = 0;  // 3D로 전환할 때 스킬 시도 횟수 초기화
+                isSkillButtonPressed = true;  // 버튼이 눌린 상태로 표시
+                SwitchTo3DMode();
             }
+        }
+
+        // 스킬 버튼이 해제되었는지 감지
+        if (skillSectionInput == 0 && isSkillButtonPressed) {
+            isSkillButtonPressed = false; // 버튼 눌림 상태를 초기화
         }
 
     }
 
+    private void SwitchTo3DMode() {
+        Is3DPlayer = true;
+        player3D.SetActive(true);
+        player2D.SetActive(false);
+    }
+
+    private void SwichTo2DMode() {
+        Is3DPlayer = false;
+        player3D.SetActive(false);
+        player2D.SetActive(true);
+    }
 
 
     // 아래 방향 확인해서 없으면? 떨어짐 
