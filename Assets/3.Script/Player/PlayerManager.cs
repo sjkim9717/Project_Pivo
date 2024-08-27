@@ -81,8 +81,7 @@ public class PlayerManager : MonoBehaviour {
             }
 
             // Animation
-            if (IsMove) ani3D.SetBool("IsMove", true);
-            else ani3D.SetBool("IsMove", false);
+            ani3D.SetBool("IsMove", IsMove);
         }
         else {
             IsMove = (horizontalInput != 0);
@@ -95,8 +94,7 @@ public class PlayerManager : MonoBehaviour {
             }
 
             // Animation
-            if (IsMove) ani2D.SetBool("IsMove", true);
-            else ani2D.SetBool("IsMove", false);
+            ani2D.SetBool("IsMove", IsMove);
         }
 
         if (CheckObstacleInFrontOfPlayer(Is3DPlayer)) return;
@@ -148,51 +146,47 @@ public class PlayerManager : MonoBehaviour {
         IsClimb = false;
     }
 
-    // 3D player 상태에서 skill 키를 사용했을 경우
-    //TODO: 스킬 사용 구간과 플레이어가 겹치는지 확인해야함
-
-    //TODO: [기억] 스킬 사용해서 2D로 변경됨
-    private void Skill(bool Is3DPlayer) {
+   
+    //TODO: 스킬 사용 구간과 플레이어가 겹치는지 확인해야함 
+    private void Skill(bool Is3DPlayer) {                                              
         float skillSectionInput = Input.GetAxis("SkillSection");
 
-        if (Is3DPlayer) {
-            // 스킬 버튼이 눌렸는지 감지
-            if (skillSectionInput != 0 && !isSkillButtonPressed) {
-                isSkillButtonPressed = true; // 버튼이 눌린 상태로 표시
+        if (Is3DPlayer) {                                                               // 3D player 상태에서 skill 키를 사용했을 경우
+
+            if (skillSectionInput != 0 && !isSkillButtonPressed) {                      // 스킬 버튼이 눌렸는지 감지
+                isSkillButtonPressed = true;                                            // 버튼이 눌린 상태로 표시
                 skillCount++;
                 IsTryToUseSkill = true;
                 Debug.Log("스킬 시도 등록. 현재 스킬 횟수: " + skillCount);
             }
 
-            // 스킬 사용 시도 횟수가 2회 이상인지 확인
-            if (skillCount >= 2) {
-                if (/* 스킬을 사용할 수 있는지 조건을 체크 */ true) {                  // 2D 모드로 전환
-                    SwichTo2DMode();
+           
+            if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
+                if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
+                    SwichTo2DMode();                        
                     Debug.Log("2D 모드로 전환됨");
                 }
                 else {                                                                  // 3D 모드 유지
                     SwitchTo3DMode();
                 }
-                skillCount = 0;  // 스킬 시도 후 시도 횟수 초기화
+                skillCount = 0;                                                         // 스킬 시도 후 시도 횟수 초기화
                 IsTryToUseSkill = false;
-            }
+            }          
 
-            // 애니메이션 상태 처리
-            ani3D.SetBool("IsTryUseSkill", IsTryToUseSkill);
-
+            ani3D.SetBool("IsTryUseSkill", IsTryToUseSkill);                            // 애니메이션 상태 처리
         }
-        else {  // 플레이어가 2D 모드인 경우
-            if (skillSectionInput != 0) { // 2D 모드에서 스킬 버튼 입력 감지
+
+        else {                                                                           // 플레이어가 2D 모드인 경우
+            if (skillSectionInput != 0 && !isSkillButtonPressed) {                       // 2D 모드에서 스킬 버튼 입력 감지
+                isSkillButtonPressed = true;                                             // 버튼이 눌린 상태로 표시
                 Debug.Log("3D 모드로 전환됨");
-                skillCount = 0;  // 3D로 전환할 때 스킬 시도 횟수 초기화
-                isSkillButtonPressed = true;  // 버튼이 눌린 상태로 표시
                 SwitchTo3DMode();
             }
         }
 
-        // 스킬 버튼이 해제되었는지 감지
-        if (skillSectionInput == 0 && isSkillButtonPressed) {
-            isSkillButtonPressed = false; // 버튼 눌림 상태를 초기화
+        
+        if (skillSectionInput == 0 && isSkillButtonPressed) {                           // 스킬 버튼이 해제되었는지 감지
+            isSkillButtonPressed = false;                                               // 버튼 눌림 상태를 초기화
         }
 
     }
@@ -207,6 +201,10 @@ public class PlayerManager : MonoBehaviour {
         Is3DPlayer = false;
         player3D.SetActive(false);
         player2D.SetActive(true);
+    }
+
+    private bool CheckSkillUsable() {                                                   //TODO: 플레이어가 스킬 자르면 해당하는 영역을 확인해야함
+        return true; 
     }
 
 

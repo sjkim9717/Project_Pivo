@@ -88,9 +88,13 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - Color_106cb697f54b48bfa7e4a78d723c78ab: {r: 0, g: 0, b: 0, a: 0}
+    - _BloomColor: {r: 0.03773582, g: 0.03773582, b: 0.03773582, a: 0}
     - _Color: {r: 0, g: 0.54482746, b: 1, a: 1}
     - _Color2: {r: 1, g: 0, b: 0, a: 1}
-    - _EmissionColor: {r: 0.6273585, g: 1, b: 0.94982773, a: 1}
+    - _EmissionColor: {r: 0.60341763, g: 1.1320755, b: 1.026344, a: 1}
+    - _EmissionMask: {r: 0.44705886, g: 0.48627454, b: 0.5568628, a: 1}
+    - _Mask: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularVector: {r: 0.6, g: 100, b: 0.6, a: 0}
   m_BuildTextureStacks: []
