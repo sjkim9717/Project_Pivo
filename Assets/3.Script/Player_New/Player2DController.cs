@@ -6,7 +6,6 @@ public class Player2DController : MonoBehaviour {
 
     public float moveSpeed = 3f;
     private int skillCount = 0;
-    public bool IsDie { get; private set; }     // 죽는 거를 여기서 확인하는게 맞나?
     private bool IsMove;
     public bool isClimb { get; private set; }
 
@@ -73,7 +72,6 @@ public class Player2DController : MonoBehaviour {
 
         float horizontalInput = Input.GetAxis("Horizontal");
 
-        //TODO: [수정 필요함] 물체가 플레이어 앞에 있을 경우 움직이면 안됨 -> 방향 번경은 되어야함 / 위치 이동은 되면 안됨
         positionToMove = Vector3.zero;
 
         IsMove = (horizontalInput != 0);
@@ -87,7 +85,6 @@ public class Player2DController : MonoBehaviour {
 
         // Animation
         ani2D.SetBool("IsMove", IsMove);
-
 
         if (IsMove) {
             transform.position += positionToMove;

@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerManager : MonoBehaviour {
 
     private int dieCount;
-    private bool isDie;
     private bool is3DPlayer;
     private bool isRespqwnDone;
 
@@ -20,6 +20,9 @@ public class PlayerManager : MonoBehaviour {
 
     private Vector3 moveposition;
 
+    public UnityEvent OnPlayerDead;             // 플레이어가 죽었을 경우 이벤트 인스펙터 창에서 연결
+
+
     private void Awake() {
         player3D = GetComponentInChildren<Rigidbody>().gameObject;
         player2D = GetComponentInChildren<Rigidbody2D>().gameObject;
@@ -30,7 +33,17 @@ public class PlayerManager : MonoBehaviour {
         player2D.SetActive(false);
     }
 
+    private void Update() {
+        if(dieCount>=3) {
+            dieCount = 0;
+            //TODO: [respawn]
+            Dead();
+        }
+    }
 
+    private void Dead() {
+        OnPlayerDead.Invoke();
+    }
 
     public void SwitchMode() {
         if (is3DPlayer) {
