@@ -5,13 +5,13 @@ using UnityEngine;
 
 
 public class SkillController : MonoBehaviour {
-    private PlayerManager playerManager;
+    private PlayerManager_Old playerManager;
     private Vector3 startSection = Vector3.zero;
     private Vector3 finishSection = Vector3.zero;
 
 
     private void Awake() {
-        playerManager = GetComponent<PlayerManager>();
+        playerManager = GetComponent<PlayerManager_Old>();
     }
 
     private void Update() {
