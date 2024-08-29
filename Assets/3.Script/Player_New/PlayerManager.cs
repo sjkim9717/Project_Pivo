@@ -24,21 +24,22 @@ public class PlayerManager : MonoBehaviour {
 
 
     private void Awake() {
-        player3D = GetComponentInChildren<Rigidbody>().gameObject;
-        player2D = GetComponentInChildren<Rigidbody2D>().gameObject;
+        player3D = transform.GetChild(0).gameObject;
+        player2D = transform.GetChild(1).gameObject;
 
         moveposition = Vector3.zero;
+        respawnposition = transform;
 
         player3D.SetActive(true);
         player2D.SetActive(false);
-        is3DPlayer = true;  
+        is3DPlayer = true;
     }
 
     private void Start() {
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
     }
     private void Update() {
-        if(dieCount>=3) {
+        if (dieCount >= 3) {
             dieCount = 0;
             //TODO: [respawn]
             Dead();

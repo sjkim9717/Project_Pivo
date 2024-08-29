@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player3DController : MonoBehaviour {
 
-    public float moveSpeed = 3f;
+    public float moveSpeed = 5f;
     private int skillCount = 0;
 
     private bool IsMove;
@@ -54,14 +54,14 @@ public class Player3DController : MonoBehaviour {
         positionToMove = Vector3.zero;
         IsMove = (horizontalInput != 0 || verticalInput != 0);
 
+        Vector3 dir = new Vector3(horizontalInput, 0, verticalInput);
+
         if (horizontalInput != 0) {       // 오른쪽
-            float moveDirection = horizontalInput > 0 ? -1f : 1f;
-            transform.rotation = Quaternion.Euler(0f, -moveDirection * 90, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * moveSpeed);
             positionToMove += Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
         }
         else if (verticalInput != 0) {        // 앞쪽
-            float moveDirection = verticalInput > 0 ? 0f : 1f;
-            transform.rotation = Quaternion.Euler(0f, moveDirection * 180f, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * moveSpeed);
             positionToMove += Vector3.forward * moveSpeed * verticalInput * Time.deltaTime;
         }
 

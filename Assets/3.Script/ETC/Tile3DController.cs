@@ -8,7 +8,7 @@ public class Tile3DController : MonoBehaviour
     private PlayerManager playerManager;
 
     private void Awake() {
-        playerManager = GetComponent<PlayerManager>();
+        playerManager = FindObjectOfType<PlayerManager>();
     }
 
 

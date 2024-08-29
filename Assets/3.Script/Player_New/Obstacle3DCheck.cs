@@ -76,12 +76,6 @@ public class Obstacle3DCheck : MonoBehaviour {
 
     }
 
-    public void OnButtonTest_Climb() {
-        if(CheckClimbPointsEmpty()) {
-            Debug.Log("여기가 climb 완료 시점");
-        }
-    }
-
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
     public bool CheckClimbPointsEmpty() {
         List<GameObject> bottomObstacles = new List<GameObject>();
@@ -90,6 +84,9 @@ public class Obstacle3DCheck : MonoBehaviour {
         Collider[] colliders = Physics.OverlapSphere(transform.position, 2.7f);     // tile : 2 + player : 0.7
 
         foreach (Collider each in colliders) {
+
+            if (!each.CompareTag("ClimbObj")) continue;
+
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
@@ -108,15 +105,15 @@ public class Obstacle3DCheck : MonoBehaviour {
         // bottom and top nomal vector check
         if (!CheckObstacleAngle(topObstacles)) {
             if (CheckObstacleAngle(bottomObstacles)) {
-                Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
+                //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
                 return true;
             }
             else {
-                Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
+                //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
             }
         }
         else {
-            Debug.Log("topObstacles 가 있음");
+            //Debug.Log("topObstacles 가 있음");
         }
 
         return false;
@@ -126,17 +123,17 @@ public class Obstacle3DCheck : MonoBehaviour {
 
         foreach (GameObject item in objs) {
 
-            Vector3 tilePos = item.transform.parent != null ? item.transform.parent.position : item.transform.position;               // 감지된 타일의 현재 월드 위치
+            Vector3 tilePos = item.transform.position;               // 감지된 타일의 현재 월드 위치
 
             Vector3 playerToTile = tilePos - transform.position;
-            Vector3 posTile = transform.InverseTransformDirection(playerToTile);
 
-            float direction = Vector3.Dot(posTile, Vector3.forward);
+            float angle = Vector3.SignedAngle(transform.forward, playerToTile, Vector3.up);
 
-            if (direction >= 0) {
-                ClimbObstacle = item.transform.parent != null ? item.transform.parent.gameObject : item;
-                Debug.Log("objs | " + objs + "item | " + item.name);
-                return true; 
+            Debug.Log("Calculated angle: " + angle);
+
+            if (angle >= -40f && angle <= 40f) {
+                Debug.Log("타일이 시야 범위 내에 있습니다.");
+                return true;
             }
         }
 
@@ -181,3 +178,42 @@ other -> 내 좌표를 기준으로 각도를 계산 (hitpoint normal, position�
  
  */
 
+#region CheckObstacleAngle_save
+/*
+private bool CheckObstacleAngle(List<GameObject> objs) {
+
+    foreach (GameObject item in objs) {
+
+        Vector3 tilePos = item.transform.position;               // 감지된 타일의 현재 월드 위치
+
+        Vector3 playerToTile = tilePos - transform.position;
+
+        Debug.Log("item namge: " + item.transform.name);
+        Debug.Log("Player position: " + transform.position);
+        Debug.Log("Tile position: " + tilePos);
+        Debug.Log("Player to Tile vector: " + playerToTile);
+
+        float angle = Vector3.SignedAngle(transform.forward, playerToTile, Vector3.up);
+
+        Debug.Log("Calculated angle: " + angle);
+
+        if (angle >= -40f && angle <= 40f) {
+            Debug.Log("타일이 시야 범위 내에 있습니다.");
+            return true;
+        }
+
+        //Vector3 posTile = transform.InverseTransformDirection(playerToTile);
+
+        //float direction = Vector3.Dot(posTile, Vector3.forward);
+
+        //if (direction >= 0) {
+        //    ClimbObstacle = item.transform.parent != null ? item.transform.parent.gameObject : item;
+        //    Debug.Log("objs | " + objs + "item | " + item.name);
+        //    return true; 
+        //}
+    }
+
+    return false;
+}
+*/
+#endregion

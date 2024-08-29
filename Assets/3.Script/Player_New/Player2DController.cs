@@ -106,10 +106,8 @@ public class Player2DController : MonoBehaviour {
     }
 
 
-    //TODO: 스킬 사용 구간과 플레이어가 겹치는지 확인해야함 
     private void Skill() {
         float skillSectionInput = Input.GetAxis("SkillSection");
-
         if (skillSectionInput != 0 && !isSkillButtonPressed) {                       // 2D 모드에서 스킬 버튼 입력 감지
             isSkillButtonPressed = true;                                             // 버튼이 눌린 상태로 표시
             Debug.Log("3D 모드로 전환됨");
@@ -121,12 +119,6 @@ public class Player2DController : MonoBehaviour {
             isSkillButtonPressed = false;                                               // 버튼 눌림 상태를 초기화
         }
 
-    }
-
-
-
-    private bool CheckSkillUsable() {                                                   //TODO: 플레이어가 스킬 자르면 해당하는 영역을 확인해야함
-        return true;
     }
 
 
