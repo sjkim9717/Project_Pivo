@@ -8,7 +8,7 @@ public class Player3DController : MonoBehaviour {
     private int skillCount = 0;
 
     private bool IsMove;
-    private bool isClimb;
+    public bool IsClimb;
     private bool isTryToUseSkill;  // skill 사용하려고 할 경우 섹션 표시 및 사용 가능인지 불가능인지 확인
     private bool isSkillButtonPressed = false;
 
@@ -28,7 +28,7 @@ public class Player3DController : MonoBehaviour {
     }
 
     private void Update() {
-        if (!isClimb) {
+        if (!IsClimb) {
             Move();
         }
 
@@ -41,7 +41,7 @@ public class Player3DController : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (!IsMove && !isClimb) Skill();
+        if (!IsMove && !IsClimb) Skill();
     }
 
 
@@ -74,20 +74,18 @@ public class Player3DController : MonoBehaviour {
 
     }
 
-    private void Climb( ) {
+    private void Climb() {
         if (isTryToUseSkill) return;
 
         float climbInput = Input.GetAxis("Climb");
 
-        if (climbInput != 0) {
+        if (climbInput != 0 && !IsClimb) {
 
             if (obstacleCheck.CheckClimbPointsEmpty()) {
-                //TODO: climb시 플레이어가 이동해야함
-                isClimb = true; 
-                ani3D.SetTrigger("IsClimb"); 
+                IsClimb = true;
+                ani3D.SetTrigger("IsClimb");
             }
         }
-        isClimb = false;
     }
 
 
@@ -134,6 +132,9 @@ public class Player3DController : MonoBehaviour {
 
     }
 }
+
+
+
 
 /*
  1. 플레이어 : 이동 x, 모드 변경

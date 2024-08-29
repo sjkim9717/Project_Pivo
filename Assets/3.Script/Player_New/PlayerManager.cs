@@ -9,18 +9,17 @@ public class PlayerManager : MonoBehaviour {
     private bool is3DPlayer;
     private bool isRespqwnDone;
 
-    public void SetPlayerDieCount() { dieCount++; }         // 죽었을 경우 Die Count 증가
+    private Vector3 moveposition;
+    public void SetPlayerDieCount() { dieCount++; }                                     // 죽었을 경우 Die Count 증가
     public void SetPlayerMode(bool is3DPlayer) { this.is3DPlayer = is3DPlayer; }
 
-    private GameObject player3D;
     private GameObject player2D;
+    private GameObject player3D;
 
-    private Transform respawnposition;  // 큐브위로 올라갈때 위치가 변경될 경우만 잡아서 갱신할 것 
-    // 타일 밟을 때마다 이벤트로 위치변경
+    private Transform respawnposition;                                                  // 큐브위로 올라갈때 위치가 변경될 경우만 잡아서 갱신할 것 \=
 
-    private Vector3 moveposition;
-
-    public UnityEvent OnPlayerDead;             // 플레이어가 죽었을 경우 이벤트 인스펙터 창에서 연결
+    public UnityEvent OnPlayerDead;                                                     // 플레이어가 죽었을 경우 이벤트 인스펙터 창에서 연결
+    public UnityEvent<Vector3> onPlayerEnterTile;
 
 
     private void Awake() {
@@ -33,6 +32,9 @@ public class PlayerManager : MonoBehaviour {
         player2D.SetActive(false);
     }
 
+    private void Start() {
+        onPlayerEnterTile.AddListener(UpdateRespawnPosition);
+    }
     private void Update() {
         if(dieCount>=3) {
             dieCount = 0;
@@ -64,7 +66,42 @@ public class PlayerManager : MonoBehaviour {
         }
     }
 
+    // respawn 위치 맞추기
+    private void UpdateRespawnPosition(Vector3 newRespawnPosition) {
+        if (respawnposition != null) {
+            respawnposition.position = newRespawnPosition;
+            Debug.Log("Respawn position updated to: " + newRespawnPosition);
+        }
+        else {
+            Debug.LogWarning("Respawn position transform is not set in the PlayerManager.");
+        }
+    }
 
+    //TODO: button에 달아야함
+    public void Respawn() {
+        if (is3DPlayer) {
+            player3D.transform.position = respawnposition.position;
+            Rigidbody playerRigidbody = player3D.GetComponent<Rigidbody>();
+            playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+        else {
+            player2D.transform.position = respawnposition.position;
+            Rigidbody2D playerRigidbody = player2D.GetComponent<Rigidbody2D>();
+            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+
+    }
+
+    public void Falling() {
+        if (is3DPlayer) {
+            Rigidbody playerRigidbody = player3D.GetComponent<Rigidbody>();
+            playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+        else {
+            Rigidbody2D playerRigidbody = player2D.GetComponent<Rigidbody2D>();
+            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+    }
 
 }
 

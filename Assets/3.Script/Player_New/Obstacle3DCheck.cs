@@ -7,6 +7,8 @@ public class Obstacle3DCheck : MonoBehaviour {
     private GameObject blockPoint;
     private GameObject climbPoint;
 
+    public GameObject ClimbObstacle;
+
     private PlayerManager playerManager;
 
 
@@ -21,7 +23,8 @@ public class Obstacle3DCheck : MonoBehaviour {
     private void Update() {
         if (CheckGroundPointsEmpty(2f)) {                   // 바로 밑에 없으면 확인해야함
             if (CheckGroundPointsEmpty(10f)) {              // 이동 했을 경우 일정거리 안으로 확인해서 
-                //TODO: [falling]
+                //TODO: [falling] -> 선택지 버튼이 나와야함
+
 
             }
             else {                                          // die count 증가               
@@ -42,8 +45,8 @@ public class Obstacle3DCheck : MonoBehaviour {
 
             Transform child = groundPoint.transform.GetChild(i);
 
-            RaycastHit[] hits = Physics.RaycastAll(child.position, child.forward, rayLength);
-            Debug.DrawRay(child.position, child.forward, Color.red, rayLength);
+            RaycastHit[] hits = Physics.RaycastAll(child.position, -child.up, rayLength);
+            Debug.DrawRay(child.position, -child.up, Color.red, rayLength);
 
             for (int j = 0; j < hits.Length; j++) {
                 if (hits.Length <= 0) {
@@ -79,8 +82,6 @@ public class Obstacle3DCheck : MonoBehaviour {
         }
     }
 
-
-
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
     public bool CheckClimbPointsEmpty() {
         List<GameObject> bottomObstacles = new List<GameObject>();
@@ -92,14 +93,14 @@ public class Obstacle3DCheck : MonoBehaviour {
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    Debug.Log("bottomObstacle | " + eachParent.name);
+                    //Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    Debug.Log("topObstacles | " + eachParent.name);
+                    //Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
@@ -107,24 +108,20 @@ public class Obstacle3DCheck : MonoBehaviour {
         // bottom and top nomal vector check
         if (!CheckObstacleAngle(topObstacles)) {
             if (CheckObstacleAngle(bottomObstacles)) {
-                Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
+                //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
                 return true;
             }
             else {
-                Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
+                //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
             }
         }
         else {
-            Debug.Log("topObstacles 가 있음");
+            //Debug.Log("topObstacles 가 있음");
         }
 
         return false;
     }
 
-    // gameobject를 돌면서  각도 계산
-    // 좌표 변환을 플레이어만 절대 좌표로 돌림 : 방향이 다름
-    // y좌표를 플레이어 기준으로 맞추고
-    // 각도 계산
     private bool CheckObstacleAngle(List<GameObject> objs) {
 
         foreach (GameObject item in objs) {
@@ -136,7 +133,10 @@ public class Obstacle3DCheck : MonoBehaviour {
 
             float direction = Vector3.Dot(posTile, Vector3.forward);
 
-            if (direction >= 0) { return true; }
+            if (direction >= 0) {
+                ClimbObstacle = item.transform.parent != null ? item.transform.parent.gameObject : item;
+                return true; 
+            }
         }
 
         return false;
@@ -156,10 +156,17 @@ public class Obstacle3DCheck : MonoBehaviour {
 - ground : 모든 하위 오브젝트가 없을경우  거리 조절을 float로 할 것
     1. 일정 거리안에 없을 경우 : 끝까지 없는지 확인 있으면, fall 없으면 die count증가
     2. 끝까지 없을 경우 : die
+
 - block : point 
+
 - climb : 범위 안을 확인해야하나
-: block의 34번이 없어야함 12번은 있어야함 5번 뭐야 
+    1. gameobject를 돌면서 OverlapSphere OnCollisionEnter() 로 구형 콜라이더 감지
+    2. 모든 콜라이더의 자식객체의 y값을 나눠서 list로 topobstacle 과 bottomobstacle을 나누기
+        3. list에 넣은 gameobject의 방향벡터를 순서대로 플레이어의 로컬 위치벡터로 변경
+        4. 플레이어 앞쪽에 있는지 확인해서 bool값 전달
+    5. topobstacle를 먼저 확인하고 위가 없으면 bottomobstacle 검사 
  
+
 
 구형 감지
 OverlapSphere OnCollisionEnter()
@@ -173,76 +180,3 @@ other -> 내 좌표를 기준으로 각도를 계산 (hitpoint normal, position�
  
  */
 
-/*
- using UnityEngine;
-using System.Collections.Generic;
-
-public class YourClassName : MonoBehaviour
-{
-    // Define your sector angle limits
-    public float minAngle = -45f; // Minimum angle of the sector
-    public float maxAngle = 45f;  // Maximum angle of the sector
-
-    // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
-    private bool CheckClimbPointsEmpty()
-    {
-        List<GameObject> bottomObstacles = new List<GameObject>();
-        List<GameObject> topObstacles = new List<GameObject>();
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 2.7f); // tile: 2 + player: 0.7
-
-        foreach (Collider each in colliders)
-        {
-            GameObject eachParent = each.transform.parent.gameObject;
-
-            if ((eachParent.transform.position.y - 1) >= transform.position.y)
-            {
-                if ((eachParent.transform.position.y + 1) <= transform.position.y + 2) // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
-                {
-                    bottomObstacles.Add(eachParent);
-                }
-                else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4) // 플레이어 y축 +2이상 : 두 번째 층
-                {
-                    topObstacles.Add(eachParent);
-                }
-            }
-
-            // TODO: bottom and top normal vector check
-            // Calculate the direction from player to the collider
-            Vector3 directionToCollider = each.transform.position - transform.position;
-
-            // Calculate the angle between the forward vector and the directionToCollider
-            float angle = Vector3.SignedAngle(transform.forward, directionToCollider, Vector3.up);
-
-            // Check if the angle is within the specified sector
-            if (angle > minAngle && angle < maxAngle)
-            {
-                Debug.Log($"Collider within sector: {each.gameObject.name}, Angle: {angle}");
-                // Additional logic if necessary, e.g., adding to a list or handling the object
-            }
-        }
-
-
-        return true;
-    }
-
-    // Draw Gizmos in the editor to visualize the sector
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 2.7f);
-
-        // Visualize the sector angles
-        Vector3 forward = transform.forward * 3f;
-        Vector3 minAngleDirection = Quaternion.Euler(0, minAngle, 0) * forward;
-        Vector3 maxAngleDirection = Quaternion.Euler(0, maxAngle, 0) * forward;
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawRay(transform.position, minAngleDirection);
-        Gizmos.DrawRay(transform.position, maxAngleDirection);
-    }
-}
- 
- 
- 
- */
