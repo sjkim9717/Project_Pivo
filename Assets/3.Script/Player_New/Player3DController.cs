@@ -55,14 +55,14 @@ public class Player3DController : MonoBehaviour {
         IsMove = (horizontalInput != 0 || verticalInput != 0);
 
         if (horizontalInput != 0) {       // 오른쪽
-            float moveDirection = horizontalInput > 0 ? 1f : 0f;
-            transform.rotation = Quaternion.Euler(0f, moveDirection * 180f, 0f);
-            positionToMove -= Vector3.forward * moveSpeed * horizontalInput * Time.deltaTime;
+            float moveDirection = horizontalInput > 0 ? -1f : 1f;
+            transform.rotation = Quaternion.Euler(0f, -moveDirection * 90, 0f);
+            positionToMove += Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
         }
         else if (verticalInput != 0) {        // 앞쪽
-            float moveDirection = verticalInput > 0 ? -1f : 1f;
-            transform.rotation = Quaternion.Euler(0f, -moveDirection * 90, 0f);
-            positionToMove += Vector3.right * moveSpeed * verticalInput * Time.deltaTime;
+            float moveDirection = verticalInput > 0 ? 0f : 1f;
+            transform.rotation = Quaternion.Euler(0f, moveDirection * 180f, 0f);
+            positionToMove += Vector3.forward * moveSpeed * verticalInput * Time.deltaTime;
         }
 
         // Animation
@@ -81,7 +81,7 @@ public class Player3DController : MonoBehaviour {
 
         if (climbInput != 0 && !IsClimb) {
 
-            if (obstacleCheck.CheckClimbPointsEmpty()) {
+            if (obstacleCheck.CheckClimbPointsEmpty() && !IsClimb) {
                 IsClimb = true;
                 ani3D.SetTrigger("IsClimb");
             }
@@ -126,11 +126,6 @@ public class Player3DController : MonoBehaviour {
         return true;
     }
 
-
-    // 아래 방향 확인해서 없으면? 떨어짐 
-    private void CheckPlayerFalling() {
-
-    }
 }
 
 

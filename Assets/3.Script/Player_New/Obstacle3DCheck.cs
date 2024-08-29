@@ -93,14 +93,14 @@ public class Obstacle3DCheck : MonoBehaviour {
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    //Debug.Log("bottomObstacle | " + eachParent.name);
+                    Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    //Debug.Log("topObstacles | " + eachParent.name);
+                    Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
@@ -108,15 +108,15 @@ public class Obstacle3DCheck : MonoBehaviour {
         // bottom and top nomal vector check
         if (!CheckObstacleAngle(topObstacles)) {
             if (CheckObstacleAngle(bottomObstacles)) {
-                //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
+                Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
                 return true;
             }
             else {
-                //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
+                Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
             }
         }
         else {
-            //Debug.Log("topObstacles 가 있음");
+            Debug.Log("topObstacles 가 있음");
         }
 
         return false;
@@ -135,6 +135,7 @@ public class Obstacle3DCheck : MonoBehaviour {
 
             if (direction >= 0) {
                 ClimbObstacle = item.transform.parent != null ? item.transform.parent.gameObject : item;
+                Debug.Log("objs | " + objs + "item | " + item.name);
                 return true; 
             }
         }

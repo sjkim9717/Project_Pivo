@@ -63,7 +63,7 @@ public class Player2DController : MonoBehaviour {
         Vector3 directionBottom = transform.InverseTransformDirection(playerToObstacle);
         float b = Vector3.Dot(directionBottom, Vector3.down);
         if (b >= 0) {       // 바닥 오브젝트가 있다면
-            Debug.Log("Object stay from bottom: " + collision.transform.parent.position);
+            //Debug.Log("Object stay from bottom: " + collision.transform.parent.position);
             isFloorExist = true;
         }
     }

@@ -12,6 +12,7 @@ public class PlayerManager : MonoBehaviour {
     private Vector3 moveposition;
     public void SetPlayerDieCount() { dieCount++; }                                     // 죽었을 경우 Die Count 증가
     public void SetPlayerMode(bool is3DPlayer) { this.is3DPlayer = is3DPlayer; }
+    public bool GetPlayerMode() { return is3DPlayer; }
 
     private GameObject player2D;
     private GameObject player3D;
@@ -30,6 +31,7 @@ public class PlayerManager : MonoBehaviour {
 
         player3D.SetActive(true);
         player2D.SetActive(false);
+        is3DPlayer = true;  
     }
 
     private void Start() {
