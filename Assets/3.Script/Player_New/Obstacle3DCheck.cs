@@ -9,6 +9,7 @@ public class Obstacle3DCheck : MonoBehaviour {
 
     private PlayerManager playerManager;
 
+
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManager>();
 
@@ -72,30 +73,75 @@ public class Obstacle3DCheck : MonoBehaviour {
 
     }
 
+    public void OnButtonTest_Climb() {
+        if(CheckClimbPointsEmpty()) {
+            Debug.Log("여기가 climb 완료 시점");
+        }
+    }
+
+
+
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
-    private bool CheckClimbPointsEmpty() {
+    public bool CheckClimbPointsEmpty() {
         List<GameObject> bottomObstacles = new List<GameObject>();
         List<GameObject> topObstacles = new List<GameObject>();
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, 2.7f);     // tile : 2 + player : 0.7
 
         foreach (Collider each in colliders) {
-            GameObject eachParent = each.transform.parent.gameObject;
+            GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
-            if ((eachParent.transform.position.y - 1) >= transform.position.y) {
-                if ((eachParent.transform.position.y + 1) <= transform.position.y + 2) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
+            if ((eachParent.transform.position.y) >= transform.position.y) {
+                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
+                    Debug.Log("bottomObstacle | " + eachParent.name);
                 }
-                else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4) {   // 플레이어 y축 +2이상 :  두 번째 층
+                else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
+                    Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
 
-        //TODO: bottom and top nomal vector check
+        // bottom and top nomal vector check
+        if (!CheckObstacleAngle(topObstacles)) {
+            if (CheckObstacleAngle(bottomObstacles)) {
+                Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
+                return true;
+            }
+            else {
+                Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
+            }
+        }
+        else {
+            Debug.Log("topObstacles 가 있음");
+        }
 
-        return true;
+        return false;
     }
+
+    // gameobject를 돌면서  각도 계산
+    // 좌표 변환을 플레이어만 절대 좌표로 돌림 : 방향이 다름
+    // y좌표를 플레이어 기준으로 맞추고
+    // 각도 계산
+    private bool CheckObstacleAngle(List<GameObject> objs) {
+
+        foreach (GameObject item in objs) {
+
+            Vector3 tilePos = item.transform.parent != null ? item.transform.parent.position : item.transform.position;               // 감지된 타일의 현재 월드 위치
+
+            Vector3 playerToTile = tilePos - transform.position;
+            Vector3 posTile = transform.InverseTransformDirection(playerToTile);
+
+            float direction = Vector3.Dot(posTile, Vector3.forward);
+
+            if (direction >= 0) { return true; }
+        }
+
+        return false;
+    }
+
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.green;        // Set the Gizmo color

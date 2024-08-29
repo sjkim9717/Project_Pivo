@@ -15,11 +15,15 @@ public class Player3DController : MonoBehaviour {
 
     private Animator ani3D;
     private PlayerManager playerManager;
+    private Obstacle3DCheck obstacleCheck;
 
     private Vector3 positionToMove = Vector3.zero;
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManager>();
+
+        obstacleCheck = GetComponent<Obstacle3DCheck>();
+
         ani3D = GetComponentInChildren<Animator>();
     }
 
@@ -77,7 +81,8 @@ public class Player3DController : MonoBehaviour {
 
         if (climbInput != 0) {
 
-            if (/*그거 클라임 확인*/false) {
+            if (obstacleCheck.CheckClimbPointsEmpty()) {
+                //TODO: climb시 플레이어가 이동해야함
                 isClimb = true; 
                 ani3D.SetTrigger("IsClimb"); 
             }
