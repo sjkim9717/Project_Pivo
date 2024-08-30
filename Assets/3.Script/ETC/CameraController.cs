@@ -21,5 +21,9 @@ public class CameraController : MonoBehaviour {
         }
     }
 
+    //TODO: test용 삭제할 것
+    public void OnclickTest() {
+        isGameStart = true;
+    }
 
 }

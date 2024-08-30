@@ -15,6 +15,7 @@ public class Player3DController : MonoBehaviour {
 
 
     private Animator ani3D;
+    private Rigidbody playerRigid;
     private PlayerManager playerManager;
     private Obstacle3DCheck obstacleCheck;
 
@@ -22,8 +23,8 @@ public class Player3DController : MonoBehaviour {
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManager>();
-
         obstacleCheck = GetComponent<Obstacle3DCheck>();
+        playerRigid = GetComponent<Rigidbody>();
 
         ani3D = GetComponentInChildren<Animator>();
     }
@@ -55,22 +56,24 @@ public class Player3DController : MonoBehaviour {
         positionToMove = Vector3.zero;
         IsMove = (horizontalInput != 0 || verticalInput != 0);
 
+        if(horizontalInput != 0 || verticalInput != 0) playerManager.isChangingModeTo3D = false;
+        
         Vector3 dir = new Vector3(horizontalInput, 0, verticalInput);
-
+        
         if (horizontalInput != 0) {       // 오른쪽
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * moveSpeed);
-            positionToMove += Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
+            positionToMove = Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
         }
         else if (verticalInput != 0) {        // 앞쪽
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * moveSpeed);
-            positionToMove += Vector3.forward * moveSpeed * verticalInput * Time.deltaTime;
+            positionToMove = Vector3.forward * moveSpeed * verticalInput * Time.deltaTime;
         }
 
         // Animation
         ani3D.SetBool("IsMove", IsMove);
 
         if (IsMove) {
-            transform.position += positionToMove;
+            playerRigid.MovePosition(playerRigid.position + positionToMove);
         }
 
     }
@@ -127,6 +130,10 @@ public class Player3DController : MonoBehaviour {
         return true;
     }
 
+    //TODO: die연결
+    public void Player3DDieAni() {
+        ani3D.SetTrigger("IsDie");
+    }
 }
 
 

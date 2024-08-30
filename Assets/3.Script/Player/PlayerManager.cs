@@ -7,7 +7,11 @@ public class PlayerManager : MonoBehaviour {
 
     private int dieCount;
     private bool is3DPlayer;
-    private bool isRespqwnDone;
+    private bool isRespawning;
+    public bool GetIsRespawning() { return isRespawning; }
+    public void SetIsRespawning (bool isRespawning) { this.isRespawning = isRespawning; }
+
+    public bool isChangingModeTo3D = false;
 
     private Vector3 moveposition;
     public void SetPlayerDieCount() { dieCount++; }                                     // 죽었을 경우 Die Count 증가
@@ -41,14 +45,15 @@ public class PlayerManager : MonoBehaviour {
     }
     private void Update() {
         if (dieCount >= 3) {
-            dieCount = 0;
-            //TODO: [respawn]
             Dead();
         }
     }
 
     private void Dead() {
         OnPlayerDead.Invoke();
+        player2D.SetActive(false);
+        dieCount = 0;
+        player3D.SetActive(true);
     }
 
     public void SwitchMode() {
@@ -94,18 +99,32 @@ public class PlayerManager : MonoBehaviour {
             playerRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
+        SetPlayerDieCount();
+        Debug.Log("player Manager | die count" + dieCount);
     }
 
-    public void Falling() {
-        if (is3DPlayer) {
-            Rigidbody playerRigidbody = player3D.GetComponent<Rigidbody>();
-            playerRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+    public void Falling() {     // SetPlayerDieCount 증가하고 
+
+        if (is3DPlayer) {//TODO:[Test 필요] y값 위치 확인 후 떨어져야함
+            if (CheckPlayerYPosition(player3D)) { Respawn(); }
         }
         else {
-            Rigidbody2D playerRigidbody = player2D.GetComponent<Rigidbody2D>();
-            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+            if (CheckPlayerYPosition(player2D)) { Respawn(); }
         }
     }
+
+    private bool CheckPlayerYPosition(GameObject player) {
+        return player.transform.position.y <= (transform.position.y - 20f);
+    }
+
+
+    
+/*
+ 1. die count 올리고
+ 2. die count 세서 3이상이면 respawn -> die 호출
+ 3. die count 3이하일 경우는 y값 일정 이하인지 확인해서 respawn 호출 
+ 
+ */
 
 }
 

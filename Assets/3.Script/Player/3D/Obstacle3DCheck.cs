@@ -21,17 +21,15 @@ public class Obstacle3DCheck : MonoBehaviour {
     }
 
     private void Update() {
-        if (CheckGroundPointsEmpty(2f)) {                   // 바로 밑에 없으면 확인해야함
-            if (CheckGroundPointsEmpty(10f)) {              // 이동 했을 경우 일정거리 안으로 확인해서 
-                //TODO: [falling] -> 선택지 버튼이 나와야함
-
+        if (CheckGroundPointsEmpty(10f)) {                   // 2d 에서 3 d 돌아왔을 때
+            if (playerManager.isChangingModeTo3D) {          //TODO: [falling] -> 선택지 버튼이 나와야함
 
             }
-            else {                                          // die count 증가               
-                playerManager.SetPlayerDieCount();
-                Debug.Log("SetPlayerDieCount ");
+            else {
+                playerManager.Falling();
             }
         }
+        
     }
 
 
@@ -39,41 +37,35 @@ public class Obstacle3DCheck : MonoBehaviour {
     private bool CheckGroundPointsEmpty(float rayLength) {
 
         bool[] hitsbool = new bool[groundPoint.transform.childCount];
-        int trueCount = 0;
+        int falseCount = 0;
 
         for (int i = 0; i < groundPoint.transform.childCount; i++) {
 
             Transform child = groundPoint.transform.GetChild(i);
 
             RaycastHit[] hits = Physics.RaycastAll(child.position, -child.up, rayLength);
-            Debug.DrawRay(child.position, -child.up, Color.red, rayLength);
+           
+            List<RaycastHit> filteredHits = new List<RaycastHit>();          // `hits` 배열에서 태그가 "Player"인 오브젝트를 제외
 
-            for (int j = 0; j < hits.Length; j++) {
-                if (hits.Length <= 0) {
-                    hitsbool[i] = false;
-                }
-                else if (hits.Length == 1) {
-                    if (hits[0].collider.CompareTag("Player")) {
-                        hitsbool[i] = false;
-                    }
-                    else {
-                        hitsbool[i] = true;
-                    }
-                }
-                else {
-                    hitsbool[i] = true;
+            foreach (RaycastHit hit in hits) {
+                if (!hit.collider.CompareTag("Player")) {
+                    filteredHits.Add(hit);
                 }
             }
+
+            // 필터링된 배열로 `hitsbool` 업데이트
+            if (filteredHits.Count <= 0) hitsbool[i] = false;               // 오브젝트가 없을 경우 false
+            else hitsbool[i] = true;                                        // 나머지 경우에는 true
+
         }
 
         for (int i = 0; i < hitsbool.Length; i++) {
             if (hitsbool[i] == false) {
-                trueCount++;
+                falseCount++;
             }
         }
 
-        return trueCount == hitsbool.Length ? true : false;
-
+        return falseCount == hitsbool.Length ? true : false;
     }
 
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위

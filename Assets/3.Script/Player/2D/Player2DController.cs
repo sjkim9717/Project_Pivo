@@ -8,27 +8,25 @@ public class Player2DController : MonoBehaviour {
     private int skillCount = 0;
 
     public bool IsClimb;
-    
+
     private bool IsMove;
 
     private bool isSkillButtonPressed = false;
 
+    private Vector3 positionToMove = Vector3.zero;
+    
     private Animator ani2D;
+    private Rigidbody2D playerRigid;
+
     private PlayerManager playerManager;
 
-    private Vector3 positionToMove = Vector3.zero;
 
-    
-    private bool isObstacleFrontPlayer;                         // 장애물이 앞쪽에 있을 경우
-
-    
-    private bool isFloorExist;                                  // 바닥이 있는지 없는지 확인
-    public Vector3 Playerpos { get; private set; }
-    private Vector3 obstaclepos;
+    private HashSet<GameObject> obstacles = new HashSet<GameObject>();
 
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManager>();
+        playerRigid = transform.GetComponent<Rigidbody2D>();
 
         ani2D = GetComponent<Animator>();
     }
@@ -46,31 +44,22 @@ public class Player2DController : MonoBehaviour {
 
     }
     private void OnCollisionStay2D(Collision2D collision) {
-        obstaclepos = collision.transform.parent != null ? collision.transform.parent.position : collision.transform.position;
-
-        Vector3 playerToObstacle = obstaclepos - Playerpos;
-
-        Vector3 directionFront = transform.InverseTransformDirection(playerToObstacle);
-        float d = Vector3.Dot(directionFront, Vector3.right);
-
-        if (d >= 0) {   // 장애물이 플레이어 앞쪽에 있을 경우 
-
-            //TODO: 장애물 bool 넘겨야함
-            isObstacleFrontPlayer = true;
-
-            float midpointY = transform.position.y;
-            float collisionY = collision.transform.position.y;
+        foreach (ContactPoint2D contact in collision.contacts) {
+            if (contact.normal.x != 0 && contact.normal.y == 0) {
+                if (collision.transform.parent != null) obstacles.Add(collision.transform.parent.gameObject);
+                //if (collision.transform.parent != null) Debug.Log(" 2D collision parent name" + collision.transform.parent.name);
+            }
         }
+    }
 
-        Vector3 directionBottom = transform.InverseTransformDirection(playerToObstacle);
-        float b = Vector3.Dot(directionBottom, Vector3.down);
-        if (b >= 0) {       // 바닥 오브젝트가 있다면
-            //Debug.Log("Object stay from bottom: " + collision.transform.parent.position);
-            isFloorExist = true;
+    private void OnCollisionExit2D(Collision2D collision) {
+        if (collision.transform.parent != null) {
+            obstacles.Clear();
         }
     }
 
     private void Move() {
+        //player2DRigid.velocity = new Vector2(0, player2DRigid.velocity.y);
 
         float horizontalInput = Input.GetAxis("Horizontal");
 
@@ -81,14 +70,15 @@ public class Player2DController : MonoBehaviour {
         if (horizontalInput != 0) {       // 오른쪽 키를 입력받아 2D에서는 앞 뒤로만 이동
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
             transform.localScale = new Vector3(moveDirection, 1f, 1f);
-            positionToMove += Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
+            positionToMove = Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
+
         }
 
         // Animation
         ani2D.SetBool("IsMove", IsMove);
 
         if (IsMove) {
-            transform.position += positionToMove;
+            playerRigid.MovePosition(playerRigid.position + (Vector2)positionToMove);
         }
 
     }
@@ -96,23 +86,46 @@ public class Player2DController : MonoBehaviour {
     private void Climb() {
         float climbInput = Input.GetAxis("Climb");
 
-        if (climbInput != 0) {
+        if (climbInput != 0 && !IsClimb) {
+            if(obstacles != null) {
+                if (!CheckClimbCountOverTwo()) {
 
-            if (/*장애물 bool 받아야함*/ true) {
-                IsClimb = true;
-                ani2D.SetTrigger("IsClimb");
+                    Debug.Log(" 여기 안들어와야하는데? " );
+                    IsClimb = true;
+                    ani2D.SetTrigger("IsClimb");
+                }
+                else {
+                    Debug.Log(" 여기 모죠? ");
+                }
             }
         }
-        IsClimb = false;
+    }
+
+    // 접점의 모든 오브젝트를 돌아 y값이 차이가 나는지확인
+    private bool CheckClimbCountOverTwo() {
+
+        HashSet<float> yPositions = new HashSet<float>();           // y 위치를 저장할 HashSet 리스트
+
+        foreach (GameObject obj in obstacles) {                             // HashSet을 순회하며 y 위치를 리스트에 추가
+            if (obj != null) {
+                //Debug.Log(obj.name);
+                float yPos = obj.transform.position.y;
+                yPositions.Add(yPos);
+            }
+        }
+        Debug.Log("2D controller | CheckClimbCountOverTwo | y값이 차이 개수 | " + yPositions.Count);
+        return yPositions.Count >= 2;                                   // y 위치가 두 개 이상이면 true 반환
     }
 
 
     private void Skill() {
         float skillSectionInput = Input.GetAxis("SkillSection");
+        //Debug.Log(" 2d contrller | skillSectionInput | " + skillSectionInput);
         if (skillSectionInput != 0 && !isSkillButtonPressed) {                       // 2D 모드에서 스킬 버튼 입력 감지
             isSkillButtonPressed = true;                                             // 버튼이 눌린 상태로 표시
             Debug.Log("3D 모드로 전환됨");
             playerManager.SetPlayerMode(true);
+            playerManager.isChangingModeTo3D = true;
             playerManager.SwitchMode();
         }
 
@@ -123,16 +136,34 @@ public class Player2DController : MonoBehaviour {
     }
 
 
-    // 아래 방향 확인해서 없으면? 떨어짐 
-    private void CheckPlayerFalling(bool Is3DPlayer) {
-        Ray2D ray = new Ray2D(transform.position, -transform.up);
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 20f);
-        if (hit.collider == null) {
-            // Animation
-            ani2D.SetTrigger("IsFalling");
-        }
-        else {
-            Debug.Log("Falling Raycast hit | " + hit.collider.name);
-        }
-    }
 }
+
+#region move Save
+/*
+private void Move() {
+    GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
+
+    float horizontalInput = Input.GetAxis("Horizontal");
+
+    positionToMove = Vector3.zero;
+
+    IsMove = (horizontalInput != 0);
+
+    if (horizontalInput != 0) {       // 오른쪽 키를 입력받아 2D에서는 앞 뒤로만 이동
+        float moveDirection = horizontalInput > 0 ? 1f : -1f;
+        transform.localScale = new Vector3(moveDirection, 1f, 1f);
+        positionToMove += Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
+    }
+
+    // Animation
+    ani2D.SetBool("IsMove", IsMove);
+
+    if (IsMove) {
+        transform.position += positionToMove;
+
+    }
+
+}
+*/
+
+#endregion
