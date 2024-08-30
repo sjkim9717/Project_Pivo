@@ -7,10 +7,8 @@ public class PlayerManager : MonoBehaviour {
 
     private int dieCount;
     private bool is3DPlayer;
-    private bool isRespawning;
-    public bool GetIsRespawning() { return isRespawning; }
-    public void SetIsRespawning (bool isRespawning) { this.isRespawning = isRespawning; }
 
+    public bool IsMovingStop;
     public bool isChangingModeTo3D = false;
 
     private Vector3 moveposition;
@@ -49,11 +47,16 @@ public class PlayerManager : MonoBehaviour {
         }
     }
 
+    public void PositionInit() {
+        player3D.GetComponent<Rigidbody>().position = transform.position;
+        player2D.GetComponent<Rigidbody2D>().position = transform.position;
+    }
+
     private void Dead() {
-        OnPlayerDead.Invoke();
         player2D.SetActive(false);
         dieCount = 0;
         player3D.SetActive(true);
+        OnPlayerDead.Invoke();
     }
 
     public void SwitchMode() {
@@ -105,11 +108,23 @@ public class PlayerManager : MonoBehaviour {
 
     public void Falling() {     // SetPlayerDieCount 증가하고 
 
+
+
         if (is3DPlayer) {//TODO:[Test 필요] y값 위치 확인 후 떨어져야함
+
+            player3D.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
             if (CheckPlayerYPosition(player3D)) { Respawn(); }
+            else {
+                player3D.GetComponentInChildren<Animator>().SetTrigger("IsFalling");
+            }
         }
         else {
+
+            player2D.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
             if (CheckPlayerYPosition(player2D)) { Respawn(); }
+            else {
+                player3D.GetComponent<Animator>().SetTrigger("IsFalling");
+            }
         }
     }
 

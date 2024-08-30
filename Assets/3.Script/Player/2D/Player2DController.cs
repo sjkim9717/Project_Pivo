@@ -9,7 +9,7 @@ public class Player2DController : MonoBehaviour {
 
     public bool IsClimb;
 
-    private bool IsMove;
+    public bool IsMove { get; private set; }
 
     private bool isSkillButtonPressed = false;
 
@@ -32,14 +32,21 @@ public class Player2DController : MonoBehaviour {
     }
 
     private void Update() {
-        if (!IsClimb) {
-            Move();
-        }
+
+        if (playerManager.IsMovingStop) return;
+
+        if (!IsClimb) Move();
 
         if (!IsMove) Climb();
     }
 
     private void FixedUpdate() {
+
+        if (playerManager.IsMovingStop) {
+            IsMove = false;
+            return;
+        }
+
         if (!IsMove && !IsClimb) Skill();
 
     }
@@ -89,13 +96,8 @@ public class Player2DController : MonoBehaviour {
         if (climbInput != 0 && !IsClimb) {
             if(obstacles != null) {
                 if (!CheckClimbCountOverTwo()) {
-
-                    Debug.Log(" 여기 안들어와야하는데? " );
                     IsClimb = true;
                     ani2D.SetTrigger("IsClimb");
-                }
-                else {
-                    Debug.Log(" 여기 모죠? ");
                 }
             }
         }

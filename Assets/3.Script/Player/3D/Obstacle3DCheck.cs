@@ -3,33 +3,97 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Obstacle3DCheck : MonoBehaviour {
-    private GameObject groundPoint;
-    private GameObject blockPoint;
-    private GameObject climbPoint;
 
+    [SerializeField] private float stopTime = 2f;
+    [SerializeField] private float stayTime = 0.5f;
+
+    private GameObject groundPoint;
+    private GameObject holdingGroup;
     public GameObject ClimbObstacle;
+
+    private Rigidbody player3DRigid;
 
     private PlayerManager playerManager;
 
 
     private void Awake() {
+        player3DRigid = transform.GetComponent<Rigidbody>();
+
         playerManager = transform.parent.GetComponent<PlayerManager>();
 
+        holdingGroup = FindObjectOfType<InGameManager>().HoldingGroup;
+
         groundPoint = transform.GetChild(1).gameObject;
-        blockPoint = transform.GetChild(2).gameObject;
-        climbPoint = transform.GetChild(3).gameObject;
     }
 
-    private void Update() {
-        if (CheckGroundPointsEmpty(10f)) {                   // 2d 에서 3 d 돌아왔을 때
-            if (playerManager.isChangingModeTo3D) {          //TODO: [falling] -> 선택지 버튼이 나와야함
+    private void LateUpdate() {
+        if (playerManager.isChangingModeTo3D) {          // 2d 에서 3 d 돌아왔을 때 
 
-            }
-            else {
-                playerManager.Falling();
+            if (CheckGroundPointsEmpty(2f)) {          //TODO: [falling] -> 선택지 버튼이 나와야함
+
+                holdingGroup.SetActive(true);
+                playerManager.IsMovingStop = true;
+                player3DRigid.constraints = RigidbodyConstraints.FreezeAll;
+
+                if (stayTime <= 0) {
+
+                    stopTime -= Time.deltaTime;
+
+                    if (stopTime >= 0) {
+                        WaitUntilChooseFallOr2D();
+                    }
+                    else {
+                        InitFallOr2D();
+                        playerManager.Falling();
+                    }
+
+                }
+                else {
+                    stayTime -= Time.deltaTime;
+                    GetComponentInChildren<Animator>().SetTrigger("IsFalling");
+                }
             }
         }
-        
+        else {
+            if (CheckGroundPointsEmpty(20f)) {                   // 2d 에서 3 d 돌아왔을 때
+                playerManager.Falling();
+            }
+        }        
+
+
+        if (stayTime <= 0f && stopTime <= 0f) {
+            InitFallOr2D();
+        }
+
+    }
+
+    private void InitFallOr2D() {
+        playerManager.IsMovingStop = false;
+        playerManager.isChangingModeTo3D = false;
+        holdingGroup.SetActive(false);
+
+        stayTime = 0.5f;
+        stopTime = 2f;
+    }
+
+    private void WaitUntilChooseFallOr2D() {
+
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+        float skillSectionInput = Input.GetAxis("SkillSection");
+
+        if (horizontalInput != 0 || verticalInput != 0) {
+            InitFallOr2D();
+
+            playerManager.Falling();
+        }
+        else if (skillSectionInput != 0) {
+            InitFallOr2D();
+
+            playerManager.SetPlayerMode(false);
+            playerManager.SwitchMode();
+            Debug.Log("2D 모드로 전환됨");
+        }
     }
 
 
@@ -44,7 +108,7 @@ public class Obstacle3DCheck : MonoBehaviour {
             Transform child = groundPoint.transform.GetChild(i);
 
             RaycastHit[] hits = Physics.RaycastAll(child.position, -child.up, rayLength);
-           
+
             List<RaycastHit> filteredHits = new List<RaycastHit>();          // `hits` 배열에서 태그가 "Player"인 오브젝트를 제외
 
             foreach (RaycastHit hit in hits) {

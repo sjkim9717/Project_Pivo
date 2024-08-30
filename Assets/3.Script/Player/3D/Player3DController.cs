@@ -9,7 +9,7 @@ public class Player3DController : MonoBehaviour {
 
     public bool IsClimb;
 
-    private bool IsMove;
+    public bool IsMove { get; private set; }
     private bool isTryToUseSkill;  // skill 사용하려고 할 경우 섹션 표시 및 사용 가능인지 불가능인지 확인
     private bool isSkillButtonPressed = false;
 
@@ -30,19 +30,25 @@ public class Player3DController : MonoBehaviour {
     }
 
     private void Update() {
-        if (!IsClimb) {
-            Move();
+
+        if (playerManager.IsMovingStop) {
+            IsMove = false;
+            return;
         }
+
+
+        if (!IsClimb) Move();
 
         if (!IsMove) Climb();
-
-        if (Input.GetKeyDown(KeyCode.E)) {
-            Debug.Log("WOW");
-            transform.position = new Vector3(0, 10f, 0);
-        }
     }
 
     private void FixedUpdate() {
+
+        if (playerManager.IsMovingStop) {
+            IsMove = false;
+            return;
+        }
+
         if (!IsMove && !IsClimb) Skill();
     }
 
@@ -56,10 +62,10 @@ public class Player3DController : MonoBehaviour {
         positionToMove = Vector3.zero;
         IsMove = (horizontalInput != 0 || verticalInput != 0);
 
-        if(horizontalInput != 0 || verticalInput != 0) playerManager.isChangingModeTo3D = false;
-        
+        if (horizontalInput != 0 || verticalInput != 0) playerManager.isChangingModeTo3D = false;
+
         Vector3 dir = new Vector3(horizontalInput, 0, verticalInput);
-        
+
         if (horizontalInput != 0) {       // 오른쪽
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * moveSpeed);
             positionToMove = Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
