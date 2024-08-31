@@ -5,10 +5,8 @@ using UnityEngine;
 public class Player2DController : MonoBehaviour {
 
     public float moveSpeed = 3f;
-    private int skillCount = 0;
 
     public bool IsClimb;
-
     public bool IsMove { get; private set; }
 
     private bool isSkillButtonPressed = false;
@@ -20,12 +18,11 @@ public class Player2DController : MonoBehaviour {
 
     private PlayerManager playerManager;
 
-
     private HashSet<GameObject> obstacles = new HashSet<GameObject>();
 
 
     private void Awake() {
-        playerManager = transform.parent.GetComponent<PlayerManager>();
+        playerManager = transform.GetComponentInParent<PlayerManager>();
         playerRigid = transform.GetComponent<Rigidbody2D>();
 
         ani2D = GetComponent<Animator>();

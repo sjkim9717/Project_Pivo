@@ -21,7 +21,7 @@ public class Obstacle3DCheck : MonoBehaviour {
 
         playerManager = transform.parent.GetComponent<PlayerManager>();
 
-        holdingGroup = FindObjectOfType<InGameManager>().HoldingGroup;
+        holdingGroup = FindObjectOfType<StaticManager>().HoldingGroup;
 
         groundPoint = transform.GetChild(1).gameObject;
     }

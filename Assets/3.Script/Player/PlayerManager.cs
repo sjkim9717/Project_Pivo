@@ -1,62 +1,90 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+// stage별 각기다른 위치로 인하여 Scene마다 개별 플레이어 존재
 public class PlayerManager : MonoBehaviour {
+    public static Action PlayerDead;
 
     private int dieCount;
     private bool is3DPlayer;
 
-    public bool IsMovingStop;
-    public bool isChangingModeTo3D = false;
+    public bool IsMovingStop;                                                           // getaxis의 키를 받아서 움직임 외 다른 기능을 사용할 경우 
+    public bool isChangingModeTo3D = false;                                             // 2D에서 3D로 넘어갈 경우 -> fall 조절
 
     private Vector3 moveposition;
+
+    public int GetPlayerDieCount() {
+        if (dieCount >= 3) dieCount = 3;
+        return dieCount;
+    }
+    public bool GetPlayerMode() { return is3DPlayer; }
+
     public void SetPlayerDieCount() { dieCount++; }                                     // 죽었을 경우 Die Count 증가
     public void SetPlayerMode(bool is3DPlayer) { this.is3DPlayer = is3DPlayer; }
-    public bool GetPlayerMode() { return is3DPlayer; }
 
     private GameObject player2D;
     private GameObject player3D;
 
     private Transform respawnposition;                                                  // 큐브위로 올라갈때 위치가 변경될 경우만 잡아서 갱신할 것 \=
 
-    public UnityEvent OnPlayerDead;                                                     // 플레이어가 죽었을 경우 이벤트 인스펙터 창에서 연결
     public UnityEvent<Vector3> onPlayerEnterTile;
 
+    private StageClearController stageClear;
 
     private void Awake() {
         player3D = transform.GetChild(0).gameObject;
         player2D = transform.GetChild(1).gameObject;
 
         moveposition = Vector3.zero;
-
         respawnposition = new GameObject("RespawnPosition").transform;
 
-        player3D.SetActive(true);
-        player2D.SetActive(false);
-        is3DPlayer = true;
+        stageClear = FindObjectOfType<StageClearController>();
+
+        Init();
     }
 
     private void Start() {
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
+
+        stageClear.StageClear += StageClear;
+
+        PlayerDead += Dead;
+
+        // restart 초기화 값 - diecount, 플레이어 위치, 플레이어 모드
+        StaticManager.Restart += Init;
+        StaticManager.Restart += PositionInit;
     }
     private void Update() {
         if (dieCount >= 3) {
-            Dead();
+            PlayerDead?.Invoke();
         }
     }
 
-    public void PositionInit() {
+    private void Init() {
+        dieCount = 0;
+        player3D.SetActive(true);
+        player2D.SetActive(false);
+        is3DPlayer = true;
+
+    }
+
+    private void StageClear() {
+        player3D.SetActive(false);
+        player2D.SetActive(false);
+    }
+
+    public void PositionInit() {                                                    // Restart 연결? 씬넘어가면 전부 풀리겠지?
         player3D.GetComponent<Rigidbody>().position = transform.position;
         player2D.GetComponent<Rigidbody2D>().position = transform.position;
     }
 
     private void Dead() {
-        player2D.SetActive(false);
         dieCount = 0;
+        player2D.SetActive(false);
         player3D.SetActive(true);
-        OnPlayerDead.Invoke();
     }
 
     public void SwitchMode() {
@@ -108,8 +136,6 @@ public class PlayerManager : MonoBehaviour {
 
     public void Falling() {     // SetPlayerDieCount 증가하고 
 
-
-
         if (is3DPlayer) {//TODO:[Test 필요] y값 위치 확인 후 떨어져야함
 
             player3D.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
@@ -133,13 +159,13 @@ public class PlayerManager : MonoBehaviour {
     }
 
 
-    
-/*
- 1. die count 올리고
- 2. die count 세서 3이상이면 respawn -> die 호출
- 3. die count 3이하일 경우는 y값 일정 이하인지 확인해서 respawn 호출 
- 
- */
+
+    /*
+     1. die count 올리고
+     2. die count 세서 3이상이면 respawn -> die 호출
+     3. die count 3이하일 경우는 y값 일정 이하인지 확인해서 respawn 호출 
+
+     */
 
 }
 

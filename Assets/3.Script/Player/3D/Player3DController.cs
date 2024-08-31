@@ -8,9 +8,10 @@ public class Player3DController : MonoBehaviour {
     private int skillCount = 0;
 
     public bool IsClimb;
+    private bool isDead = false;
 
     public bool IsMove { get; private set; }
-    private bool isTryToUseSkill;  // skill 사용하려고 할 경우 섹션 표시 및 사용 가능인지 불가능인지 확인
+    public bool IsTryToUseSkill { get; private set; }  // skill 사용하려고 할 경우 섹션 표시 및 사용 가능인지 불가능인지 확인
     private bool isSkillButtonPressed = false;
 
 
@@ -29,6 +30,10 @@ public class Player3DController : MonoBehaviour {
         ani3D = GetComponentInChildren<Animator>();
     }
 
+    private void Start() {
+        PlayerManager.PlayerDead += Dead;
+    }
+
     private void Update() {
 
         if (playerManager.IsMovingStop) {
@@ -36,10 +41,14 @@ public class Player3DController : MonoBehaviour {
             return;
         }
 
-
         if (!IsClimb) Move();
 
         if (!IsMove) Climb();
+
+        // Dead() 메서드가 호출된 후 애니메이션이 끝났는지 확인
+        if (isDead && IsAnimationFinished()) {
+            gameObject.SetActive(false); // 오브젝트 비활성화
+        }
     }
 
     private void FixedUpdate() {
@@ -52,9 +61,22 @@ public class Player3DController : MonoBehaviour {
         if (!IsMove && !IsClimb) Skill();
     }
 
+    private void Dead() {
+        ani3D.SetTrigger("IsDie");
+        isDead = true;
+
+    }
+
+    private bool IsAnimationFinished() {
+        // 현재 애니메이션 상태 정보 가져오기
+        AnimatorStateInfo stateInfo = ani3D.GetCurrentAnimatorStateInfo(0);
+
+        // "IsDie" 애니메이션 상태가 완료되었는지 확인
+        return stateInfo.IsName("IsDie") && stateInfo.normalizedTime >= 1.0f;
+    }
 
     private void Move() {
-        if (isTryToUseSkill) return;
+        if (IsTryToUseSkill) return;
 
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
@@ -81,11 +103,14 @@ public class Player3DController : MonoBehaviour {
         if (IsMove) {
             playerRigid.MovePosition(playerRigid.position + positionToMove);
         }
+        else {
+            playerRigid.velocity = Vector3.zero; // Stop moving when no input
+        }
 
     }
 
     private void Climb() {
-        if (isTryToUseSkill) return;
+        if (IsTryToUseSkill) return;
 
         float climbInput = Input.GetAxis("Climb");
 
@@ -106,7 +131,7 @@ public class Player3DController : MonoBehaviour {
         if (skillSectionInput != 0 && !isSkillButtonPressed) {                      // 스킬 버튼이 눌렸는지 감지
             isSkillButtonPressed = true;                                            // 버튼이 눌린 상태로 표시
             skillCount++;
-            isTryToUseSkill = true;
+            IsTryToUseSkill = true;
             Debug.Log("스킬 시도 등록. 현재 스킬 횟수: " + skillCount);
         }
 
@@ -121,10 +146,11 @@ public class Player3DController : MonoBehaviour {
                 playerManager.SetPlayerMode(true);
             }
             skillCount = 0;                                                         // 스킬 시도 후 시도 횟수 초기화
-            isTryToUseSkill = false;
+            IsTryToUseSkill = false;
+            playerManager.IsMovingStop = false;
         }
 
-        ani3D.SetBool("IsTryUseSkill", isTryToUseSkill);                            // 애니메이션 상태 처리
+        ani3D.SetBool("IsTryUseSkill", IsTryToUseSkill);                            // 애니메이션 상태 처리
 
         if (skillSectionInput == 0 && isSkillButtonPressed) {                           // 스킬 버튼이 해제되었는지 감지
             isSkillButtonPressed = false;                                               // 버튼 눌림 상태를 초기화
@@ -136,10 +162,6 @@ public class Player3DController : MonoBehaviour {
         return true;
     }
 
-    //TODO: die연결
-    public void Player3DDieAni() {
-        ani3D.SetTrigger("IsDie");
-    }
 }
 
 
