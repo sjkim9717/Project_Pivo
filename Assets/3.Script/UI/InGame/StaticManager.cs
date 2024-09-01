@@ -28,10 +28,8 @@ public class StaticManager : MonoBehaviour {
         HoldingGroup = transform.GetChild(2).gameObject;
         RestartGroup = transform.GetChild(6).gameObject;
 
-        Debug.LogWarning("StaticManager | Awake");
         for(int i =1; i<HPGroup.transform.GetChild(0).childCount; i++) {
             HpImgaes[i-1] = HPGroup.transform.GetComponentsInChildren<Image>()[i];
-            Debug.Log("??//" + HpImgaes[i - 1].name);
         }
         biscuitCountText = biscuitGroup.GetComponentInChildren<Text>();
 
