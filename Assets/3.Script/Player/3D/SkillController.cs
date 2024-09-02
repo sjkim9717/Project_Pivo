@@ -25,7 +25,7 @@ public class SkillController : MonoBehaviour {
 
     private PlayerManager playerManager;
     private Player3DController playerController;
-    private MapManager mapManager;
+    private ConvertMode_Tile convertMode_Tile;
 
     private Animator ani3D;
     public List<GameObject> GetSelectObject() { return selectObjects; }
@@ -37,7 +37,7 @@ public class SkillController : MonoBehaviour {
         }
         blockObjects.Clear();
         selectObjects.Clear();
-        mapManager.ChangeTileLayerAllActive();
+        convertMode_Tile.ChangeLayerAllActiveTrue();
     }
 
     private void Awake() {
@@ -45,7 +45,7 @@ public class SkillController : MonoBehaviour {
 
         playerManager = GetComponentInParent<PlayerManager>();
         playerController = GetComponent<Player3DController>();
-        mapManager = FindObjectOfType<MapManager>();
+        convertMode_Tile = FindObjectOfType<ConvertMode_Tile>();
 
         ani3D = GetComponentInChildren<Animator>();
 
@@ -92,7 +92,7 @@ public class SkillController : MonoBehaviour {
 
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
-                mapManager.ChangeTileLayer(selectObjects);
+                convertMode_Tile.ChangeLayerActiveFalse(selectObjects);
 
                 playerManager.SetPlayerMode(false);
                 playerManager.SwitchMode();
@@ -186,9 +186,7 @@ public class SkillController : MonoBehaviour {
 
 
         ResetSelectObject();                                                    // raycast가 움직이기전 초기화
-
         ChangeSelectObjectLayer(startSection, finishSection);                   // Raycast를 넣어서  
-
         ChangeBlockObjectMaterial();
     }
 
@@ -214,7 +212,6 @@ public class SkillController : MonoBehaviour {
                         if (!selectObjects.Contains(parent)) {
                             //Debug.Log("Hit: " + parent.name);
                             selectObjects.Add(parent);
-                            //parent.GetComponentInChildren<TileController>().ChangeMaterial_select();
                         }
                     }
                 }
@@ -249,10 +246,7 @@ public class SkillController : MonoBehaviour {
 
     }
 
-    //TODO: blockObjects갯수가 0이상일경우에 오브젝트의 z위치가 플레이어의 위치보다 위에 있는지 아래에 있는지 판별
-    // 적용은 아직 생각 못함
-
-    public Color boxColor = Color.gray;
+    // blockObjects갯수가 0이상일경우에 오브젝트의 z위치가 플레이어의 위치보다 위에 있는지 아래에 있는지 판별
     private void CheckBlockObjectZPosition() {
         if (blockObjects.Count >= 1) {
             if (blockObjects[0].transform.position.z >= playerRigidbody.position.z) blockZposCheck = 1;

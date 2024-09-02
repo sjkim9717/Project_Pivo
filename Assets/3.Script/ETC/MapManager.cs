@@ -15,8 +15,8 @@ public class MapManager : MonoBehaviour {
     public Material selectTileMaterial;
 
     private void Awake() {
-        activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrueTile");
-        activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalseTile");
+        activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
+        activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
 
         parentTileObject = new GameObject[GameObject.FindGameObjectsWithTag("ParentTile").Length];
         for (int i = 0; i < parentTileObject.Length; i++) {

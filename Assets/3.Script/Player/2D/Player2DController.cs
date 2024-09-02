@@ -63,7 +63,7 @@ public class Player2DController : MonoBehaviour {
     }
 
     private void Move() {
-        //player2DRigid.velocity = new Vector2(0, player2DRigid.velocity.y);
+        playerRigid.velocity = new Vector2(0, playerRigid.velocity.y);
 
         float horizontalInput = Input.GetAxis("Horizontal");
 
@@ -123,7 +123,7 @@ public class Player2DController : MonoBehaviour {
         if (skillSectionInput != 0 && !isSkillButtonPressed) {                       // 2D 모드에서 스킬 버튼 입력 감지
             isSkillButtonPressed = true;                                             // 버튼이 눌린 상태로 표시
             Debug.Log("3D 모드로 전환됨");
-            FindObjectOfType<MapManager>().ChangeTileLayerAllActive();
+            FindObjectOfType<ConvertMode>().ChangeLayerAllActiveTrue();
 
             playerManager.SetPlayerMode(true);
             playerManager.isChangingModeTo3D = true;
@@ -139,32 +139,3 @@ public class Player2DController : MonoBehaviour {
 
 }
 
-#region move Save
-/*
-private void Move() {
-    GetComponent<Rigidbody2D>().velocity = new Vector2(0, GetComponent<Rigidbody2D>().velocity.y);
-
-    float horizontalInput = Input.GetAxis("Horizontal");
-
-    positionToMove = Vector3.zero;
-
-    IsMove = (horizontalInput != 0);
-
-    if (horizontalInput != 0) {       // 오른쪽 키를 입력받아 2D에서는 앞 뒤로만 이동
-        float moveDirection = horizontalInput > 0 ? 1f : -1f;
-        transform.localScale = new Vector3(moveDirection, 1f, 1f);
-        positionToMove += Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
-    }
-
-    // Animation
-    ani2D.SetBool("IsMove", IsMove);
-
-    if (IsMove) {
-        transform.position += positionToMove;
-
-    }
-
-}
-*/
-
-#endregion

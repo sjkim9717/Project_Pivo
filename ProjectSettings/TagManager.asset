@@ -18,8 +18,8 @@ TagManager:
   - UI
   - 3DPlayer
   - 2DPlayer
-  - ActiveTrueTile
-  - ActiveFalseTile
+  - ActiveTrue
+  - ActiveFalse
   - 
   - 
   - 
