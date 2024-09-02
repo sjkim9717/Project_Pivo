@@ -214,7 +214,7 @@ public class SkillController : MonoBehaviour {
                         if (!selectObjects.Contains(parent)) {
                             //Debug.Log("Hit: " + parent.name);
                             selectObjects.Add(parent);
-                            parent.GetComponentInChildren<TileController>().ChangeMaterial_select();
+                            //parent.GetComponentInChildren<TileController>().ChangeMaterial_select();
                         }
                     }
                 }

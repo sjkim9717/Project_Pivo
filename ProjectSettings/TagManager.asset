@@ -6,6 +6,9 @@ TagManager:
   tags:
   - ClimbObj
   - ParentTile
+  - Biscuit
+  - Tree
+  - Puzzle
   layers:
   - Default
   - TransparentFX
