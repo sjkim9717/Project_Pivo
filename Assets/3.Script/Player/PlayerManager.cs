@@ -88,8 +88,10 @@ public class PlayerManager : MonoBehaviour {
     }
 
     public void SwitchMode() {
-        if (is3DPlayer) {
 
+        FindObjectOfType<MapManager>().ChangeActiveTile();
+
+        if (is3DPlayer) {
             moveposition = player2D.transform.position;
             player3D.transform.position = moveposition;
 
@@ -97,13 +99,13 @@ public class PlayerManager : MonoBehaviour {
             player3D.SetActive(true);
         }
         else {
-
             moveposition = player3D.transform.position;
             player2D.transform.position = moveposition;
 
             player3D.SetActive(false);
             player2D.SetActive(true);
         }
+
     }
 
     // respawn 위치 맞추기

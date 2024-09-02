@@ -7,7 +7,10 @@ using UnityEngine;
 public class SkillController : MonoBehaviour {
 
     private int skillCount = 0;
+    private int blockZposCheck = 0;
+
     private bool isSkillButtonPressed = false;
+
     public bool IsTryToUseSkill { get; private set; }  // skill 사용하려고 할 경우 섹션 표시 및 사용 가능인지 불가능인지 확인
 
     private Vector3 startSection = Vector3.zero;
@@ -15,19 +18,34 @@ public class SkillController : MonoBehaviour {
 
     private GameObject sectionLine;
     private GameObject sectionLine_First;
+    private List<GameObject> selectObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
+    private List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
 
     private Rigidbody playerRigidbody;
 
     private PlayerManager playerManager;
     private Player3DController playerController;
+    private MapManager mapManager;
 
     private Animator ani3D;
+    public List<GameObject> GetSelectObject() { return selectObjects; }
+    public void ResetSelectObject() {
+        if (selectObjects == null) return;
+
+        foreach (var item in selectObjects) {
+            item.GetComponentInChildren<TileController>().InitMaterial();
+        }
+        blockObjects.Clear();
+        selectObjects.Clear();
+        mapManager.ChangeTileLayerAllActive();
+    }
 
     private void Awake() {
         playerRigidbody = GetComponent<Rigidbody>();
 
         playerManager = GetComponentInParent<PlayerManager>();
         playerController = GetComponent<Player3DController>();
+        mapManager = FindObjectOfType<MapManager>();
 
         ani3D = GetComponentInChildren<Animator>();
 
@@ -51,7 +69,7 @@ public class SkillController : MonoBehaviour {
         }
     }
 
-    //TODO: 스킬 사용 구간과 플레이어가 겹치는지 확인해야함 
+
     private void Skill() {
         float skillSectionInput = Input.GetAxis("SkillSection");
 
@@ -64,7 +82,9 @@ public class SkillController : MonoBehaviour {
 
         }
 
-        if(skillCount == 1) {
+        if (skillCount == 1) {
+            CheckBlockObjectZPosition();                                            // 막힌 오브젝트의 위치를 비교함
+
             GetKeyInput();      // 화살표 섹션 이동
             CancleSkill();      // 취소키
         }
@@ -72,12 +92,16 @@ public class SkillController : MonoBehaviour {
 
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
+                mapManager.ChangeTileLayer(selectObjects);
+
                 playerManager.SetPlayerMode(false);
                 playerManager.SwitchMode();
                 Debug.Log("2D 모드로 전환됨");
             }
-            else {                                                                  // 3D 모드 유지
-                playerManager.SetPlayerMode(true);
+            else {
+                ResetSelectObject();                                               // 3D 모드 유지
+                skillCount = 1;
+                return;
             }
             skillCount = 0;                                                         // 스킬 시도 후 시도 횟수 초기화
             IsTryToUseSkill = false;
@@ -106,18 +130,20 @@ public class SkillController : MonoBehaviour {
     // 입력을 받아서 일정 범위 결정
     private void GetKeyInput() {
         // 각 화살표 키가 눌렸는지 확인
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {
-            MoveSectionLine(true);
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {
+            if (blockZposCheck != 1)
+                MoveSectionLine(true);
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
-            MoveSectionLine(false);
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
+            if (blockZposCheck != -1)
+                MoveSectionLine(false);
         }
 
     }
 
     private void CancleSkill() {
         float CancleInput = Input.GetAxis("Climb");
-        
+
         if (CancleInput != 0) {       // x 키 취소
             skillCount = 0;
             IsTryToUseSkill = false;
@@ -125,6 +151,7 @@ public class SkillController : MonoBehaviour {
             playerManager.IsMovingStop = false;
             playerManager.isChangingModeTo3D = false;
             EffectOff();
+            ResetSelectObject();
             return;
         }
     }
@@ -137,8 +164,8 @@ public class SkillController : MonoBehaviour {
         EffectOn();
 
         if (startSection == Vector3.zero) {
-            startSection = new Vector3(playerRigidbody.position.x, playerRigidbody.position.y, (int)playerRigidbody.position.z - direction * 1f);
-            finishSection = new Vector3(startSection.x, startSection.y, startSection.z + direction * 2f);
+            startSection = new Vector3(playerRigidbody.position.x, playerRigidbody.position.y, (int)playerRigidbody.position.z - 1f);
+            finishSection = new Vector3(startSection.x, startSection.y, startSection.z - direction * 2f);
         }
         else {
             float movingAmount = direction * 2f;
@@ -153,19 +180,89 @@ public class SkillController : MonoBehaviour {
             }
         }
 
+
         sectionLine.transform.position = finishSection;
         sectionLine_First.transform.position = startSection;
+
+
+        ResetSelectObject();                                                    // raycast가 움직이기전 초기화
+
+        ChangeSelectObjectLayer(startSection, finishSection);                   // Raycast를 넣어서  
+
+        ChangeBlockObjectMaterial();
     }
 
-    //TODO: 플레이어가 스킬 자르면 해당하는 영역을 확인해야함
+
+    // 플레이어가 스킬 자르면 해당하는 영역을 확인해야함
+    private void ChangeSelectObjectLayer(Vector3 start, Vector3 finish) {
+
+        float centerpos = (finish.z + start.z) * 0.5f;
+        Vector3 center = new Vector3((startSection.x + finishSection.x) * 0.5f, (startSection.y + finishSection.y) * 0.5f, centerpos);
+
+        float zSize = Mathf.Abs(finish.z - start.z) / 2 - 0.5f;
+        Vector3 halfExtents = new Vector3(20, 20, zSize); // 직사각형의 절반 크기
+
+        Vector3 direction = (finish - start).normalized;
+
+        RaycastHit[] hits = Physics.BoxCastAll(center, halfExtents, direction, Quaternion.identity, 0);
+
+        foreach (RaycastHit hit in hits) {
+            if (hit.transform.parent != null) {
+                if (hit.transform.parent.parent != null) {
+                    if (hit.transform.parent.parent.CompareTag("ParentTile")) {
+                        GameObject parent = hit.transform.parent.gameObject;
+                        if (!selectObjects.Contains(parent)) {
+                            //Debug.Log("Hit: " + parent.name);
+                            selectObjects.Add(parent);
+                            parent.GetComponentInChildren<TileController>().ChangeMaterial_select();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 플레이어가 스킬로 섹션을 자르면 해당하는 역역 중 같은 선상에 있는 물체 확인
     private bool CheckSkillUsable() {
-
-        return true;
+        if (startSection == finishSection) return false;
+        return blockObjects.Count >= 1 ? false : true;
     }
 
+    private void ChangeBlockObjectMaterial() {
+        if (selectObjects == null) return;
+        blockObjects.Clear();
 
+        foreach (GameObject each in selectObjects) {
+            Vector2 playerXYpos = new Vector2(playerRigidbody.position.x, playerRigidbody.position.y);
+            Vector2 eachXYpos = new Vector2(each.transform.position.x, each.transform.position.y);
 
-    // 같은 선상에 있으면 해당 오브젝트 담아야함
+            if (playerXYpos.x < (eachXYpos.x + 1) && playerXYpos.x > (eachXYpos.x - 1)) {    // 만약 플레이어와 오브젝트가 같은 x좌표에 있다면 플레이어의 y좌표를 기준으로  +4 이하에 있으면 같은 선상임
+                if (eachXYpos.y >= playerXYpos.y - 0.5) {
+                    if (eachXYpos.y <= playerXYpos.y + 4) {
+                        Debug.Log(" 같은 선상의 오브젝트 이름 | " + each.name);
+                        blockObjects.Add(each);
+                        each.GetComponentInChildren<TileController>().ChangeMaterial();
+                    }
+                }
+            }
+        }
+
+    }
+
+    //TODO: blockObjects갯수가 0이상일경우에 오브젝트의 z위치가 플레이어의 위치보다 위에 있는지 아래에 있는지 판별
+    // 적용은 아직 생각 못함
+
+    public Color boxColor = Color.gray;
+    private void CheckBlockObjectZPosition() {
+        if (blockObjects.Count >= 1) {
+            if (blockObjects[0].transform.position.z >= playerRigidbody.position.z) blockZposCheck = 1;
+            else blockZposCheck = -1;
+        }
+        else {
+            blockZposCheck = 0;
+        }
+    }
+
 }
 
 /*
