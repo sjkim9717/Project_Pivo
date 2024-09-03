@@ -123,7 +123,11 @@ public class Player2DController : MonoBehaviour {
         if (skillSectionInput != 0 && !isSkillButtonPressed) {                       // 2D 모드에서 스킬 버튼 입력 감지
             isSkillButtonPressed = true;                                             // 버튼이 눌린 상태로 표시
             Debug.Log("3D 모드로 전환됨");
-            FindObjectOfType<ConvertMode>().ChangeLayerAllActiveTrue();
+
+            ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
+            foreach (ConvertMode mode in convertModes) {
+                mode.ChangeLayerAllActiveTrue();
+            }
 
             playerManager.SetPlayerMode(true);
             playerManager.isChangingModeTo3D = true;

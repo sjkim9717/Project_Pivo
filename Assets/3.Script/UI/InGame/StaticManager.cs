@@ -104,7 +104,7 @@ public class StaticManager : MonoBehaviour {
     }
     private void BiscuitEatCount() {
         biscuitCount++;
-        Debug.Log("StaticManager | biscuitCount |" + biscuitCount);
+        //Debug.Log("StaticManager | biscuitCount |" + biscuitCount);
     }
     private void BiscuitEatTextChange() {
         biscuitCountText.text = string.Format($"X {biscuitCount}");

@@ -9,6 +9,8 @@ TagManager:
   - Biscuit
   - Tree
   - Puzzle
+  - Objects
+  - Triggers
   layers:
   - Default
   - TransparentFX

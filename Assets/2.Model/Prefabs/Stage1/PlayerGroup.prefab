@@ -16121,7 +16121,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.33, y: 0.48}
+  m_Size: {x: 4.1154847, y: 3.3632462}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -19187,7 +19187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabce8970d70f074097eab68702e55d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &7170033185011368504
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,19 +5,84 @@ using System;
 using System.IO;
 
 [Serializable]
+public enum StageLevel {
+    StageLevel_1,
+    StageLevel_5,
+    StageLevel_7
+}
+
+[Serializable]
+public class StageLevelData {
+    public StageLevel StageLevel;
+    public bool IsStageClear;
+    public int StageScore;
+}
+
+[Serializable]
 public class StageSaveData {
-    public bool[] stage = new bool[3];
+    public List<StageLevelData> StageLevelDataList = new List<StageLevelData>();
+
+    public StageSaveData() {
+        InitializeData();
+    }
+
+    private void InitializeData() {
+        foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
+            StageLevelDataList.Add(new StageLevelData {
+                StageLevel = level,
+                IsStageClear = false,
+                StageScore = 0
+            });
+        }
+    }
+    public StageLevelData GetStageLevelData(StageLevel level) {
+        return StageLevelDataList.Find(data => data.StageLevel == level);
+    }
+    public bool TryGetStageClear(StageLevel level, out bool isClear) {
+        var data = GetStageLevelData(level);
+        if (data != null) {
+            isClear = data.IsStageClear;
+            return true;
+        }
+        else {
+            isClear = false;
+            return false;
+        }
+    }
+
+    public bool TryGetStageScore(StageLevel level, out int score) {
+        var data = GetStageLevelData(level);
+        if (data != null) {
+            score = data.StageScore;
+            return true;
+        }
+        else {
+            score = 0;
+            return false;
+        }
+    }
+
+    public void SetStageData(StageLevel level, bool isClear, int score) {
+        var data = GetStageLevelData(level);
+        if (data != null) {
+            data.IsStageClear = isClear;
+            data.StageScore = score;
+        }
+    }
 }
 
 public class Save : MonoBehaviour
 {
     public static Save instance = null;
 
+    public StageSaveData SaveData = new StageSaveData();
+
+    private string SaveJsonFilePath;
+
     private void Awake() {
         if(instance == null) {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            InitSave();
         }
         else {
             Destroy(gameObject);
@@ -30,10 +95,6 @@ public class Save : MonoBehaviour
         Debug.Log("single file path :" + SaveJsonFilePath);
     }
 
-
-    public StageSaveData SaveData = new StageSaveData();
-
-    private string SaveJsonFilePath;
 
     //TODO:new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
@@ -59,12 +120,14 @@ public class Save : MonoBehaviour
         return null;
     }
 
-    public void InitSave() {
-        for (int i = 0; i < SaveData.stage.Length; i++) {
-            SaveData.stage[i] = false;
-            //TODO: 각 스테이지 별 뼈다귀 개수 init 추가
+    public StageLevelData GetStageLevelData(StageLevel level) {
+        if (SaveData != null) {
+            return SaveData.GetStageLevelData(level);
         }
+        return null;
     }
+
+
 }
 
 /*

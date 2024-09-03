@@ -89,7 +89,10 @@ public class PlayerManager : MonoBehaviour {
 
     public void SwitchMode() {
 
-        FindObjectOfType<ConvertMode>().ChangeActiveWithLayer();
+        ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
+        foreach (ConvertMode mode in convertModes) {
+            mode.ChangeActiveWithLayer();
+        }
 
         if (is3DPlayer) {
             moveposition = player2D.transform.position;

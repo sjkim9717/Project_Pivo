@@ -20,15 +20,17 @@ public abstract class ConvertMode : MonoBehaviour {
         activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
         activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
 
-        string basePath = "Assets/6.Materials/ConvertModeMaterial";
-
-        BlockMaterial = LoadMaterial(Path.Combine(basePath, "BlockMaterialDumy.mat"));
-        SelectMaterial = LoadMaterial(Path.Combine(basePath, "SelectMaterialDumy.mat"));
+        if(BlockMaterial ==null || SelectMaterial == null) {
+            string basePath = "ConvertModeMaterial";
+            BlockMaterial = LoadMaterial(Path.Combine(basePath, "BlockMaterialDumy"));
+            SelectMaterial = LoadMaterial(Path.Combine(basePath, "SelectMaterialDumy"));
+        }
     }
+
     protected abstract void Start();
 
     private Material LoadMaterial(string path) {
-        Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+        Material material = Resources.Load<Material>(path);
         if (material != null) {
             Debug.Log($"Loaded Material: {material.name}");
         }
@@ -38,7 +40,8 @@ public abstract class ConvertMode : MonoBehaviour {
         return material;
     }
 
-    protected void InitParentObjectWithTag(string tagName) {
+    protected void InitParentObjectWithTag(Tag tagName) {
+        Debug.Log("Tag" + tagName);
         parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
         for (int i = 0; i < parentObject.Length; i++) {
             parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
@@ -46,9 +49,8 @@ public abstract class ConvertMode : MonoBehaviour {
 
         foreach (GameObject parenttile in parentObject) {
             foreach (Transform child in parenttile.transform) {
-                AllObjects.Add(child.gameObject);
-                if (child.name.Contains("Root")||child.name.Contains("3D"))
-                    Debug.LogWarning(" tile list error" + child.name);
+                if (!child.name.Contains("Root") && !child.name.Contains("3D"))
+                    AllObjects.Add(child.gameObject);
             }
         }
     }

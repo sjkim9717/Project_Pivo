@@ -21,9 +21,10 @@ public class Obstacle3DCheck : MonoBehaviour {
 
         playerManager = transform.parent.GetComponent<PlayerManager>();
 
-        holdingGroup = FindObjectOfType<StaticManager>().HoldingGroup;
-
         groundPoint = transform.GetChild(1).gameObject;
+    }
+    private void Start() {
+        holdingGroup = FindObjectOfType<StaticManager>().HoldingGroup;        
     }
 
     private void LateUpdate() {
@@ -146,14 +147,14 @@ public class Obstacle3DCheck : MonoBehaviour {
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    Debug.Log("bottomObstacle | " + eachParent.name);
+                    //Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    Debug.Log("topObstacles | " + eachParent.name);
+                    //Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
@@ -180,12 +181,10 @@ public class Obstacle3DCheck : MonoBehaviour {
         foreach (GameObject item in objs) {
 
             Vector3 tilePos = item.transform.position;               // 감지된 타일의 현재 월드 위치
-
             Vector3 playerToTile = tilePos - transform.position;
-
             float angle = Vector3.SignedAngle(transform.forward, playerToTile, Vector3.up);
 
-            Debug.Log("Calculated angle: " + angle);
+            //Debug.Log("Calculated angle: " + angle);
 
             if (angle >= -40f && angle <= 40f) {
                 Debug.Log("타일이 시야 범위 내에 있습니다.");

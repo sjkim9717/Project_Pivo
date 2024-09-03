@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 
 
 public class SkillController : MonoBehaviour {
@@ -18,40 +18,41 @@ public class SkillController : MonoBehaviour {
 
     private GameObject sectionLine;
     private GameObject sectionLine_First;
-    private List<GameObject> selectObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
+    [SerializeField]
+    private List<GameObject>[] selectObjects;              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
     private List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
 
     private Rigidbody playerRigidbody;
 
     private PlayerManager playerManager;
     private Player3DController playerController;
-    private ConvertMode_Tile convertMode_Tile;
+    private ConvertMode[] convertMode;
 
     private Animator ani3D;
-    public List<GameObject> GetSelectObject() { return selectObjects; }
-    public void ResetSelectObject() {
-        if (selectObjects == null) return;
-
-        foreach (var item in selectObjects) {
-            item.GetComponentInChildren<TileController>().InitMaterial();
-        }
-        blockObjects.Clear();
-        selectObjects.Clear();
-        convertMode_Tile.ChangeLayerAllActiveTrue();
-    }
 
     private void Awake() {
         playerRigidbody = GetComponent<Rigidbody>();
 
         playerManager = GetComponentInParent<PlayerManager>();
         playerController = GetComponent<Player3DController>();
-        convertMode_Tile = FindObjectOfType<ConvertMode_Tile>();
 
         ani3D = GetComponentInChildren<Animator>();
 
         sectionLine = transform.parent.GetChild(4).gameObject;
         sectionLine_First = Instantiate(sectionLine, sectionLine.transform.parent);
         sectionLine_First.name = "SectionLine_First";
+    }
+
+    private void Start() {
+        convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
+
+        convertMode[0] = FindObjectOfType<ConvertMode_Tile>();
+        convertMode[1] = FindObjectOfType<ConvertMode_Item>();
+
+        selectObjects = new List<GameObject>[convertMode.Length];
+        for (int i = 0; i < selectObjects.Length; i++) {
+            selectObjects[i] = new List<GameObject>();
+        }
     }
 
     private void Update() {
@@ -92,7 +93,10 @@ public class SkillController : MonoBehaviour {
 
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
-                convertMode_Tile.ChangeLayerActiveFalse(selectObjects);
+
+                for (int i = 0; i < selectObjects.Length; i++) {
+                    convertMode[i].ChangeLayerActiveFalse(selectObjects[i]);
+                }
 
                 playerManager.SetPlayerMode(false);
                 playerManager.SwitchMode();
@@ -126,6 +130,25 @@ public class SkillController : MonoBehaviour {
         sectionLine_First.SetActive(false);
     }
 
+    // convertMode가 여러개 있을 경우 전체 담아서 초기화
+    public void ResetSelectObject() {
+        if (selectObjects[0] == null) return;
+
+
+        foreach (var item in selectObjects[0]) {
+            item.GetComponentInChildren<TileController>().InitMaterial();
+        }
+
+        blockObjects.Clear();
+
+        for (int i = 0; i < convertMode.Length; i++) {
+            selectObjects[i].Clear();
+        }
+
+        foreach (ConvertMode item in convertMode) {
+            item.ChangeLayerAllActiveTrue();
+        }
+    }
 
     // 입력을 받아서 일정 범위 결정
     private void GetKeyInput() {
@@ -198,7 +221,7 @@ public class SkillController : MonoBehaviour {
         Vector3 center = new Vector3((startSection.x + finishSection.x) * 0.5f, (startSection.y + finishSection.y) * 0.5f, centerpos);
 
         float zSize = Mathf.Abs(finish.z - start.z) / 2 - 0.5f;
-        Vector3 halfExtents = new Vector3(20, 20, zSize); // 직사각형의 절반 크기
+        Vector3 halfExtents = new Vector3(30, 20, zSize); // 직사각형의 절반 크기
 
         Vector3 direction = (finish - start).normalized;
 
@@ -207,15 +230,39 @@ public class SkillController : MonoBehaviour {
         foreach (RaycastHit hit in hits) {
             if (hit.transform.parent != null) {
                 if (hit.transform.parent.parent != null) {
-                    if (hit.transform.parent.parent.CompareTag("ParentTile")) {
+                    string tagName = hit.transform.parent.parent.tag;
+
+                    if(Enum.TryParse(tagName, out Tag tagEnum)) {
+                        
                         GameObject parent = hit.transform.parent.gameObject;
-                        if (!selectObjects.Contains(parent)) {
-                            //Debug.Log("Hit: " + parent.name);
-                            selectObjects.Add(parent);
-                        }
+                        AddSelectObjectsWithTag(tagEnum, parent);
                     }
+                    
                 }
             }
+        }
+    }
+
+    private void AddSelectObjectsWithTag(Tag tagName, GameObject parent) {
+        switch (tagName) {
+            case Tag.ParentTile:
+                if (!selectObjects[0].Contains(parent)) {
+                    //Debug.Log("ParentTile Hit: " + parent.name);
+                    selectObjects[0].Add(parent);
+                }
+                break;
+            case Tag.Triggers:
+            case Tag.Biscuit:
+            case Tag.Objects:
+            case Tag.Puzzle:
+            case Tag.Tree:
+                if (!selectObjects[1].Contains(parent)) {
+                    //Debug.Log("selectObjects Hit: " + parent.name);
+                    selectObjects[1].Add(parent);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -229,7 +276,7 @@ public class SkillController : MonoBehaviour {
         if (selectObjects == null) return;
         blockObjects.Clear();
 
-        foreach (GameObject each in selectObjects) {
+        foreach (GameObject each in selectObjects[0]) {
             Vector2 playerXYpos = new Vector2(playerRigidbody.position.x, playerRigidbody.position.y);
             Vector2 eachXYpos = new Vector2(each.transform.position.x, each.transform.position.y);
 
@@ -267,8 +314,7 @@ public class SkillController : MonoBehaviour {
 
 => MoveSectionLine 메소드
  startSection 벡터 :현재 위치를 중심으로 z-1,x, y는 고정 
- finishSection 벡터 : z+1,x, y고정에서 출발
-            z축을 +2단위로 움직임
+ finishSection 벡터 : z+1,x, y고정에서 출발 
 단 clamp함수를 사용해서 to벡터의 z가 움직일 수 있는 최대 범위(from - to)는 10까지로 제한 
 
 
