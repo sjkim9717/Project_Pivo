@@ -4,11 +4,17 @@ using UnityEngine;
 using System;
 using System.IO;
 
+public enum SceneStatus {
+    Stage,
+    Select
+}
+
 [Serializable]
 public enum StageLevel {
     StageLevel_1,
     StageLevel_5,
-    StageLevel_7
+    StageLevel_7,
+    StageSelect
 }
 
 [Serializable]
@@ -92,7 +98,7 @@ public class Save : MonoBehaviour
         if (!Directory.Exists(Path.GetDirectoryName(SaveJsonFilePath))) {
             Directory.CreateDirectory(Path.GetDirectoryName(SaveJsonFilePath));
         }
-        Debug.Log("single file path :" + SaveJsonFilePath);
+        Debug.Log("Save file path :" + SaveJsonFilePath);
     }
 
 

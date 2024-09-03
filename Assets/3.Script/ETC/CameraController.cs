@@ -46,3 +46,7 @@ public class CameraController : MonoBehaviour {
     }
 
 }
+
+
+
+//TODO: 시작과 동시에 플레이어 transform 찾을 수 있도록 해놓을 것

@@ -19,8 +19,9 @@ public class StaticManager : MonoBehaviour {
     public GameObject RestartGroup;
 
     private PlayerManager playerManager;
-    private StageClearController stageClearController;
     private List<BiscuitController> biscuitControllers = new List<BiscuitController>();
+
+    public int GetBiscuitCount() { return biscuitCount; }
 
     private void Awake() {
         HPGroup = transform.GetChild(0).gameObject;
@@ -68,7 +69,6 @@ public class StaticManager : MonoBehaviour {
     // stage 클리어시 변경되는 오브젝트 다시 받아와야함(초기화 다시해야함)
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
         playerManager = FindObjectOfType<PlayerManager>();
-        stageClearController = FindObjectOfType<StageClearController>();
 
         //TODO: [확인 필요함]
         PlayerManager.PlayerDead += ShowRestart;
@@ -131,7 +131,7 @@ public class StaticManager : MonoBehaviour {
 
 }
 
-/*
+/* 목적 : 씬 변경되는 시점의 표시 상태 초기화 / 각 아이템들 스크립트 잡아옴
  1. 비스킷을 먹는 이벤트 발동 시 카운트 증가
  2. 비스킷 텍스트 변경
 

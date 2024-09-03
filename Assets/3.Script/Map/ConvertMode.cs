@@ -20,14 +20,22 @@ public abstract class ConvertMode : MonoBehaviour {
         activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
         activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
 
-        if(BlockMaterial ==null || SelectMaterial == null) {
-            string basePath = "ConvertModeMaterial";
-            BlockMaterial = LoadMaterial(Path.Combine(basePath, "BlockMaterialDumy"));
-            SelectMaterial = LoadMaterial(Path.Combine(basePath, "SelectMaterialDumy"));
+        // 자산 로딩을 지연시키고, 나중에 실행하도록 변경
+        if (BlockMaterial == null || SelectMaterial == null) {
+            StartCoroutine(LoadMaterialsAsync());
         }
     }
 
     protected abstract void Start();
+
+    private IEnumerator LoadMaterialsAsync() {
+        // 자산 로딩을 코루틴으로 지연
+        yield return null;  // 프레임 대기
+
+        string basePath = "ConvertModeMaterial";
+        BlockMaterial = LoadMaterial(Path.Combine(basePath, "BlockMaterialDumy"));
+        SelectMaterial = LoadMaterial(Path.Combine(basePath, "SelectMaterialDumy"));
+    }
 
     private Material LoadMaterial(string path) {
         Material material = Resources.Load<Material>(path);
@@ -41,7 +49,6 @@ public abstract class ConvertMode : MonoBehaviour {
     }
 
     protected void InitParentObjectWithTag(Tag tagName) {
-        Debug.Log("Tag" + tagName);
         parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
         for (int i = 0; i < parentObject.Length; i++) {
             parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
