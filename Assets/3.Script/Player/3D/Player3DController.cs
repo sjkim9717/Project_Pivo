@@ -93,7 +93,7 @@ public class Player3DController : MonoBehaviour {
             playerRigid.MovePosition(playerRigid.position + positionToMove);
         }
         else {
-            playerRigid.velocity = Vector3.zero; // Stop moving when no input
+            playerRigid.velocity = new Vector3(0, playerRigid.velocity.y, 0);
         }
 
     }

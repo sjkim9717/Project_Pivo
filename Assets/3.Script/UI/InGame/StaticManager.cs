@@ -16,7 +16,7 @@ public class StaticManager : MonoBehaviour {
     private GameObject HPGroup;
     private GameObject biscuitGroup;
     public GameObject HoldingGroup;
-    public GameObject RestartGroup;
+    public GameObject PauseGroup;
 
     private PlayerManager playerManager;
     private List<BiscuitController> biscuitControllers = new List<BiscuitController>();
@@ -27,7 +27,7 @@ public class StaticManager : MonoBehaviour {
         HPGroup = transform.GetChild(0).gameObject;
         biscuitGroup = transform.GetChild(1).gameObject;
         HoldingGroup = transform.GetChild(2).gameObject;
-        RestartGroup = transform.GetChild(6).gameObject;
+        PauseGroup = transform.GetChild(4).gameObject;
 
         for(int i =1; i<HPGroup.transform.GetChild(0).childCount; i++) {
             HpImgaes[i-1] = HPGroup.transform.GetComponentsInChildren<Image>()[i];
@@ -54,6 +54,11 @@ public class StaticManager : MonoBehaviour {
                 HpImageChange();
             }
         }
+        if (GameManager.instance.IsGameStart) {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                PauseGroup.SetActive(true);
+            }
+        }
     }
 
     // Restart시에도 카운트 초기화 되어야함
@@ -70,8 +75,6 @@ public class StaticManager : MonoBehaviour {
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
         playerManager = FindObjectOfType<PlayerManager>();
 
-        //TODO: [확인 필요함]
-        PlayerManager.PlayerDead += ShowRestart;
     }
 
 
@@ -118,17 +121,13 @@ public class StaticManager : MonoBehaviour {
         }
     }
 
-
-    // 플레이어가 죽었을 경우 restart 화면이 떠야함
-    private void ShowRestart() {
-        RestartGroup.SetActive(true);
-    }
-
     //TODO: Restart Yes 버튼 할당 필요함
     public void OnButtonClick_Restart() {
         Restart?.Invoke();
     }
-
+    public void ButtonOnClick_StageSelect() {
+        SceneManager.LoadScene("StageSelect_Grass");
+    }
 }
 
 /* 목적 : 씬 변경되는 시점의 표시 상태 초기화 / 각 아이템들 스크립트 잡아옴

@@ -65,6 +65,7 @@ public class TitleManager : MonoBehaviour {
 
     public void ButtonOnClick_LoadGame() {
         SceneManager.LoadScene("StageSelect_Grass");
+        GameManager.instance.IsGameStart = false;
         //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
     }
 
@@ -103,6 +104,7 @@ public class TitleManager : MonoBehaviour {
 
         // 1번씬 카메라 플레이어 찾아야함
         FindObjectOfType<CameraController>().SetCameraSettingGameStart(true);
+        GameManager.instance.IsGameStart = true;
     }
 
     // newGameGroup에서 새게임 시작

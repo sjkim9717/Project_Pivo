@@ -8,7 +8,10 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
 
+    public bool IsGameStart;
+
     public StageLevel currentStage;
+    private GameObject staticGroup;
 
     private StageClearController[] stageClearController;
 
@@ -20,17 +23,19 @@ public class GameManager : MonoBehaviour {
         else {
             Destroy(gameObject);
         }
+
+        staticGroup = transform.GetChild(0).gameObject;
     }
 
 
     private void OnEnable() {
         SceneManager.sceneLoaded += FindScenLevelWhenLevelChange;
-        SceneManager.sceneLoaded += FindStageClearWhenLevelChange;
+        SceneManager.sceneLoaded += FindObjectsWhenLevelChange;
     }
 
     private void OnDisable() {
         SceneManager.sceneLoaded -= FindScenLevelWhenLevelChange;
-        SceneManager.sceneLoaded -= FindStageClearWhenLevelChange;
+        SceneManager.sceneLoaded -= FindObjectsWhenLevelChange;
     }
 
     // 씬이 변경될때마다 씬 레벨 확인
@@ -40,18 +45,24 @@ public class GameManager : MonoBehaviour {
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
-    private void FindStageClearWhenLevelChange(Scene scene, LoadSceneMode mode) {
+    private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
 
-        if (currentStage == StageLevel.StageSelect) return;
+        if (currentStage == StageLevel.StageSelect) {
+            staticGroup.SetActive(false);
+        }
 
-        stageClearController = FindObjectsOfType<StageClearController>();
+        else {
+            staticGroup.SetActive(true);
 
-        // StageClear 이벤트 구독
-        foreach (var controller in stageClearController) {
-            if (controller != null) {
-                // 이벤트 핸들러가 이미 등록되어 있는지 확인하고, 중복 등록을 방지합니다.
-                if (!controller.StageClear.GetInvocationList().Contains((Action)OnStageClear)) {
-                    controller.StageClear += OnStageClear;
+            stageClearController = FindObjectsOfType<StageClearController>();
+
+            // StageClear 이벤트 구독
+            foreach (var controller in stageClearController) {
+                if (controller != null) {
+                    // 이벤트 핸들러가 이미 등록되어 있는지 확인하고, 중복 등록을 방지합니다.
+                    if (!controller.StageClear.GetInvocationList().Contains((Action)OnStageClear)) {
+                        controller.StageClear += OnStageClear;
+                    }
                 }
             }
         }
@@ -61,6 +72,8 @@ public class GameManager : MonoBehaviour {
     private void OnStageClear() {
         Save.instance.SaveData.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
         Save.instance.MakeSave();
+        SceneManager.LoadScene("StageSelect_Grass");
+        GameManager.instance.IsGameStart = false;
     }
 
     private StageLevel SelectSceneLevelWithSceneName(ref StageLevel stageLevel, string sceneName) {
@@ -91,6 +104,7 @@ public class GameManager : MonoBehaviour {
 
     //TODO: stage level 선택씬에서 연결할 것
     public void OnButtonClick_LevelChoose(StageLevel stageLevel) {
+        GameManager.instance.IsGameStart = true;
 
     }
 

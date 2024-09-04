@@ -58,11 +58,15 @@ public class StageSaveData {
 
     public bool TryGetStageScore(StageLevel level, out int score) {
         var data = GetStageLevelData(level);
+        Debug.Log("data != null " + level);
         if (data != null) {
+            Debug.Log("data != null " + data.StageScore);
             score = data.StageScore;
+            Debug.Log("data != null |  " + score);
             return true;
         }
         else {
+            Debug.Log("data == null ");
             score = 0;
             return false;
         }
@@ -102,14 +106,11 @@ public class Save : MonoBehaviour
     }
 
 
-    //TODO:new play 클릭시 확인
+    // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
         if (File.Exists(SaveJsonFilePath)) return true;
         return false;
     }
-    
-    //TODO: stage 클리어시 해당하는 stage의 뼈다귀 개수 
-    
 
     public void MakeSave() {
         if (SaveData == null) {
@@ -132,6 +133,9 @@ public class Save : MonoBehaviour
         }
         return null;
     }
+
+
+
 
 
 }
