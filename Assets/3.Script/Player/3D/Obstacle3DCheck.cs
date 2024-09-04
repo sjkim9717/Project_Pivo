@@ -30,7 +30,7 @@ public class Obstacle3DCheck : MonoBehaviour {
     private void LateUpdate() {
         if (playerManager.isChangingModeTo3D) {          // 2d 에서 3 d 돌아왔을 때 
 
-            if (CheckGroundPointsEmpty(2f)) {          //TODO: [falling] -> 선택지 버튼이 나와야함
+            if (CheckGroundPointsEmpty(2f)) {         
 
                 holdingGroup.SetActive(true);
                 playerManager.IsMovingStop = true;

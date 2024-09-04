@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class TitleManager : MonoBehaviour {
+public class MainTitleManager : MonoBehaviour {
     private GameObject mainGroup;
     private GameObject optionGroup;
     private GameObject newGameGroup;
@@ -13,8 +13,8 @@ public class TitleManager : MonoBehaviour {
     public GameObject Select;
 
     // Load Game Button에 달려있는 이벤트 트리거
-    public EventTrigger eventTrigger;
-    private List<EventTrigger.Entry> storedEntries;
+    public EventTrigger LoadeventTrigger;
+    private List<EventTrigger.Entry> LoadstoredEntries;
 
     private void Awake() {
         mainGroup = transform.GetChild(0).gameObject;
@@ -23,15 +23,15 @@ public class TitleManager : MonoBehaviour {
     }
 
     private void Start() {
-        //TODO: 파일있는지 확인해서 없으면 Load Game button 의 이벤트 트리거 들고옴
-        eventTrigger = Default.transform.GetChild(1).gameObject.GetComponent<EventTrigger>();
-        storedEntries = new List<EventTrigger.Entry>(eventTrigger.triggers);
+        // 파일있는지 확인해서 없으면 Load Game button의 이벤트 트리거 들고옴
+        LoadeventTrigger = Default.transform.GetChild(1).gameObject.GetComponent<EventTrigger>();
+        LoadstoredEntries = new List<EventTrigger.Entry>(LoadeventTrigger.triggers);
 
         if (!Save.instance.GetSaveExist()) {
-            eventTrigger.triggers.Clear();
+            LoadeventTrigger.triggers.Clear();
         }
         else {
-            eventTrigger.triggers.AddRange(storedEntries);
+            LoadeventTrigger.triggers.AddRange(LoadstoredEntries);
         }
     }
 
@@ -57,7 +57,7 @@ public class TitleManager : MonoBehaviour {
             newGameGroup.SetActive(true);
         }
         else {
-            //TODO: play 시작
+            //TODO: tutorial 연결
             gameObject.SetActive(false);
             FindPlayerWhenStartGame();
         }
@@ -65,7 +65,7 @@ public class TitleManager : MonoBehaviour {
 
     public void ButtonOnClick_LoadGame() {
         SceneManager.LoadScene("StageSelect_Grass");
-        GameManager.instance.IsGameStart = false;
+        GameManager.instance.IsTutorialClear = false;
         //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
     }
 
@@ -94,6 +94,7 @@ public class TitleManager : MonoBehaviour {
         }
     }
 
+    //TODO: [변경 필요] tutorial 끝나고 시작해야함
     private void FindPlayerWhenStartGame() {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (var item in players) {
@@ -104,13 +105,16 @@ public class TitleManager : MonoBehaviour {
 
         // 1번씬 카메라 플레이어 찾아야함
         FindObjectOfType<CameraController>().SetCameraSettingGameStart(true);
-        GameManager.instance.IsGameStart = true;
     }
 
     // newGameGroup에서 새게임 시작
     public void ButtonOnClick_NewGameWhenHaveData() {
         newGameGroup.SetActive(false);
+        Save.instance.MakeNewGame();
+        GameManager.instance.IsTutorialClear = false;
         FindPlayerWhenStartGame();
+
+        //TODO: tutorial 연결
     }
 
 

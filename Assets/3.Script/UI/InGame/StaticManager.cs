@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class StaticManager : MonoBehaviour {
 
     private int HpCount = 3;
     private int biscuitCount = 0;
+
     private Text biscuitCountText;
     private Image[] HpImgaes = new Image[3];
 
@@ -20,6 +22,11 @@ public class StaticManager : MonoBehaviour {
 
     private PlayerManager playerManager;
     private List<BiscuitController> biscuitControllers = new List<BiscuitController>();
+
+
+    //TODO: SceneSelect Game Button에 달려있는 이벤트 트리거 => 첫번째 씬에서 튜토리얼 완료 안했다면 트리거 삭제
+    public EventTrigger SceneSelecteventTrigger;
+    private List<EventTrigger.Entry> SceneSelectstoredEntries;
 
     public int GetBiscuitCount() { return biscuitCount; }
 
@@ -38,14 +45,10 @@ public class StaticManager : MonoBehaviour {
     }
 
     private void OnEnable() {
-        SceneManager.sceneLoaded += FindBiscuitsWhenLevelChange;
-        SceneManager.sceneLoaded += LevelInitWhenLevelChange;
         SceneManager.sceneLoaded += FindObjectsWhenLevelChange;
     }
 
     private void OnDisable() {
-        SceneManager.sceneLoaded -= FindBiscuitsWhenLevelChange;
-        SceneManager.sceneLoaded -= LevelInitWhenLevelChange;
         SceneManager.sceneLoaded -= FindObjectsWhenLevelChange;
     }
     private void Update() {
@@ -54,7 +57,8 @@ public class StaticManager : MonoBehaviour {
                 HpImageChange();
             }
         }
-        if (GameManager.instance.IsGameStart) {
+
+        if (GameManager.instance.IsTutorialClear) {
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 PauseGroup.SetActive(true);
             }
@@ -71,45 +75,29 @@ public class StaticManager : MonoBehaviour {
         biscuitCount = 0;
     }
 
-    // stage 클리어시 변경되는 오브젝트 다시 받아와야함(초기화 다시해야함)
+    // stage 클리어시 secen변경이 일어남 ->변경되는 오브젝트 다시 받아와야함(초기화 다시해야함)
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
-        playerManager = FindObjectOfType<PlayerManager>();
-
-    }
-
-
-    // stage 변경시 초기화
-    private void LevelInitWhenLevelChange(Scene scene, LoadSceneMode mode) {
-        HpCount = 3;
-        for (int i = 0; i < HpImgaes.Length; i++) {
-            HpImgaes[i].gameObject.SetActive(true);
-        }
-        biscuitCountText.text = "X 0";
-        biscuitCount = 0;
-    }
-
-    // 비스킷을 먹었을 경우 카운트 증기
-    // level clear시에 secen변경이 일어남 -> 모든 스크립트가 달린 오브젝트를 찾아서 재할당이 필요함
-    private void FindBiscuitsWhenLevelChange(Scene scene, LoadSceneMode mode) {
         Debug.Log($"Scene loaded: {scene.name}");
         Debug.Log($"Load mode: {mode}");
 
-        biscuitControllers.Clear();
+        playerManager = FindObjectOfType<PlayerManager>();
 
+        LevelInitWhenRestart();
+
+        biscuitControllers.Clear();
+        // 모든 비스킷들을 찾아서 할당해주어야함
         BiscuitController[] controllers = FindObjectsOfType<BiscuitController>();
         foreach (var controller in controllers) {
             if (!biscuitControllers.Contains(controller)) {
-                controller.BiscuiEat += BiscuitEatCount;
                 controller.BiscuiEat += BiscuitEatTextChange;
                 biscuitControllers.Add(controller);
             }
         }
     }
-    private void BiscuitEatCount() {
+
+    private void BiscuitEatTextChange() {
         biscuitCount++;
         //Debug.Log("StaticManager | biscuitCount |" + biscuitCount);
-    }
-    private void BiscuitEatTextChange() {
         biscuitCountText.text = string.Format($"X {biscuitCount}");
     }
 
@@ -140,5 +128,5 @@ public class StaticManager : MonoBehaviour {
 //TODO: 재시작 리스트
 1. 플레이어 위치 초기화
 2. 비스킷 생명 초기화
- 
+3. 플레이어 애니메이션 idle
  */

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class StageSelectManager : MonoBehaviour {
+public class StageSelectController : MonoBehaviour {
 
     public RectTransform ScoreTexts;
     private Text stage;
@@ -74,7 +74,7 @@ public class StageSelectManager : MonoBehaviour {
     }
 
 
-    public void SelectStageLevel(StageLevel stageLevel) { 
+    public void SelectStageLevel(StageLevel stageLevel) {
         selectStageLevel = stageLevel;
         stage.text = stageLevel.ToString();
         int[] requirement;
@@ -89,7 +89,7 @@ public class StageSelectManager : MonoBehaviour {
 
         // 플레이어가 획득한 별 갯수
         int _saveScore = 0;
-        if (Save.instance.SaveData.TryGetStageScore(stageLevel,out _saveScore)) {
+        if (Save.instance.TryGetStageScore(stageLevel,out _saveScore)) {
             saveScore.text = string.Format($"x {_saveScore}");
         }
         else {
@@ -98,3 +98,10 @@ public class StageSelectManager : MonoBehaviour {
 
     }
 }
+
+/*
+ 1. 플레이어가 클리어한 레벨확인해서 
+ 2. 클리어 레벨 위로 플레이어 위치
+ 3. 
+ 
+ */

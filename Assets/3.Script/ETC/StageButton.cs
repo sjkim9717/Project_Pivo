@@ -5,10 +5,10 @@ using UnityEngine;
 public class StageButton : MonoBehaviour
 {
     public StageLevel ButtonStageLevel;
-    private StageSelectManager stageSelect;
+    private StageSelectController stageSelect;
 
     private void Awake() {
-        stageSelect = FindObjectOfType<StageSelectManager>();
+        stageSelect = FindObjectOfType<StageSelectController>();
     }
 
     private void OnCollisionEnter(Collision collision) {

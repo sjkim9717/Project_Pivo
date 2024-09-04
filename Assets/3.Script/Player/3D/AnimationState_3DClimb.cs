@@ -45,7 +45,6 @@ public class AnimationState_3DClimb : StateMachineBehaviour {
 
 /*
  1. 플레이어가 climb 모션을 끝내고 위치가 전환되어야함
-//TODO: 위치가 부드럽게 움직여야함
  
 1. animator는 player3DBone의 위치를 변경함 
 2. player3DBone의 초기 중심 위치가 player3D의 중심과 달라서 해당 위치를 bonePosition 에 위치 차이를 담음

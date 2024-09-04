@@ -24,68 +24,12 @@ public class StageLevelData {
     public int StageScore;
 }
 
-[Serializable]
-public class StageSaveData {
-    public List<StageLevelData> StageLevelDataList = new List<StageLevelData>();
-
-    public StageSaveData() {
-        InitializeData();
-    }
-
-    private void InitializeData() {
-        foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
-            StageLevelDataList.Add(new StageLevelData {
-                StageLevel = level,
-                IsStageClear = false,
-                StageScore = 0
-            });
-        }
-    }
-    public StageLevelData GetStageLevelData(StageLevel level) {
-        return StageLevelDataList.Find(data => data.StageLevel == level);
-    }
-    public bool TryGetStageClear(StageLevel level, out bool isClear) {
-        var data = GetStageLevelData(level);
-        if (data != null) {
-            isClear = data.IsStageClear;
-            return true;
-        }
-        else {
-            isClear = false;
-            return false;
-        }
-    }
-
-    public bool TryGetStageScore(StageLevel level, out int score) {
-        var data = GetStageLevelData(level);
-        Debug.Log("data != null " + level);
-        if (data != null) {
-            Debug.Log("data != null " + data.StageScore);
-            score = data.StageScore;
-            Debug.Log("data != null |  " + score);
-            return true;
-        }
-        else {
-            Debug.Log("data == null ");
-            score = 0;
-            return false;
-        }
-    }
-
-    public void SetStageData(StageLevel level, bool isClear, int score) {
-        var data = GetStageLevelData(level);
-        if (data != null) {
-            data.IsStageClear = isClear;
-            data.StageScore = score;
-        }
-    }
-}
 
 public class Save : MonoBehaviour
 {
     public static Save instance = null;
 
-    public StageSaveData SaveData = new StageSaveData();
+    public List<StageLevelData> SaveDataList = new List<StageLevelData>();
 
     private string SaveJsonFilePath;
 
@@ -103,6 +47,8 @@ public class Save : MonoBehaviour
             Directory.CreateDirectory(Path.GetDirectoryName(SaveJsonFilePath));
         }
         Debug.Log("Save file path :" + SaveJsonFilePath);
+
+        InitializeData();
     }
 
 
@@ -111,30 +57,71 @@ public class Save : MonoBehaviour
         if (File.Exists(SaveJsonFilePath)) return true;
         return false;
     }
+    public void MakeNewGame() {
+        SaveDataList = new List<StageLevelData>();
 
+        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveDataList));  // 덮어쓰기
+    }
     public void MakeSave() {
-        if (SaveData == null) {
-            SaveData = new StageSaveData();
+        if (SaveDataList == null) {
+            SaveDataList = new List<StageLevelData>();
         }
 
-        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveData));  // 덮어쓰기
+        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveDataList));  // 덮어쓰기
     }
 
-    public StageSaveData Load() {
+    public List<StageLevelData> Load() {
         if (GetSaveExist()) {
-            return JsonUtility.FromJson<StageSaveData>(File.ReadAllText(SaveJsonFilePath));
+            return JsonUtility.FromJson<List<StageLevelData>>(File.ReadAllText(SaveJsonFilePath));
         }
         return null;
     }
+
+    private void InitializeData() {
+        foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
+            SaveDataList.Add(new StageLevelData {
+                StageLevel = level,
+                IsStageClear = false,
+                StageScore = 0
+            });
+        }
+    }
+
 
     public StageLevelData GetStageLevelData(StageLevel level) {
-        if (SaveData != null) {
-            return SaveData.GetStageLevelData(level);
+        return SaveDataList.Find(data => data.StageLevel == level);
+    }
+    public bool TryGetStageClear(StageLevel level, out bool isClear) {
+        var data = GetStageLevelData(level);
+        if (data != null) {
+            isClear = data.IsStageClear;
+            return true;
         }
-        return null;
+        else {
+            isClear = false;
+            return false;
+        }
     }
 
+    public bool TryGetStageScore(StageLevel level, out int score) {
+        var data = GetStageLevelData(level);
+        if (data != null) {
+            score = data.StageScore;
+            return true;
+        }
+        else {
+            score = 0;
+            return false;
+        }
+    }
 
+    public void SetStageData(StageLevel level, bool isClear, int score) {
+        var data = GetStageLevelData(level);
+        if (data != null) {
+            data.IsStageClear = isClear;
+            data.StageScore = score;
+        }
+    }
 
 
 

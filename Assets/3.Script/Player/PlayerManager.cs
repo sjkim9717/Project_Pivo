@@ -68,7 +68,7 @@ public class PlayerManager : MonoBehaviour {
         player3D.SetActive(true);
         player2D.SetActive(false);
         is3DPlayer = true;
-
+        player3D.GetComponentInChildren<Animator>().Rebind(); // 애니메이션 상태 초기화
     }
 
     private void StageClear() {
@@ -122,8 +122,8 @@ public class PlayerManager : MonoBehaviour {
         }
     }
 
-    //TODO: button에 달아야함
-    public void Respawn() {
+    // Respawn
+    private void Respawn() {
         if (is3DPlayer) {
             player3D.transform.position = respawnposition.position;
             Rigidbody playerRigidbody = player3D.GetComponent<Rigidbody>();

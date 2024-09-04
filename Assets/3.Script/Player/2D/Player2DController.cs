@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player2DController : MonoBehaviour {
 
-    public float moveSpeed = 5f;
+    public float moveSpeed = 10f;
 
     public bool IsClimb;
     public bool IsMove { get; private set; }
@@ -92,7 +92,7 @@ public class Player2DController : MonoBehaviour {
 
         if (climbInput != 0 && !IsClimb) {
             if(obstacles != null) {
-                if (!CheckClimbCountOverTwo()) {
+                if (CheckClimbCountOne()) {
                     IsClimb = true;
                     ani2D.SetTrigger("IsClimb");
                 }
@@ -101,7 +101,7 @@ public class Player2DController : MonoBehaviour {
     }
 
     // 접점의 모든 오브젝트를 돌아 y값이 차이가 나는지확인
-    private bool CheckClimbCountOverTwo() {
+    private bool CheckClimbCountOne() {
 
         HashSet<float> yPositions = new HashSet<float>();           // y 위치를 저장할 HashSet 리스트
 
@@ -113,7 +113,7 @@ public class Player2DController : MonoBehaviour {
             }
         }
         Debug.Log("2D controller | CheckClimbCountOverTwo | y값이 차이 개수 | " + yPositions.Count);
-        return yPositions.Count >= 2;                                   // y 위치가 두 개 이상이면 true 반환
+        return yPositions.Count == 1;                                   // y 위치가 1개가 아니면 true 반환
     }
 
 

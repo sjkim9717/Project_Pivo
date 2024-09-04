@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
 
-    public bool IsGameStart;
+    public bool IsTutorialClear;
 
     public StageLevel currentStage;
     private GameObject staticGroup;
@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour {
 
         staticGroup = transform.GetChild(0).gameObject;
     }
-
 
     private void OnEnable() {
         SceneManager.sceneLoaded += FindScenLevelWhenLevelChange;
@@ -70,10 +69,9 @@ public class GameManager : MonoBehaviour {
 
     // StageClear 이벤트가 호출될 때 실행될 메서드
     private void OnStageClear() {
-        Save.instance.SaveData.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
+        Save.instance.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
         Save.instance.MakeSave();
         SceneManager.LoadScene("StageSelect_Grass");
-        GameManager.instance.IsGameStart = false;
     }
 
     private StageLevel SelectSceneLevelWithSceneName(ref StageLevel stageLevel, string sceneName) {
@@ -81,9 +79,11 @@ public class GameManager : MonoBehaviour {
         switch (sceneName) {
             case "StartTest":
                 stageLevel = StageLevel.StageLevel_1;
+                if (IsTutorialClear) FindObjectOfType<MainTitleManager>().gameObject.SetActive(false);
                 break;
             case "GrassStage_Stage1":
                 stageLevel = StageLevel.StageLevel_1;
+                if (IsTutorialClear) FindObjectOfType<MainTitleManager>().gameObject.SetActive(false);
                 break;
             case "GrassStage_Stage5":
                 stageLevel = StageLevel.StageLevel_5;
@@ -104,10 +104,13 @@ public class GameManager : MonoBehaviour {
 
     //TODO: stage level 선택씬에서 연결할 것
     public void OnButtonClick_LevelChoose(StageLevel stageLevel) {
-        GameManager.instance.IsGameStart = true;
-
+        
     }
 
+    //TODO: [Test] tutorial test 삭제할것
+    public void ButtonTest() {
+        GameManager.instance.IsTutorialClear = true;
+    }
 }
 
 /*  목적 : 씬 변경되는 시점의 stagelevel data 들고옴 + clear 시 정보저장
