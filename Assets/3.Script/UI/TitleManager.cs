@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class TitleManager : MonoBehaviour
-{
+public class TitleManager : MonoBehaviour {
     private GameObject mainGroup;
     private GameObject optionGroup;
     private GameObject newGameGroup;
 
     public GameObject Default;
     public GameObject Select;
+
+    // Load Game Button에 달려있는 이벤트 트리거
+    public EventTrigger eventTrigger;
+    private List<EventTrigger.Entry> storedEntries;
 
     private void Awake() {
         mainGroup = transform.GetChild(0).gameObject;
@@ -19,16 +23,16 @@ public class TitleManager : MonoBehaviour
     }
 
     private void Start() {
-        //TODO: 파일있는지 확인해서 없으면 Load Game button 잠금
-        /*
+        //TODO: 파일있는지 확인해서 없으면 Load Game button 의 이벤트 트리거 들고옴
+        eventTrigger = Default.transform.GetChild(1).gameObject.GetComponent<EventTrigger>();
+        storedEntries = new List<EventTrigger.Entry>(eventTrigger.triggers);
+
         if (!Save.instance.GetSaveExist()) {
-            Default.transform.GetChild(1).gameObject.SetActive(false);
+            eventTrigger.triggers.Clear();
         }
         else {
-            Default.transform.GetChild(1).gameObject.SetActive(true);
+            eventTrigger.triggers.AddRange(storedEntries);
         }
-        */  
-
     }
 
     //TODO: escape 시 각종 UI 원위치
@@ -36,34 +40,29 @@ public class TitleManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape)) Escape();
     }
 
-
-
-    // on pointer event
-
+    // on click event
     public void ButtonOnEnter_Main(int num) {
         for (int i = 0; i < Select.transform.childCount; i++) {
-            if(i == num) Select.transform.GetChild(i).gameObject.SetActive(true);
+            if (i == num) Select.transform.GetChild(i).gameObject.SetActive(true);
             else Select.transform.GetChild(i).gameObject.SetActive(false);
         }
     }
 
 
-    // on click event
-
     public void ButtonOnClick_NewGame() {
-        /*
-                 if (Save.instance.GetSaveExist()) {
+
+        if (Save.instance.GetSaveExist()) {
+            // 시작할 건지
             mainGroup.SetActive(false);
             newGameGroup.SetActive(true);
         }
         else {
             //TODO: play 시작
             gameObject.SetActive(false);
+            FindPlayerWhenStartGame();
         }
-         
-         */
-
     }
+
     public void ButtonOnClick_LoadGame() {
         SceneManager.LoadScene("StageSelect_Grass");
         //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
@@ -73,7 +72,7 @@ public class TitleManager : MonoBehaviour
         mainGroup.SetActive(false);
         optionGroup.SetActive(true);
     }
-
+    
     public void ButtonOnClick_Exit() {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
@@ -90,9 +89,28 @@ public class TitleManager : MonoBehaviour
             mainGroup.SetActive(true);
         }
         else {
-            if(mainGroup.activeSelf) mainGroup.SetActive(false);
+            if (mainGroup.activeSelf) mainGroup.SetActive(false);
         }
     }
+
+    private void FindPlayerWhenStartGame() {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (var item in players) {
+            if (item.layer == LayerMask.NameToLayer("2DPlayer")) {
+                item.SetActive(true);
+            }
+        }
+
+        // 1번씬 카메라 플레이어 찾아야함
+        FindObjectOfType<CameraController>().SetCameraSettingGameStart(true);
+    }
+
+    // newGameGroup에서 새게임 시작
+    public void ButtonOnClick_NewGameWhenHaveData() {
+        newGameGroup.SetActive(false);
+        FindPlayerWhenStartGame();
+    }
+
 
 }
 

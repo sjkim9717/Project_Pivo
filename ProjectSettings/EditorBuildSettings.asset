@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/1.Scene/TestScene/StartTest.unity
     guid: e2dff94f70757e841a756e6c2377994b
+  - enabled: 1
+    path: Assets/1.Scene/GrassStage_Stage7.unity
+    guid: fae531c8c3beaae449e0c5b3ffcac021
+  - enabled: 1
+    path: Assets/1.Scene/StageSelect_Grass.unity
+    guid: cd8f551cad7a87f4788229a337af3214
   m_configObjects: {}

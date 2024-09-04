@@ -1,36 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Cinemachine;
 
 public class CameraController : MonoBehaviour {
     private CinemachineBrain main;
 
     private Animator camAni;
+    private GameObject player;
     private PlayerManager playerManager;
 
-    private bool isGameStart;
-    public void SetGameStart(bool gamestart) { isGameStart = gamestart; }
+    public void SetCameraSettingGameStart(bool camStart) { main.enabled = camStart; }
 
     private void Awake() {
         playerManager = FindObjectOfType<PlayerManager>();
+        player = FindObjectOfType<Player3DController>().gameObject;
         main = GetComponentInChildren<CinemachineBrain>();
+
+        ConvertCameraEnable();
         camAni = GetComponent<Animator>();
-        isGameStart = false;
 
         if (main == null) Debug.LogWarning("CinemachineBrain not found.");
     }
 
     private void Update() {
-        if (isGameStart) {
-            if (main != null) {
-                main.enabled = true;
-            }
-            else {
-                Debug.LogWarning("CinemachineBrain is null.");
-            }
-            camAni.SetBool("Is3D", playerManager.GetPlayerMode());
-        }
+
+        camAni.SetBool("Is3D", playerManager.GetPlayerMode());
 
         if (Camera.main != null) {
             Camera.main.orthographic = !playerManager.GetPlayerMode();
@@ -40,13 +36,11 @@ public class CameraController : MonoBehaviour {
         }
     }
 
-    //TODO: test용 삭제할 것
-    public void OnclickTest() {
-        isGameStart = true;
+    private void ConvertCameraEnable() {
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name == "GrassStage_Stage1") main.enabled = false;
+        else main.enabled = true;
     }
 
 }
 
-
-
-//TODO: 시작과 동시에 플레이어 transform 찾을 수 있도록 해놓을 것

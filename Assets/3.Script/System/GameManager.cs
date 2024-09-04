@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    //TODO:[확인 필요함] StageClear 이벤트가 호출될 때 실행될 메서드
+    // StageClear 이벤트가 호출될 때 실행될 메서드
     private void OnStageClear() {
         Save.instance.SaveData.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
         Save.instance.MakeSave();
@@ -87,8 +87,6 @@ public class GameManager : MonoBehaviour {
 
         return stageLevel;
     }
-
-    //TODO: stage clear 시 저장
 
 
     //TODO: stage level 선택씬에서 연결할 것
