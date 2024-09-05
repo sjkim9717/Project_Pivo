@@ -4,32 +4,12 @@ using UnityEngine;
 using System;
 using System.IO;
 
-public enum SceneStatus {
-    Stage,
-    Select
-}
-
-[Serializable]
-public enum StageLevel {
-    StageLevel_1,
-    StageLevel_5,
-    StageLevel_7,
-    StageSelect
-}
-
-[Serializable]
-public class StageLevelData {
-    public StageLevel StageLevel;
-    public bool IsStageClear;
-    public int StageScore;
-}
-
 
 public class Save : MonoBehaviour
 {
     public static Save instance = null;
 
-    public List<StageLevelData> SaveDataList = new List<StageLevelData>();
+    public GameSaveData GameSaveData = new GameSaveData();
 
     private string SaveJsonFilePath;
 
@@ -54,20 +34,18 @@ public class Save : MonoBehaviour
 
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
-        if (File.Exists(SaveJsonFilePath)) return true;
-        return false;
+        return File.Exists(SaveJsonFilePath);
     }
+
     public void MakeNewGame() {
-        SaveDataList = new List<StageLevelData>();
 
-        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveDataList));  // 덮어쓰기
+        GameSaveData = new GameSaveData();
+        SaveGame();  // 새로 만든 데이터를 저장
     }
-    public void MakeSave() {
-        if (SaveDataList == null) {
-            SaveDataList = new List<StageLevelData>();
-        }
 
-        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(SaveDataList));  // 덮어쓰기
+    public void SaveGame() {
+        string jsonData = JsonUtility.ToJson(GameSaveData, true);
+        File.WriteAllText(SaveJsonFilePath, jsonData);
     }
 
     public List<StageLevelData> Load() {
@@ -78,8 +56,11 @@ public class Save : MonoBehaviour
     }
 
     private void InitializeData() {
+
+        GameSaveData.TutorialData.IsTutorialCompleted = false;
+
         foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
-            SaveDataList.Add(new StageLevelData {
+            GameSaveData.SaveDataList.Add(new StageLevelData {
                 StageLevel = level,
                 IsStageClear = false,
                 StageScore = 0
@@ -89,7 +70,7 @@ public class Save : MonoBehaviour
 
 
     public StageLevelData GetStageLevelData(StageLevel level) {
-        return SaveDataList.Find(data => data.StageLevel == level);
+        return GameSaveData.SaveDataList.Find(data => data.StageLevel == level);
     }
     public bool TryGetStageClear(StageLevel level, out bool isClear) {
         var data = GetStageLevelData(level);
@@ -123,7 +104,16 @@ public class Save : MonoBehaviour
         }
     }
 
+    // 튜토리얼 완료 여부 설정
+    public void CompleteTutorial() {
+        GameSaveData.TutorialData.IsTutorialCompleted = true;
+        SaveGame(); // 저장
+    }
 
+    // 튜토리얼 완료 여부 확인
+    public bool IsTutorialCompleted() {
+        return GameSaveData.TutorialData.IsTutorialCompleted;
+    }
 
 }
 
@@ -132,9 +122,8 @@ public class Save : MonoBehaviour
 
  2. 저장 내용 
     - 스테이지 클리어 여부
-    - //TODO: 각 스테이지 별 뼈다귀 개수 
-
-    - //TODO: 각 스테이지 별 클리어 점수 기준
+    - 각 스테이지 별 뼈다귀 개수 
+    - 각 스테이지 별 클리어 점수 기준
 
  3. 해야하는 내용
     - 싱글톤

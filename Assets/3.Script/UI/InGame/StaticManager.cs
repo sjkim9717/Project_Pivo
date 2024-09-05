@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -22,12 +20,6 @@ public class StaticManager : MonoBehaviour {
 
     private PlayerManager playerManager;
     private List<BiscuitController> biscuitControllers = new List<BiscuitController>();
-
-
-    //TODO: SceneSelect Game Button에 달려있는 이벤트 트리거 => 첫번째 씬에서 튜토리얼 완료 안했다면 트리거 삭제
-    public EventTrigger SceneSelecteventTrigger;
-    private List<EventTrigger.Entry> SceneSelectstoredEntries;
-
     public int GetBiscuitCount() { return biscuitCount; }
 
     private void Awake() {
@@ -58,7 +50,7 @@ public class StaticManager : MonoBehaviour {
             }
         }
 
-        if (GameManager.instance.IsTutorialClear) {
+        if (Save.instance.IsTutorialCompleted()) {
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 PauseGroup.SetActive(true);
             }
