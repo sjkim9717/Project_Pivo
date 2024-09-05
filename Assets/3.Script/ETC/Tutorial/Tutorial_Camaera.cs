@@ -55,7 +55,6 @@ public class Tutorial_Camaera : MonoBehaviour {
     // Tutorial 1번 카메라 설정
     public void SettingCamerasPriority_Tutorial_1() {
         SetCameraPriority(CameraType.IntroCam1);  // IntroCam1을 활성화
-        Debug.Log("?????" + cameras[0].Priority);
     }
 
     // Tutorial 2번 카메라 설정

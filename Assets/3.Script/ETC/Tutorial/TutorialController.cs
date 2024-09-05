@@ -38,11 +38,7 @@ public class TutorialController : MonoBehaviour
             tutorial_2_Director.stopped -= OnTimeline_2_Stopped;
         }
     }
-    private void OnDisable() {
-        tutorial_Bg.SetActive(false);
-        tutorial_2.SetActive(false);
-        tutorial.SetActive(false);
-    }
+
 
     public void StartTutorial() {
         tutorial_Bg.SetActive(true);
