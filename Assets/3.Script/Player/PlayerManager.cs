@@ -43,10 +43,12 @@ public class PlayerManager : MonoBehaviour {
 
         stageClear = FindObjectOfType<StageClearController>();
 
-        Init();
     }
 
     private void Start() {
+
+        Init();
+
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
 
         stageClear.StageClear += StageClear;
@@ -65,6 +67,9 @@ public class PlayerManager : MonoBehaviour {
 
     private void Init() {
         dieCount = 0;
+
+        if (!Save.instance.GameSaveData.TutorialData.IsTutorialCompleted) return;
+
         player3D.SetActive(true);
         player2D.SetActive(false);
         is3DPlayer = true;

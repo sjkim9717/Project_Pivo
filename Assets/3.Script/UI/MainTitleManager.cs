@@ -61,6 +61,7 @@ public class MainTitleManager : MonoBehaviour {
         else {
             //TODO: tutorial 연결
             gameObject.SetActive(false);
+            FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_1();
             FindObjectOfType<TutorialController>().StartTutorial();
             //FindPlayerWhenStartGame();
         }
@@ -100,6 +101,7 @@ public class MainTitleManager : MonoBehaviour {
         newGameGroup.SetActive(false);
         Save.instance.MakeNewGame();
         //FindPlayerWhenStartGame();
+        FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_1();
         FindObjectOfType<TutorialController>().StartTutorial();
 
     }

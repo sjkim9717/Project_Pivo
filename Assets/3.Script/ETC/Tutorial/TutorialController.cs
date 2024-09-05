@@ -10,11 +10,10 @@ public class TutorialController : MonoBehaviour
     private GameObject tutorial_2;
     private GameObject tutorial_Bg;
 
-
-
     PlayableDirector tutorial_1_Director;
     PlayableDirector tutorial_2_Director;
 
+    Tutorial_Camaera tutorial_Camaera;
 
     private void Awake() {
 
@@ -24,10 +23,12 @@ public class TutorialController : MonoBehaviour
 
         tutorial_1_Director = tutorial.GetComponent<PlayableDirector>();
         tutorial_2_Director = tutorial_2.GetComponent<PlayableDirector>();
+        tutorial_Camaera = FindObjectOfType<Tutorial_Camaera>();
     }
     private void OnEnable() {
         tutorial_1_Director.stopped += OnTimeline_1_Stopped;
         tutorial_2_Director.stopped += OnTimeline_2_Stopped;
+
     }
 
     private void OnDestroy() {
@@ -48,32 +49,25 @@ public class TutorialController : MonoBehaviour
         tutorial.SetActive(true);
         tutorial_1_Director.Play();
     }
+
+
     //TODO: Timeline이 종료될 때 실행되는 메서드 : tutorial 끝, animation2번 연결
     private void OnTimeline_1_Stopped(PlayableDirector director) {
         Debug.Log("Timeline_1 has finished playing.");
         // Timeline이 끝났을 때 실행할 로직
+        FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_2();
         tutorial_2.SetActive(true);
 
     }
     private void OnTimeline_2_Stopped(PlayableDirector director) {
         Debug.Log("Timeline_2 has finished playing.");
         // Timeline이 끝났을 때 실행할 로직
-        FindPlayerWhenStartGame();
         Save.instance.CompleteTutorial();
+        tutorial_Camaera.SettingCamerasPriority_Game();
+        tutorial_Camaera.FindPlayerWhenStartGame();
     }
 
-    // tutorial 끝나고 시작해야함
-    public void FindPlayerWhenStartGame() {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (var item in players) {
-            if (item.layer == LayerMask.NameToLayer("2DPlayer")) {
-                item.SetActive(true);
-            }
-        }
 
-        // 1번씬 카메라 플레이어 찾아야함
-        FindObjectOfType<CameraController>().SetCameraSettingGameStart(true);
-    }
 }
 
 /*

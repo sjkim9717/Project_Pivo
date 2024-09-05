@@ -34,7 +34,14 @@ public class Save : MonoBehaviour
 
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
-        return File.Exists(SaveJsonFilePath);
+
+        if (File.Exists(SaveJsonFilePath)) {
+            GameSaveData = JsonUtility.FromJson<GameSaveData>(File.ReadAllText(SaveJsonFilePath));
+            if (GameSaveData != null) {
+                if (GameSaveData.TutorialData.IsTutorialCompleted) return true;
+            }
+        }
+        return false;
     }
 
     public void MakeNewGame() {
@@ -48,13 +55,6 @@ public class Save : MonoBehaviour
         File.WriteAllText(SaveJsonFilePath, jsonData);
     }
 
-    public List<StageLevelData> Load() {
-        if (GetSaveExist()) {
-            return JsonUtility.FromJson<List<StageLevelData>>(File.ReadAllText(SaveJsonFilePath));
-        }
-        return null;
-    }
-
     private void InitializeData() {
 
         GameSaveData.TutorialData.IsTutorialCompleted = false;
@@ -66,6 +66,8 @@ public class Save : MonoBehaviour
                 StageScore = 0
             });
         }
+
+        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(GameSaveData, true));
     }
 
 

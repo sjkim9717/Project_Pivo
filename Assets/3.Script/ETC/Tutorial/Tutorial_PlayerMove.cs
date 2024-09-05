@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tutorial_PlayerMove : MonoBehaviour
 {
-    private float moveSpeed = 7f;
+    private float moveSpeed = 3f;
     private bool isPlayerMovable;
     public void SetPlayerMove() { isPlayerMovable = true; }
 
@@ -31,8 +31,11 @@ public class Tutorial_PlayerMove : MonoBehaviour
 
         if (horizontalInput != 0) {       // 오른쪽 키를 입력받아 2D에서는 앞 뒤로만 이동
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
-            transform.localScale = new Vector3(moveDirection, 1f, 1f);
-            playerTransform.position = Vector3.right * moveSpeed * horizontalInput * Time.deltaTime;
+            playerTransform.localScale = new Vector3(moveDirection, 1f, 1f);
+            playerTransform.position = new Vector3(
+                playerTransform.position .x + moveSpeed * horizontalInput * Time.deltaTime,
+                playerTransform.position.y,
+                playerTransform.position.z);
 
         }
 
