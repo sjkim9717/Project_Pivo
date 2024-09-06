@@ -9,7 +9,7 @@ public class Save : MonoBehaviour
 {
     public static Save instance = null;
 
-    public GameSaveData GameSaveData = new GameSaveData();
+    public List<StageLevelData> GameSaveData = new List<StageLevelData>();
 
     private string SaveJsonFilePath;
 
@@ -27,8 +27,6 @@ public class Save : MonoBehaviour
             Directory.CreateDirectory(Path.GetDirectoryName(SaveJsonFilePath));
         }
         Debug.Log("Save file path :" + SaveJsonFilePath);
-
-        InitializeData();
     }
 
 
@@ -36,17 +34,14 @@ public class Save : MonoBehaviour
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
 
         if (File.Exists(SaveJsonFilePath)) {
-            GameSaveData = JsonUtility.FromJson<GameSaveData>(File.ReadAllText(SaveJsonFilePath));
-            if (GameSaveData != null) {
-                if (GameSaveData.TutorialData.IsTutorialCompleted) return true;
-            }
+            return true;
         }
         return false;
     }
 
     public void MakeNewGame() {
-
-        GameSaveData = new GameSaveData();
+        GameManager.instance.IsTutorialCompleted = false;
+        GameSaveData = new List<StageLevelData>();
         SaveGame();  // 새로 만든 데이터를 저장
     }
 
@@ -56,11 +51,8 @@ public class Save : MonoBehaviour
     }
 
     private void InitializeData() {
-
-        GameSaveData.TutorialData.IsTutorialCompleted = false;
-
         foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
-            GameSaveData.SaveDataList.Add(new StageLevelData {
+            GameSaveData.Add(new StageLevelData {
                 StageLevel = level,
                 IsStageClear = false,
                 StageScore = 0
@@ -72,7 +64,7 @@ public class Save : MonoBehaviour
 
 
     public StageLevelData GetStageLevelData(StageLevel level) {
-        return GameSaveData.SaveDataList.Find(data => data.StageLevel == level);
+        return GameSaveData.Find(data => data.StageLevel == level);
     }
     public bool TryGetStageClear(StageLevel level, out bool isClear) {
         var data = GetStageLevelData(level);
@@ -104,17 +96,6 @@ public class Save : MonoBehaviour
             data.IsStageClear = isClear;
             data.StageScore = score;
         }
-    }
-
-    // 튜토리얼 완료 여부 설정
-    public void CompleteTutorial() {
-        GameSaveData.TutorialData.IsTutorialCompleted = true;
-        SaveGame(); // 저장
-    }
-
-    // 튜토리얼 완료 여부 확인
-    public bool IsTutorialCompleted() {
-        return GameSaveData.TutorialData.IsTutorialCompleted;
     }
 
 }

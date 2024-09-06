@@ -38,14 +38,31 @@ public class TutorialController : MonoBehaviour {
         tutorial_Camaera = FindObjectOfType<Tutorial_Camaera>();
 
         canvas = transform.GetChild(0).GetComponent<Canvas>();
+        Debug.Log(canvas.name);
+        Debug.Log(canvas.transform.parent);
         tutorialImg = canvas.GetComponentsInChildren<Image>()[1];
         tutorialText = canvas.GetComponentInChildren<Text>();
+
+        if (!GameManager.isLoadTitle) {
+            StopTutorial();
+        }
     }
 
     private void Start() {
         SaveBindings();
     }
+    private void OnEnable() {
+        tutorial_1_Director.stopped += OnTimeline_1_Stopped;
 
+    }
+
+    private void OnDestroy() {
+        if (tutorial_1_Director != null) {
+            tutorial_1_Director.stopped -= OnTimeline_1_Stopped;
+        }
+    }
+
+    // ============== playable director 연결 등록 해재, 재등록
     private void SaveBindings() {
         TimelineAsset timeline = (TimelineAsset)tutorial_1_Director.playableAsset;
         // 타임라인의 트랙을 순회
@@ -92,68 +109,62 @@ public class TutorialController : MonoBehaviour {
         }
     }
 
-    private void OnEnable() {
-        tutorial_1_Director.stopped += OnTimeline_1_Stopped;
 
-    }
-
-    private void OnDestroy() {
-        // 메모리 누수를 방지하기 위해 이벤트 등록을 해제
-        if (tutorial_1_Director != null) {
-            tutorial_1_Director.stopped -= OnTimeline_1_Stopped;
-        }
-    }
-
-
+    // ============== tutorial 활성화 비활성화
     public void StartTutorial() {
         tutorial_Bg.SetActive(true);
         tutorial.SetActive(true);
         tutorial_1_Director.Play();
     }
+
+    public void StopTutorial() {
+        tutorialPlayer.SetActive(false);
+        tutorial_Bg.SetActive(false);
+        tutorial.SetActive(false);
+    }
+
+
+    // Timeline이 일시정지
     public void PauseTimeLine() {
         tutorial_1_Director.Pause();
         Debug.Log("Timeline_1 has paursed playing.");
 
         // Timeline이 끝났을 때 실행할 로직
         FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_2();
-
         AddComponentWhenTimeLineEnd();
-
-        UnbindAnimationTracks();            // 바인딩 해제 
+        UnbindAnimationTracks();            
 
         FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(true);
     }
 
-    //TODO: Timeline이 종료될 때 실행되는 메서드 : tutorial 끝, animation2번 연결
-    private void OnTimeline_1_Stopped(PlayableDirector director) {
-        Debug.Log("Timeline_1 has finished playing.");
-
-        FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(false);
-
-        tutorialPlayer.SetActive(false);
-        tutorial_Bg.SetActive(false);
-        tutorial.SetActive(false);
-
-        // Timeline이 끝났을 때 실행할 로직
-        tutorial_Camaera.SettingCamerasPriority_Game();
-        tutorial_Camaera.FindPlayerWhenStartGame();
-        Save.instance.CompleteTutorial();
-
-    }
-
-
+    // Timeline 일시정지 시 플레이어 수동 조작 component연결
     private void AddComponentWhenTimeLineEnd() {
-        // BoxCollider2D 추가 후 isTrigger 설정
         var boxCollider = tutorialPlayer.AddComponent<BoxCollider2D>();
         boxCollider.isTrigger = true;
 
-        // Rigidbody2D 추가 후 BodyType을 Kinematic으로 설정
         var rb2d = tutorialPlayer.AddComponent<Rigidbody2D>();
         rb2d.bodyType = RigidbodyType2D.Kinematic;
     }
 
-    //==============================
+    // Timeline이 종료될 때 실행되는 메서드
+    private void OnTimeline_1_Stopped(PlayableDirector director) {
+        Debug.Log("Timeline_1 has finished playing.");
+
+        FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(false);
+        StopTutorial();
+
+        // Timeline이 끝났을 때 실행할 로직
+        GameManager.instance.IsTutorialCompleted = true;
+        FindObjectOfType<PlayerManager>().transform.GetChild(0).gameObject.SetActive(true);
+        tutorial_Camaera.SettingCamerasPriority_Game();
+        tutorial_Camaera.FindPlayerWhenStartGame();
+    }
+
+
+    //==============================   tutorial trigger setting
     public void CheckTriggerSetting(TutorialTriggerSprite tutorialTrigger, bool spriteshow) {
+        if (!GameManager.isLoadTitle) return;
+
         if (spriteshow) {
             canvas.gameObject.SetActive(true);
             switch (tutorialTrigger) {
@@ -193,7 +204,6 @@ public class TutorialController : MonoBehaviour {
         tutorialText.text = "MOVE";
     }
 
-
     public void SettingTutorialUI_Climb() {
         tutorialImg.gameObject.SetActive(false);
         tutorialText.text = "Climb";
@@ -202,9 +212,6 @@ public class TutorialController : MonoBehaviour {
         tutorialImg.gameObject.SetActive(false);
         tutorialText.text = "ViewChange";
     }
-
-
-
 
 }
 

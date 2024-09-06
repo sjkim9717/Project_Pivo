@@ -8,8 +8,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
 
+    public static bool isLoadTitle=true;
+    public bool IsTutorialCompleted;
     public StageLevel currentStage;
     private GameObject staticGroup;
+    private GameObject UI_Title;
 
     private StageClearController[] stageClearController;
 
@@ -23,6 +26,7 @@ public class GameManager : MonoBehaviour {
         }
 
         staticGroup = transform.GetChild(0).gameObject;
+        UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
     }
 
     private void OnEnable() {
@@ -38,7 +42,15 @@ public class GameManager : MonoBehaviour {
     // 씬이 변경될때마다 씬 레벨 확인
     private void FindScenLevelWhenLevelChange(Scene scene, LoadSceneMode mode) {
         string sceneName = SceneManager.GetActiveScene().name;
-        SelectSceneLevelWithSceneName(ref currentStage, sceneName);
+        currentStage  =  SelectSceneLevelWithSceneName( sceneName);
+        if(currentStage == StageLevel.StageLevel_1) {
+            if (!isLoadTitle) {
+                UI_Title.SetActive(false);
+            }
+            else {
+                UI_Title.SetActive(true);
+            }
+        }
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
@@ -72,14 +84,13 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene("StageSelect_Grass");
     }
 
-    private StageLevel SelectSceneLevelWithSceneName(ref StageLevel stageLevel, string sceneName) {
+    // scene이 로드될경우 해당씬 확인
+    public StageLevel SelectSceneLevelWithSceneName( string sceneName) {
+        StageLevel stageLevel = StageLevel.StageSelect;
 
         switch (sceneName) {
             case "GrassStage_Stage1":
                 stageLevel = StageLevel.StageLevel_1;
-                if (Save.instance.GameSaveData.TutorialData.IsTutorialCompleted) {
-                    FindObjectOfType<MainTitleManager>().gameObject.SetActive(false);
-                }
                 break;
             case "GrassStage_Stage5":
                 stageLevel = StageLevel.StageLevel_5;
@@ -90,18 +101,39 @@ public class GameManager : MonoBehaviour {
             case "StageSelect_Grass":
                 stageLevel = StageLevel.StageSelect;
                 break;
+            case "Stage7Test":
+                stageLevel = StageLevel.StageLevel_1;
+                break;
             default:
                 break;
         }
-
         return stageLevel;
     }
 
 
-    //TODO: [Test] tutorial test 삭제할것
-    public void ButtonTest() {
-        Save.instance.GameSaveData.TutorialData.IsTutorialCompleted = true;
+    public void LoadSelectStage(StageLevel selectStageLevel) {
+        string sceneName = "";
+        switch (selectStageLevel) {
+            case StageLevel.StageLevel_1:
+                sceneName = "GrassStage_Stage1";
+                break;
+            case StageLevel.StageLevel_5:
+                sceneName = "GrassStage_Stage5";
+                break;
+            case StageLevel.StageLevel_7:
+                sceneName = "GrassStage_Stage7";
+                break;
+            case StageLevel.StageSelect:
+                break;
+            default:
+                break;
+        }
+        SceneManager.LoadScene(sceneName);
     }
+
+
+
+
 }
 
 /*  목적 : 씬 변경되는 시점의 stagelevel data 들고옴 + clear 시 정보저장

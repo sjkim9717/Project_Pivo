@@ -67,13 +67,11 @@ public class PlayerManager : MonoBehaviour {
 
     private void Init() {
         dieCount = 0;
-
-        if (!Save.instance.GameSaveData.TutorialData.IsTutorialCompleted) return;
-
-        player3D.SetActive(true);
         player2D.SetActive(false);
-        is3DPlayer = true;
         player3D.GetComponentInChildren<Animator>().Rebind(); // 애니메이션 상태 초기화
+        is3DPlayer = true;
+        if (!GameManager.instance.IsTutorialCompleted) return;
+        player3D.SetActive(true);
     }
 
     private void StageClear() {

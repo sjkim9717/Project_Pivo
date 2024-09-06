@@ -44,35 +44,15 @@ public class StageSelectController : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.X)) {
-            LoadSelectStage();
+            GameManager.isLoadTitle = false;
+            GameManager.instance.LoadSelectStage(selectStageLevel);
         }
     }
 
     public void OnButtonClick_ReturnTitle() {
+        GameManager.isLoadTitle = true;
         SceneManager.LoadScene("GrassStage_Stage1");
     }
-
-    private void LoadSelectStage() {
-        string sceneName = "";
-        switch (selectStageLevel) {
-            case StageLevel.StageLevel_1:
-                sceneName = "GrassStage_Stage1";
-                break;
-            case StageLevel.StageLevel_5:
-                sceneName = "GrassStage_Stage5";
-                break;
-            case StageLevel.StageLevel_7:
-                sceneName = "GrassStage_Stage7";
-                break;
-            case StageLevel.StageSelect:
-                break;
-            default:
-                break;
-        }
-
-        SceneManager.LoadScene(sceneName);
-    }
-
 
     public void SelectStageLevel(StageLevel stageLevel) {
         selectStageLevel = stageLevel;

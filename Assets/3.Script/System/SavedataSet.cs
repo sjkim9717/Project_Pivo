@@ -17,11 +17,6 @@ public enum StageLevel {
     StageSelect
 }
 
-[System.Serializable]
-public class TutorialData {
-    public bool IsTutorialCompleted;
-}
-
 [Serializable]
 public class StageLevelData {
     public StageLevel StageLevel;
@@ -29,8 +24,3 @@ public class StageLevelData {
     public int StageScore;
 }
 
-[System.Serializable]
-public class GameSaveData {
-    public List<StageLevelData> SaveDataList = new List<StageLevelData>();
-    public TutorialData TutorialData = new TutorialData();
-}

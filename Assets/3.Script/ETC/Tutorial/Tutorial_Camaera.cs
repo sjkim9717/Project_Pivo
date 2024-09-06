@@ -19,8 +19,10 @@ public class Tutorial_Camaera : MonoBehaviour {
 
         // Initialize all cameras including gameCam
         cameras = new CinemachineVirtualCamera[3];
-        cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
-        cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
+        if (!GameManager.instance.IsTutorialCompleted) {
+            cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
+            cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
+        }
         cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
         gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
 
@@ -30,6 +32,7 @@ public class Tutorial_Camaera : MonoBehaviour {
     // 모든 카메라의 우선순위를 OFF로 설정하는 메서드
     private void TurnOffAllCameras() {
         foreach (var cam in cameras) {
+            if (cam == null) continue;
             cam.Priority = PRIORITY_OFF;
         }
         gameCam.Priority = PRIORITY_OFF;
