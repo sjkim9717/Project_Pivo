@@ -11,6 +11,7 @@ TagManager:
   - Puzzle
   - Objects
   - Triggers
+  - Tutorial
   layers:
   - Default
   - TransparentFX

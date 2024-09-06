@@ -17,3 +17,9 @@ public enum ScreenMode {
     FullScreenWindow
 }
 
+public enum TutorialTriggerSprite {
+    Move2D,
+    Move3D,
+    Climb,
+    ViewChange
+}

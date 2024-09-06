@@ -76,9 +76,6 @@ public class Tutorial_Camaera : MonoBehaviour {
                 item.SetActive(true);
             }
         }
-
-        // 1번씬 카메라 플레이어 찾아야함
-        FindObjectOfType<CameraController>().SetCameraSettingGameStart(true);
     }
 
 
