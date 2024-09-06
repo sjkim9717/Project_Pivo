@@ -16,10 +16,15 @@ public class MainTitleManager : MonoBehaviour {
 
 
     // Load Game Button에 달려있는 이벤트 트리거
-    public EventTrigger LoadeventTrigger;
+    [SerializeField]private EventTrigger LoadeventTrigger;
     private List<EventTrigger.Entry> LoadstoredEntries;
 
     private void Awake() {
+
+        if(!GameManager.isLoadTitle) {
+            gameObject.SetActive(false);
+        }
+
         mainGroup = transform.GetChild(0).gameObject;
         optionGroup = transform.GetChild(1).gameObject;
         newGameGroup = transform.GetChild(2).gameObject;

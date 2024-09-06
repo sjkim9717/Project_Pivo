@@ -27,13 +27,15 @@ public class Save : MonoBehaviour
             Directory.CreateDirectory(Path.GetDirectoryName(SaveJsonFilePath));
         }
         Debug.Log("Save file path :" + SaveJsonFilePath);
+
+        InitializeData();
     }
 
 
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
-
         if (File.Exists(SaveJsonFilePath)) {
+            GameManager.instance.IsTutorialCompleted = true;
             return true;
         }
         return false;
@@ -58,8 +60,6 @@ public class Save : MonoBehaviour
                 StageScore = 0
             });
         }
-
-        File.WriteAllText(SaveJsonFilePath, JsonUtility.ToJson(GameSaveData, true));
     }
 
 

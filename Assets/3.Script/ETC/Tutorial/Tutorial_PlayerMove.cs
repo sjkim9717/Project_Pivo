@@ -16,14 +16,12 @@ public class Tutorial_PlayerMove : MonoBehaviour
 
     private void Awake() {
         player = transform.GetChild(1).gameObject;
-        Debug.Log(player.name);
         playerTransform = player.transform;
         ani2D = player.GetComponent<Animator>();
     }
 
     private void Update() {
         if (isPlayerMovable) {
-
             Move();
         }
     }

@@ -4,29 +4,59 @@ using UnityEngine;
 using Cinemachine;
 
 public class Tutorial_Camaera : MonoBehaviour {
+    private Animator camAni;
+    private GameObject player3D;
+    private GameObject player2D;
+    private PlayerManager playerManager;
+
+    private bool is2DGameCameraSetDone;
 
     private const int PRIORITY_ON = 20; // 활성화된 카메라의 우선순위
     private const int PRIORITY_OFF = 0; // 비활성화된 카메라의 우선순위
 
     private CinemachineBrain main;
-
     private CinemachineVirtualCamera[] cameras;
     private CinemachineStateDrivenCamera gameCam;
+
     private enum CameraType { CanvasCamera, IntroCam1, IntroCam2, GameCam }
 
     private void Awake() {
+        camAni = GetComponent<Animator>();
+        playerManager = FindObjectOfType<PlayerManager>();
         main = GetComponentInChildren<CinemachineBrain>();
+        gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
 
         // Initialize all cameras including gameCam
         cameras = new CinemachineVirtualCamera[3];
-        if (!GameManager.instance.IsTutorialCompleted) {
+        if (GameManager.isLoadTitle) {
             cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
             cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
+            cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+            DefaultCameraSetting();
         }
-        cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
-        gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
+        else {
+            SettingCamerasPriority_Game();
+        }
 
-        DefaultCameraSetting();
+    }
+
+    private void Update() {
+
+        if (FindGameModeCamera()) {
+
+            if (player3D == null) {
+                player3D = FindObjectOfType<Player3DController>().gameObject;
+            }
+
+            if (Camera.main != null) {
+                camAni.SetBool("Is3D", playerManager.GetPlayerMode());
+                Camera.main.orthographic = !playerManager.GetPlayerMode();
+                //SettingCamera2DGameMode();
+            }
+            else {
+                Debug.LogWarning("Main camera not found.");
+            }
+        }
     }
 
     // 모든 카메라의 우선순위를 OFF로 설정하는 메서드
@@ -81,5 +111,52 @@ public class Tutorial_Camaera : MonoBehaviour {
         }
     }
 
+    private bool FindGameModeCamera() {
+        if (gameCam.Priority == PRIORITY_ON) return true;
+        else return false;
+    }
 
+    /*
+    private void SettingCamera2DGameMode() {
+        if (!playerManager.GetPlayerMode()) {
+
+            // Framing Transposer 접근
+            var transposer = gameCam2D.GetCinemachineComponent<CinemachineFramingTransposer>();
+            // Composer 접근
+            var composer = gameCam2D.GetCinemachineComponent<CinemachineComposer>();
+
+            if (!is2DGameCameraSetDone) {               // 2D모드일때 1번만 위치 맞춰야함
+                is2DGameCameraSetDone = true;
+                if (player2D == null) {
+                    player2D = FindObjectOfType<Player2DController>().gameObject;
+                }
+
+                if (transposer != null) {
+                    transposer.m_DeadZoneWidth = 0.1f;
+                    transposer.m_DeadZoneHeight = 0.1f;
+                }
+
+                if (composer != null) {
+                    composer.m_DeadZoneWidth = 0.1f;
+                    composer.m_DeadZoneHeight = 0.1f;
+                }
+            }
+            else {  // 그외 deadzone 1로 변경
+                if (transposer != null) {
+                    transposer.m_DeadZoneWidth = 1f; 
+                    transposer.m_DeadZoneHeight = 1f; 
+                }
+
+                if (composer != null) {
+                    composer.m_DeadZoneWidth = 1f; 
+                    composer.m_DeadZoneHeight = 1f; 
+                }
+            }
+        }
+        else {
+            is2DGameCameraSetDone = false;
+
+        }
+    }
+    */
 }

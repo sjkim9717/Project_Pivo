@@ -43,14 +43,6 @@ public class GameManager : MonoBehaviour {
     private void FindScenLevelWhenLevelChange(Scene scene, LoadSceneMode mode) {
         string sceneName = SceneManager.GetActiveScene().name;
         currentStage  =  SelectSceneLevelWithSceneName( sceneName);
-        if(currentStage == StageLevel.StageLevel_1) {
-            if (!isLoadTitle) {
-                UI_Title.SetActive(false);
-            }
-            else {
-                UI_Title.SetActive(true);
-            }
-        }
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인

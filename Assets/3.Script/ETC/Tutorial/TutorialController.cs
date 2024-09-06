@@ -11,6 +11,7 @@ public class TutorialController : MonoBehaviour {
     private GameObject tutorial;
     private GameObject tutorial_Bg;
 
+    private double signalTime;                          // 애니메이션 중지되는 타이밍
     private Tutorial_Camaera tutorial_Camaera;
     private PlayableDirector tutorial_1_Director;
 
@@ -38,8 +39,6 @@ public class TutorialController : MonoBehaviour {
         tutorial_Camaera = FindObjectOfType<Tutorial_Camaera>();
 
         canvas = transform.GetChild(0).GetComponent<Canvas>();
-        Debug.Log(canvas.name);
-        Debug.Log(canvas.transform.parent);
         tutorialImg = canvas.GetComponentsInChildren<Image>()[1];
         tutorialText = canvas.GetComponentInChildren<Text>();
 
@@ -53,7 +52,6 @@ public class TutorialController : MonoBehaviour {
     }
     private void OnEnable() {
         tutorial_1_Director.stopped += OnTimeline_1_Stopped;
-
     }
 
     private void OnDestroy() {
@@ -95,18 +93,22 @@ public class TutorialController : MonoBehaviour {
     // 바인딩 다시 설정
     private void BindAnimationTracks() {
         foreach (var track in trackBindings.Keys) {
-            // 바인딩을 설정하기 전에 기존 바인딩된 GameObject의 위치를 가져옴
+            // 바인딩을 설정하기 전에 기존 바인딩된 GameObject 가져옴
             var boundObject = trackBindings[track];
 
             if (boundObject != null) {
-                // tutorialPlayer의 위치를 바인딩된 GameObject의 위치로 설정
-                boundObject.transform.position = tutorialPlayer.transform.position;
-
                 // 바인딩 다시 설정
                 tutorial_1_Director.SetGenericBinding(track, tutorialPlayer);
-                Debug.Log($"AnimationTrack {track.name}에 {tutorialPlayer.name} 바인딩하고 위치를 {tutorialPlayer.transform.position}으로 설정!");
             }
         }
+
+        tutorial_1_Director.time = signalTime + 0.1;
+
+        // 애니메이션 트랙의 현재 상태를 업데이트
+        tutorial_1_Director.Evaluate();
+
+        // 애니메이션 재생
+        tutorial_1_Director.Play();
     }
 
 
@@ -127,12 +129,13 @@ public class TutorialController : MonoBehaviour {
     // Timeline이 일시정지
     public void PauseTimeLine() {
         tutorial_1_Director.Pause();
+        signalTime = tutorial_1_Director.time;
         Debug.Log("Timeline_1 has paursed playing.");
 
         // Timeline이 끝났을 때 실행할 로직
         FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_2();
         AddComponentWhenTimeLineEnd();
-        UnbindAnimationTracks();            
+        UnbindAnimationTracks(); 
 
         FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(true);
     }
@@ -187,7 +190,6 @@ public class TutorialController : MonoBehaviour {
 
             if (tutorialTrigger == TutorialTriggerSprite.Move2D) {
                 BindAnimationTracks();                  // 재 바인딩
-                tutorial_1_Director.Play();
             }
         }
     }
