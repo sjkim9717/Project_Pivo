@@ -17,12 +17,12 @@ public class TutorialController : MonoBehaviour {
 
     private Dictionary<AnimationTrack, GameObject> trackBindings = new Dictionary<AnimationTrack, GameObject>();
 
-
     private Canvas canvas;
     private Image tutorialImg;
     private Text tutorialText;
     public Sprite[] TutorialSprites;
 
+    private StageClearController[] stageClearController;
     private void Awake() {
         tutorial_Bg = GameObject.Find("IntroBG");
         tutorial = GameObject.Find("IntroTimeLine");
@@ -44,6 +44,12 @@ public class TutorialController : MonoBehaviour {
 
         if (!GameManager.isLoadTitle) {
             StopTutorial();
+        }
+        else {  // title을 불러오는 경우 스테이지가 끝나야만 tutorial 종료됨
+            stageClearController = FindObjectsOfType<StageClearController>();
+            foreach (StageClearController each in stageClearController) {
+                each.StageClear += StopTutorialWhenStageEnd;
+            }
         }
     }
 
@@ -75,7 +81,7 @@ public class TutorialController : MonoBehaviour {
                     // Animator의 주체 GameObject 확인
                     if (animator.gameObject == tutorialPlayer) {
                         trackBindings[animationTrack] = animator.gameObject;
-                        Debug.Log($"AnimationTrack {track.name}의 바인딩이 {animator.gameObject.name}으로 저장되었습니다.");
+                        //Debug.Log($"AnimationTrack {track.name}의 바인딩이 {animator.gameObject.name}으로 저장되었습니다.");
                     }
                 }
             }
@@ -86,7 +92,7 @@ public class TutorialController : MonoBehaviour {
     private void UnbindAnimationTracks() {
         foreach (var track in trackBindings.Keys) {
             tutorial_1_Director.SetGenericBinding(track, null);
-            Debug.Log($"AnimationTrack {track.name}의 바인딩 해제!");
+            //Debug.Log($"AnimationTrack {track.name}의 바인딩 해제!");
         }
     }
 
@@ -125,6 +131,9 @@ public class TutorialController : MonoBehaviour {
         tutorial.SetActive(false);
     }
 
+    private void StopTutorialWhenStageEnd() {
+        GameManager.instance.IsTutorialCompleted = true;
+    }
 
     // Timeline이 일시정지
     public void PauseTimeLine() {
@@ -135,19 +144,11 @@ public class TutorialController : MonoBehaviour {
         // Timeline이 끝났을 때 실행할 로직
         FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_2();
         AddComponentWhenTimeLineEnd();
-        UnbindAnimationTracks(); 
+        UnbindAnimationTracks();
 
         FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(true);
     }
 
-    // Timeline 일시정지 시 플레이어 수동 조작 component연결
-    private void AddComponentWhenTimeLineEnd() {
-        var boxCollider = tutorialPlayer.AddComponent<BoxCollider2D>();
-        boxCollider.isTrigger = true;
-
-        var rb2d = tutorialPlayer.AddComponent<Rigidbody2D>();
-        rb2d.bodyType = RigidbodyType2D.Kinematic;
-    }
 
     // Timeline이 종료될 때 실행되는 메서드
     private void OnTimeline_1_Stopped(PlayableDirector director) {
@@ -157,7 +158,6 @@ public class TutorialController : MonoBehaviour {
         StopTutorial();
 
         // Timeline이 끝났을 때 실행할 로직
-        GameManager.instance.IsTutorialCompleted = true;
         FindObjectOfType<PlayerManager>().transform.GetChild(0).gameObject.SetActive(true);
         tutorial_Camaera.SettingCamerasPriority_Game();
         tutorial_Camaera.FindPlayerWhenStartGame();
@@ -189,10 +189,31 @@ public class TutorialController : MonoBehaviour {
             canvas.gameObject.SetActive(false);
 
             if (tutorialTrigger == TutorialTriggerSprite.Move2D) {
+                DeleteComponentWhenTimeLineEnd();
                 BindAnimationTracks();                  // 재 바인딩
             }
         }
     }
+
+    // Timeline 일시정지 시 플레이어 수동 조작 component연결
+    private void AddComponentWhenTimeLineEnd() {
+        var boxCollider = tutorialPlayer.AddComponent<BoxCollider2D>();
+        boxCollider.isTrigger = true;
+
+        var rb2d = tutorialPlayer.AddComponent<Rigidbody2D>();
+        rb2d.bodyType = RigidbodyType2D.Kinematic;
+    }
+    private void DeleteComponentWhenTimeLineEnd() {
+        var boxCollider = tutorialPlayer.GetComponent<BoxCollider2D>();
+        Destroy(boxCollider);
+
+        var rb2d = tutorialPlayer.GetComponent<Rigidbody2D>();
+        Destroy(rb2d);
+    }
+
+
+
+    //==========UI
 
     public void SettingTutorialUI_Move(bool isMove2D) {
         tutorialImg.gameObject.SetActive(true);

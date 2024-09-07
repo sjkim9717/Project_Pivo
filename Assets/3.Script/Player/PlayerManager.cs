@@ -67,7 +67,7 @@ public class PlayerManager : MonoBehaviour {
 
     private void Init() {
         dieCount = 0;
-        player2D.SetActive(false);
+        if(player2D.activeSelf) player2D.SetActive(false);
         player3D.GetComponentInChildren<Animator>().Rebind(); // 애니메이션 상태 초기화
         is3DPlayer = true;
         if (!GameManager.instance.IsTutorialCompleted) return;
