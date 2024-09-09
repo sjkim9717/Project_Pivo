@@ -37,7 +37,7 @@ public class PlayerBase : MonoBehaviour {
         moveposition = Vector3.zero;
 
         rigid3D = player3D.GetComponent<Rigidbody>();
-        rigid2D = player3D.GetComponent<Rigidbody2D>();
+        rigid2D = player2D.GetComponent<Rigidbody2D>();
 
         ani2D = player2D.GetComponent<Animator>();
         ani3D = player3D.GetComponentInChildren<Animator>();

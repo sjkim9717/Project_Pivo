@@ -29,7 +29,6 @@ public class PlayerManage : PlayerBase {
     //private StageClearController stageClear;
 
     protected override void Awake() {
-        base.Awake();
 
         if (_instance == null) {
             _instance = this;
@@ -38,14 +37,16 @@ public class PlayerManage : PlayerBase {
             Destroy(gameObject); // 기존 인스턴스가 있으면 현재 객체를 제거
         }
 
+        base.Awake();
+
         respawnposition = new GameObject("RespawnPosition").transform;
 
         //stageClear = FindObjectOfType<StageClearController>();
-
+        Debug.LogWarning("PlayerManage | Awake | " + Player2D.name);
     }
 
     private void Start() {
-
+        Debug.LogWarning("PlayerManage | Start |" + Player2D.name);
 
         Init();
 

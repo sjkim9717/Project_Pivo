@@ -15,15 +15,12 @@ public class PlayerState3D_Idle : PlayerState3D {
     }
 
     private void Update() {
-
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
         skillSectionInput = Input.GetAxis("SkillSection");
         interactionInput = Input.GetAxis("Climb");
 
         ChangeState();
-
-
     }
 
     private void ChangeState() {

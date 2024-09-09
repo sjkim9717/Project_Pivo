@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44644582, g: 0.49626607, b: 0.5747402, a: 1}
+  m_IndirectSpecularColor: {r: 0.44644624, g: 0.49626642, b: 0.57474077, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -80209,10 +80209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf067d91fa87d824089706f3f3fdf764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  IsClimb: 0
-  isMove: 0
-  ClimbObstacle: {fileID: 0}
+  moveSpeed: 10
 --- !u!114 &9115412724201947811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90284,6 +90281,12 @@ GameObject:
   - component: {fileID: 9115412724742874479}
   - component: {fileID: 9115412724742874476}
   - component: {fileID: 9115412724742874477}
+  - component: {fileID: 9115412724742874456}
+  - component: {fileID: 9115412724742874453}
+  - component: {fileID: 9115412724742874452}
+  - component: {fileID: 9115412724742874455}
+  - component: {fileID: 9115412724742874454}
+  - component: {fileID: 9115412724742874451}
   m_Layer: 7
   m_Name: Root2D
   m_TagString: Player
@@ -90291,6 +90294,79 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &9115412724742874451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115412724742874450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255d064f38810134ba961a2b0dcd4435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9115412724742874452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115412724742874450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183e6a0b17a03184fb4026a422549f32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9115412724742874453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115412724742874450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3473115b08a5bf443846b469547d572c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9115412724742874454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115412724742874450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d988a5684bde624897370f7c99464e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9115412724742874455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115412724742874450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 537a93ad2929e8e4e8f52136f5568d6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9115412724742874456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115412724742874450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7d6acbb666e6404e9107031d6155dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 10
 --- !u!50 &9115412724742874476
 Rigidbody2D:
   serializedVersion: 4

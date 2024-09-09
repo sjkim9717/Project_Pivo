@@ -21,7 +21,6 @@ public class PlayerState3D : StateBase {
         horizontalInput = 0;
         verticalInput = 0;
         skillSectionInput = 0;
-        interactionInput = 0;
-        
+        interactionInput = 0;        
     }
 }

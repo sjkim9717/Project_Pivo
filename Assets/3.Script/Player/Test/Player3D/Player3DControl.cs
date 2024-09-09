@@ -7,8 +7,6 @@ public class Player3DControl : MonoBehaviour {
 
     public float moveSpeed = 5f;
     private bool isDead = false;
-    public bool IsClimb;
-    public bool isMove;
 
     public Animator Ani3D { get { return PlayerManage.instance.Ani3D; } }
     public GameObject Player { get { return PlayerManage.instance.Player3D; } }
@@ -21,10 +19,8 @@ public class Player3DControl : MonoBehaviour {
     private PlayerState3D currentStateComponent;
     private Dictionary<PlayerState, PlayerState3D> stateDic;
 
-
     private GameObject groundPoint;
     public GameObject GroundPoint { get { return groundPoint; } }
-    public GameObject ClimbObstacle;
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
@@ -154,18 +150,6 @@ public class Player3DControl : MonoBehaviour {
 
 
 
-    //================== 미사용
-
-
-    private void Dead() {
-        Ani3D.SetTrigger("IsDie");
-        isDead = true;
-
-    }
-
-
-
-
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
     public GameObject CheckInteractObject() {
         GameObject interactionObj = null;
@@ -236,4 +220,16 @@ public class Player3DControl : MonoBehaviour {
         Gizmos.color = Color.green;        // Set the Gizmo color
         Gizmos.DrawWireSphere(transform.position, 2.7f);
     }
+
+    //================== 미사용
+
+
+    private void Dead() {
+        Ani3D.SetTrigger("IsDie");
+        isDead = true;
+
+    }
+
+
+
 }
