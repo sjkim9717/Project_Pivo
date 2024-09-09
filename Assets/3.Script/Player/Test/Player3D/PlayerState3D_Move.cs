@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerState3D_Move : PlayerState3D {
-    float horizontalInput;
-    float verticalInput;
+    protected override void OnEnable() {
+        base.OnEnable();
+    }
+
     public override void EnterState() {
         Control3D.Ani3D.SetBool("IsMove", true);
     }
@@ -28,16 +30,16 @@ public class PlayerState3D_Move : PlayerState3D {
             Control3D.ChangeState(PlayerState.Falling);
         }
         else if (horizontalInput != 0 || verticalInput != 0) {
-            Control3D.Move(horizontalInput, verticalInput);
-            Control3D.ChangeState(PlayerState.Move);
 
+            PlayerManage.instance.isChangingModeTo3D = false;
+            Control3D.Move(horizontalInput, verticalInput);
         }
-        else if(horizontalInput == 0 && verticalInput == 0) {
+        else if (horizontalInput == 0 && verticalInput == 0) {
             Control3D.ChangeState(PlayerState.Idle);
         }
     }
 
     public override void ExitState() {
-        Control3D. Ani3D.SetBool("IsMove", false);
+        Control3D.Ani3D.SetBool("IsMove", false);
     }
 }

@@ -12,6 +12,9 @@ TagManager:
   - Objects
   - Triggers
   - Tutorial
+  - PushBox
+  - Bomb
+  - OpenPanel
   layers:
   - Default
   - TransparentFX

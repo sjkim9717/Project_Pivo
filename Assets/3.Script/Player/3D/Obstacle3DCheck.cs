@@ -187,8 +187,8 @@ public class Obstacle3DCheck : MonoBehaviour {
             //Debug.Log("Calculated angle: " + angle);
 
             if (angle >= -40f && angle <= 40f) {
-                Debug.Log("타일이 시야 범위 내에 있습니다.");
-                return true;
+                Debug.Log("시야 범위 내 물체가 있습니다.");
+                return true;    
             }
         }
 

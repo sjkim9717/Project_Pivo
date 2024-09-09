@@ -7,13 +7,13 @@ public enum PlayerMode {
 public enum PlayerState {
     Idle,
     Move,
-    Interaction,
+    Climb,
+    PushBox,
+    Bomb,
+    OpenPanel,
     Skill,
     Falling,
     Holding,
     Dead,
     Disable
 }
-
-
-

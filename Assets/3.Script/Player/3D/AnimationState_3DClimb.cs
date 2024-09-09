@@ -6,8 +6,8 @@ public class AnimationState_3DClimb : StateMachineBehaviour {
 
     private GameObject player3D;
     private GameObject player3DBone;
-    private Obstacle3DCheck obstacle3DCheck;
-    private Player3DController player3DController;
+    //private Obstacle3DCheck obstacle3DCheck;
+    //private Player3DController player3DController;
 
     Vector3 boneInitPosition = Vector3.zero;
     Vector3 movingPosition = Vector3.zero;
@@ -17,8 +17,8 @@ public class AnimationState_3DClimb : StateMachineBehaviour {
         player3D = animator.transform.parent.gameObject;
         player3DBone = animator.transform.GetChild(0).gameObject;
 
-        obstacle3DCheck = player3D.GetComponent<Obstacle3DCheck>();
-        player3DController = player3D.GetComponent<Player3DController>();
+        //obstacle3DCheck = player3D.GetComponent<Obstacle3DCheck>();
+        //player3DController = player3D.GetComponent<Player3DController>();
 
 
         boneInitPosition = player3DBone.transform.position;
@@ -27,17 +27,26 @@ public class AnimationState_3DClimb : StateMachineBehaviour {
     // 애니메이션이 끝나서 상태가 종료될 때 호출됨
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 
-        if (obstacle3DCheck != null && player3DController.IsClimb) {
+        //if (obstacle3DCheck != null && player3DController.IsClimb) {
 
-            Vector3 boneFinalPosition = player3DBone.transform.position;
+        //    Vector3 boneFinalPosition = player3DBone.transform.position;
 
-            movingPosition = boneFinalPosition - boneInitPosition;
+        //    movingPosition = boneFinalPosition - boneInitPosition;
 
-            player3D.transform.position += movingPosition;
+        //    player3D.transform.position += movingPosition;
 
-            obstacle3DCheck.ClimbObstacle = null;
-            player3DController.IsClimb = false;
-        }
+        //    obstacle3DCheck.ClimbObstacle = null;
+        //    player3DController.IsClimb = false;
+        //}
+
+
+        Vector3 boneFinalPosition = player3DBone.transform.position;
+
+        movingPosition = boneFinalPosition - boneInitPosition;
+
+        player3D.transform.position += movingPosition;
+
+
     }
 
 }

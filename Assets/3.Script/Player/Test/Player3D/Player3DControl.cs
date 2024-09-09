@@ -23,12 +23,13 @@ public class Player3DControl : MonoBehaviour {
 
 
     private GameObject groundPoint;
+    public GameObject GroundPoint { get { return groundPoint; } }
     public GameObject ClimbObstacle;
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
 
-        groundPoint = transform.GetChild(1).gameObject;
+        groundPoint = Player.transform.GetChild(1).gameObject;
 
         PlayerManager.PlayerDead += Dead;
 
@@ -73,9 +74,9 @@ public class Player3DControl : MonoBehaviour {
         Debug.Log(newState);
         // 현재 상태가 null이 아니면 비활성화
         if (currentStateComponent != null) {
+            currentStateComponent.ExitState();
             currentStateComponent.enabled = false;
         }
-
         // 새로운 상태를 가져와서 활성화
         if (stateDic.TryGetValue(newState, out PlayerState3D newStateComponent)) {
             PlayerManage.instance.CurrentState = newState;
@@ -88,51 +89,26 @@ public class Player3DControl : MonoBehaviour {
             Debug.LogWarning($"State {newState} not found in stateDic.");
         }
 
+       
     }
 
+
+
     public void Move(float horizontalInput, float verticalInput) {
-        isMove = (horizontalInput != 0 || verticalInput != 0);
         positionToMove = Vector3.zero;
-        isMove = (horizontalInput != 0 || verticalInput != 0);
-        if (horizontalInput != 0 || verticalInput != 0) playerManager.isChangingModeTo3D = false;
 
-        // 방향 벡터를 생성
-        Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
+        if(horizontalInput != 0 || verticalInput !=0) {
+            // 방향 벡터를 생성
+            Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
 
-        if (isMove) {
             // 캐릭터 회전
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * moveSpeed);
 
             positionToMove = dir * moveSpeed * Time.deltaTime;
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }
-        else {
-            // 움직임이 없을 때 속도 정지
-            PlayerRigid.velocity = new Vector3(0, PlayerRigid.velocity.y, 0);
-        }
-    }
-
-
-
-
-
-    //================== 미사용
-
-
-    private void Dead() {
-        Ani3D.SetTrigger("IsDie");
-        isDead = true;
 
     }
-
-    private bool IsAnimationFinished() {
-        // 현재 애니메이션 상태 정보 가져오기
-        AnimatorStateInfo stateInfo = Ani3D.GetCurrentAnimatorStateInfo(0);
-
-        // "IsDie" 애니메이션 상태가 완료되었는지 확인
-        return stateInfo.IsName("IsDie") && stateInfo.normalizedTime >= 1.0f;
-    }
-
 
     // 바닥 오브젝트 확인
     public bool CheckGroundPointsEmpty(float rayLength) {
@@ -141,7 +117,6 @@ public class Player3DControl : MonoBehaviour {
         int falseCount = 0;
 
         for (int i = 0; i < groundPoint.transform.childCount; i++) {
-
             Transform child = groundPoint.transform.GetChild(i);
 
             RaycastHit[] hits = Physics.RaycastAll(child.position, -child.up, rayLength);
@@ -165,12 +140,36 @@ public class Player3DControl : MonoBehaviour {
                 falseCount++;
             }
         }
-        Debug.LogWarning(falseCount);
+
         return falseCount == hitsbool.Length ? true : false;
     }
 
+    public bool IsAnimationFinished(string flagName) {
+        // 현재 애니메이션 상태 정보 가져오기
+        AnimatorStateInfo stateInfo = Ani3D.GetCurrentAnimatorStateInfo(0);
+
+        // 애니메이션 상태가 완료되었는지 확인
+        return stateInfo.IsName($"{flagName}") && stateInfo.normalizedTime >= 1.0f;
+    }
+
+
+
+    //================== 미사용
+
+
+    private void Dead() {
+        Ani3D.SetTrigger("IsDie");
+        isDead = true;
+
+    }
+
+
+
+
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
-    public bool CheckClimbPointsEmpty() {
+    public GameObject CheckInteractObject() {
+        GameObject interactionObj = null;
+
         List<GameObject> bottomObstacles = new List<GameObject>();
         List<GameObject> topObstacles = new List<GameObject>();
 
@@ -196,10 +195,10 @@ public class Player3DControl : MonoBehaviour {
         }
 
         // bottom and top nomal vector check
-        if (!CheckObstacleAngle(topObstacles)) {
-            if (CheckObstacleAngle(bottomObstacles)) {
+        if (!CheckObstacleAngle(topObstacles, ref interactionObj)) {
+            if (CheckObstacleAngle(bottomObstacles, ref interactionObj)) {
                 //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
-                return true;
+                return interactionObj;
             }
             else {
                 //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
@@ -209,10 +208,10 @@ public class Player3DControl : MonoBehaviour {
             //Debug.Log("topObstacles 가 있음");
         }
 
-        return false;
+        return null;
     }
 
-    private bool CheckObstacleAngle(List<GameObject> objs) {
+    private bool CheckObstacleAngle(List<GameObject> objs, ref GameObject interactionObj) {
 
         foreach (GameObject item in objs) {
 
@@ -224,6 +223,7 @@ public class Player3DControl : MonoBehaviour {
 
             if (angle >= -40f && angle <= 40f) {
                 Debug.Log("타일이 시야 범위 내에 있습니다.");
+                interactionObj = item;
                 return true;
             }
         }

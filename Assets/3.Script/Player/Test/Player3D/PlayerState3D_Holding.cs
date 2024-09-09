@@ -8,6 +8,9 @@ public class PlayerState3D_Holding : PlayerState3D {
     [SerializeField] private float stayTime = 0.5f;
 
     private GameObject holdingGroup;
+    protected override void OnEnable() {
+        base.OnEnable();
+    }
 
     private void Start() {
         holdingGroup = FindObjectOfType<StaticManager>().HoldingGroup;
