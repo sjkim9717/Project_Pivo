@@ -14,7 +14,7 @@ public class PlayerState2D_Idle : PlayerState2D {
     private void Update() {
         horizontalInput = Input.GetAxis("Horizontal");
         skillSectionInput = Input.GetAxis("SkillSection");
-        interactionInput = Input.GetAxis("Climb");
+        interactionInput = Input.GetAxis("Interaction");
 
         ChangeState();
     }
@@ -34,11 +34,13 @@ public class PlayerState2D_Idle : PlayerState2D {
 
 
         if (Control2D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인
-            if (Vector3.Distance(Control2D.PlayerRigid.position, PlayerManage.instance.Respawnposition.position) <= 0.1f) {
+
+            float distance = Control2D.PlayerRigid.position.y - PlayerManage.instance.Respawnposition.position.y;
+            if (distance <= 0.1f) {
                 return;
             }
             else {
-                Debug.Log(Vector3.Distance(Control2D.PlayerRigid.position, PlayerManage.instance.Respawnposition.position));
+                Debug.Log(distance);
                 Control2D.ChangeState(PlayerState.Falling);
             }
         }

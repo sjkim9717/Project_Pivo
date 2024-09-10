@@ -11,9 +11,10 @@ public enum SceneStatus {
 
 [Serializable]
 public enum StageLevel {
-    StageLevel_1,
-    StageLevel_5,
-    StageLevel_7,
+    GrassStageLevel_1,
+    GrassStageLevel_5,
+    GrassStageLevel_7,
+    SnowStageLevel_3,
     StageSelect
 }
 

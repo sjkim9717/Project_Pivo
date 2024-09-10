@@ -16,9 +16,10 @@ public class StageSelectController : MonoBehaviour {
     private StageLevel selectStageLevel = StageLevel.StageSelect;
 
     private Dictionary<StageLevel, int[]> StageRequiementScore = new Dictionary<StageLevel, int[]> {
-        {StageLevel.StageLevel_1, new int[] { 0, 11, 15} },
-        {StageLevel.StageLevel_5, new int[] { 0, 8, 14} },
-        {StageLevel.StageLevel_7, new int[] { 0, 11, 15} }
+        {StageLevel.GrassStageLevel_1, new int[] { 0, 11, 15} },
+        {StageLevel.GrassStageLevel_5, new int[] { 0, 8, 14} },
+        {StageLevel.GrassStageLevel_7, new int[] { 0, 11, 15} },
+        {StageLevel.SnowStageLevel_3, new int[] { 0, 11, 15} }
     };
 
     private void Awake() {

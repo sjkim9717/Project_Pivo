@@ -42,12 +42,9 @@ public class PlayerManage : PlayerBase {
         respawnposition = new GameObject("RespawnPosition").transform;
 
         //stageClear = FindObjectOfType<StageClearController>();
-        Debug.LogWarning("PlayerManage | Awake | " + Player2D.name);
     }
 
     private void Start() {
-        Debug.LogWarning("PlayerManage | Start |" + Player2D.name);
-
         Init();
 
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);

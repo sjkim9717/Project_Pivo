@@ -13,8 +13,10 @@ TagManager:
   - Triggers
   - Tutorial
   - PushBox
-  - Bomb
   - OpenPanel
+  - PushSwitch
+  - PushTile
+  - BombSpawner
   layers:
   - Default
   - TransparentFX

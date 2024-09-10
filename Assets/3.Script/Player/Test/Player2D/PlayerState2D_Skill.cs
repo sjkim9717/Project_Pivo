@@ -10,13 +10,18 @@ public class PlayerState2D_Skill : PlayerState2D {
        convertModes = FindObjectsOfType<ConvertMode>();
     }
 
-    public override void EnterState() {
-        Control2D.Ani2D.SetBool("IsTryUseSkill", true);
-    }
     private void Update() {
         skillSectionInput = Input.GetAxis("SkillSection");
 
-        ChangeState();
+        foreach (ConvertMode mode in convertModes) {
+            mode.ChangeLayerAllActiveTrue();
+        }
+
+        PlayerManage.instance.CurrentMode = PlayerMode.Player3D;
+        PlayerManage.instance.isChangingModeTo3D = true;
+        PlayerManage.instance.SwitchMode();
+
+        //ChangeState();
     }
 
     private void ChangeState() {
@@ -39,9 +44,4 @@ public class PlayerState2D_Skill : PlayerState2D {
 
     }
 
-
-
-    public override void ExitState() {
-        Control2D.Ani2D.SetBool("IsTryUseSkill", false);
-    }
 }

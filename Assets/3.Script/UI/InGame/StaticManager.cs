@@ -16,6 +16,7 @@ public class StaticManager : MonoBehaviour {
     private GameObject HPGroup;
     private GameObject biscuitGroup;
     public GameObject HoldingGroup;
+    public GameObject PanelGroup;
     public GameObject PauseGroup;
 
     private PlayerManager playerManager;
@@ -26,6 +27,7 @@ public class StaticManager : MonoBehaviour {
         HPGroup = transform.GetChild(0).gameObject;
         biscuitGroup = transform.GetChild(1).gameObject;
         HoldingGroup = transform.GetChild(2).gameObject;
+        PanelGroup = transform.GetChild(3).gameObject;
         PauseGroup = transform.GetChild(4).gameObject;
 
         for(int i =1; i<HPGroup.transform.GetChild(0).childCount; i++) {

@@ -17,3 +17,15 @@ public enum PlayerState {
     Dead,
     Disable
 }
+
+public interface IPushBox {
+    public void IInteractionPushBox(float horizontal, float vertical);
+}
+
+public interface IBomb {
+    public void IBombMoveStart();
+    public void IBombMoving();
+    public void IBombMoveEnd();
+
+    public void IBombExplosion();
+}

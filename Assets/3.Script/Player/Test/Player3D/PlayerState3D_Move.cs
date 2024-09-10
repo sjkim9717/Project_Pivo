@@ -35,6 +35,7 @@ public class PlayerState3D_Move : PlayerState3D {
             Control3D.Move(horizontalInput, verticalInput);
         }
         else if (horizontalInput == 0 && verticalInput == 0) {
+            Control3D.Move(0, 0);
             Control3D.ChangeState(PlayerState.Idle);
         }
     }

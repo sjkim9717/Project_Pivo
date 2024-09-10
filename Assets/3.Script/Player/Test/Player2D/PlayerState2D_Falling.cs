@@ -31,7 +31,9 @@ public class PlayerState2D_Falling : PlayerState2D {
 
             Control2D.GroundPoint.transform.localPosition = Vector3.zero;
 
-            if (Vector3.Distance(Control2D.PlayerRigid.position, PlayerManage.instance.Respawnposition.position) <= 0.1f) {
+            float distance = Control2D.PlayerRigid.position.y - PlayerManage.instance.Respawnposition.position.y;
+
+            if (distance <= 0.1f) {
                 Control2D.ChangeState(PlayerState.Idle);
             }
         }

@@ -21,6 +21,7 @@ public class Player3DControl : MonoBehaviour {
 
     private GameObject groundPoint;
     public GameObject GroundPoint { get { return groundPoint; } }
+    public GameObject InteractionObject;
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
@@ -35,6 +36,32 @@ public class Player3DControl : MonoBehaviour {
     private void OnEnable() {
         ChangeState(PlayerState.Idle);
     }
+
+    private void OnCollisionStay(Collision collision) {
+        if (collision.collider.CompareTag("BombSpawner") || collision.collider.CompareTag("OpenPanel") || collision.collider.CompareTag("ClimbObj")) {
+            InteractionObject = collision.transform.parent.gameObject;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision) {
+        if (InteractionObject!= null) {
+            InteractionObject = null;
+        }
+    }
+
+    private void OnTriggerStay(Collider other) {
+        if (other.CompareTag("PushSwitch")) {
+            InteractionObject = other.transform.parent.gameObject;
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (InteractionObject != null) {
+            InteractionObject = null;
+        }
+    }
+
+
 
     private void InitializeStates() {
         stateDic = new Dictionary<PlayerState, PlayerState3D>();
@@ -84,10 +111,7 @@ public class Player3DControl : MonoBehaviour {
         else {
             Debug.LogWarning($"State {newState} not found in stateDic.");
         }
-
-       
     }
-
 
 
     public void Move(float horizontalInput, float verticalInput) {
@@ -103,7 +127,9 @@ public class Player3DControl : MonoBehaviour {
             positionToMove = dir * moveSpeed * Time.deltaTime;
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }
-
+        else {
+            PlayerRigid.velocity = Vector3.zero;
+        }
     }
 
     // 바닥 오브젝트 확인
@@ -151,9 +177,7 @@ public class Player3DControl : MonoBehaviour {
 
 
     // player 주변 원형으로 모든 콜라이더를 감지해서 들고옴 -> y축을 기준으로 바닥 바로 위
-    public GameObject CheckInteractObject() {
-        GameObject interactionObj = null;
-
+    public bool CheckInteractObject() {
         List<GameObject> bottomObstacles = new List<GameObject>();
         List<GameObject> topObstacles = new List<GameObject>();
 
@@ -178,11 +202,12 @@ public class Player3DControl : MonoBehaviour {
             }
         }
 
+
         // bottom and top nomal vector check
-        if (!CheckObstacleAngle(topObstacles, ref interactionObj)) {
-            if (CheckObstacleAngle(bottomObstacles, ref interactionObj)) {
+        if (!CheckObstacleAngle(topObstacles)) {
+            if (CheckObstacleAngle(bottomObstacles)) {
                 //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
-                return interactionObj;
+                return true;
             }
             else {
                 //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
@@ -192,22 +217,20 @@ public class Player3DControl : MonoBehaviour {
             //Debug.Log("topObstacles 가 있음");
         }
 
-        return null;
+        return false;
     }
 
-    private bool CheckObstacleAngle(List<GameObject> objs, ref GameObject interactionObj) {
+    private bool CheckObstacleAngle(List<GameObject> objs) {
 
         foreach (GameObject item in objs) {
 
             Vector3 tilePos = item.transform.position;               // 감지된 타일의 현재 월드 위치
             Vector3 playerToTile = tilePos - transform.position;
             float angle = Vector3.SignedAngle(transform.forward, playerToTile, Vector3.up);
-
             //Debug.Log("Calculated angle: " + angle);
 
             if (angle >= -40f && angle <= 40f) {
-                Debug.Log("타일이 시야 범위 내에 있습니다.");
-                interactionObj = item;
+                //Debug.Log("타일이 시야 범위 내에 있습니다.");
                 return true;
             }
         }

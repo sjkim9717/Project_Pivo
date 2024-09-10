@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
     public bool IsTutorialCompleted;
     public StageLevel currentStage;
     private GameObject staticGroup;
-    private GameObject UI_Title;
+    //private GameObject UI_Title;
 
     private StageClearController[] stageClearController;
 
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
         }
 
         staticGroup = transform.GetChild(0).gameObject;
-        UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
+        //UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
     }
 
     private void OnEnable() {
@@ -82,19 +82,22 @@ public class GameManager : MonoBehaviour {
 
         switch (sceneName) {
             case "GrassStage_Stage1":
-                stageLevel = StageLevel.StageLevel_1;
+                stageLevel = StageLevel.GrassStageLevel_1;
                 break;
             case "GrassStage_Stage5":
-                stageLevel = StageLevel.StageLevel_5;
+                stageLevel = StageLevel.GrassStageLevel_5;
                 break;
             case "GrassStage_Stage7":
-                stageLevel = StageLevel.StageLevel_7;
+                stageLevel = StageLevel.GrassStageLevel_7;
                 break;
             case "StageSelect_Grass":
                 stageLevel = StageLevel.StageSelect;
                 break;
-            case "Stage7Test":
-                stageLevel = StageLevel.StageLevel_1;
+            case "SnowStage_Stage3":
+                stageLevel = StageLevel.SnowStageLevel_3;
+                break;
+            case "SnowMapTest3":
+                stageLevel = StageLevel.SnowStageLevel_3;
                 break;
             default:
                 break;
@@ -106,14 +109,17 @@ public class GameManager : MonoBehaviour {
     public void LoadSelectStage(StageLevel selectStageLevel) {
         string sceneName = "";
         switch (selectStageLevel) {
-            case StageLevel.StageLevel_1:
+            case StageLevel.GrassStageLevel_1:
                 sceneName = "GrassStage_Stage1";
                 break;
-            case StageLevel.StageLevel_5:
+            case StageLevel.GrassStageLevel_5:
                 sceneName = "GrassStage_Stage5";
                 break;
-            case StageLevel.StageLevel_7:
+            case StageLevel.GrassStageLevel_7:
                 sceneName = "GrassStage_Stage7";
+                break;
+            case StageLevel.SnowStageLevel_3:
+                sceneName = "SnowStage_Stage3";
                 break;
             case StageLevel.StageSelect:
                 break;

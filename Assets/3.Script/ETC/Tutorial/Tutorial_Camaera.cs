@@ -116,47 +116,5 @@ public class Tutorial_Camaera : MonoBehaviour {
         else return false;
     }
 
-    /*
-    private void SettingCamera2DGameMode() {
-        if (!playerManager.GetPlayerMode()) {
 
-            // Framing Transposer 접근
-            var transposer = gameCam2D.GetCinemachineComponent<CinemachineFramingTransposer>();
-            // Composer 접근
-            var composer = gameCam2D.GetCinemachineComponent<CinemachineComposer>();
-
-            if (!is2DGameCameraSetDone) {               // 2D모드일때 1번만 위치 맞춰야함
-                is2DGameCameraSetDone = true;
-                if (player2D == null) {
-                    player2D = FindObjectOfType<Player2DController>().gameObject;
-                }
-
-                if (transposer != null) {
-                    transposer.m_DeadZoneWidth = 0.1f;
-                    transposer.m_DeadZoneHeight = 0.1f;
-                }
-
-                if (composer != null) {
-                    composer.m_DeadZoneWidth = 0.1f;
-                    composer.m_DeadZoneHeight = 0.1f;
-                }
-            }
-            else {  // 그외 deadzone 1로 변경
-                if (transposer != null) {
-                    transposer.m_DeadZoneWidth = 1f; 
-                    transposer.m_DeadZoneHeight = 1f; 
-                }
-
-                if (composer != null) {
-                    composer.m_DeadZoneWidth = 1f; 
-                    composer.m_DeadZoneHeight = 1f; 
-                }
-            }
-        }
-        else {
-            is2DGameCameraSetDone = false;
-
-        }
-    }
-    */
 }

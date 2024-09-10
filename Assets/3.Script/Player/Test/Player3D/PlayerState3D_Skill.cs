@@ -22,6 +22,11 @@ public class PlayerState3D_Skill : PlayerState3D {
     private ConvertMode[] convertMode;
     protected override void OnEnable() {
         base.OnEnable();
+        startSection = Vector3.zero;
+        finishSection = Vector3.zero;
+        isSkillButtonPressed = false;
+        blockZposCheck = 0;
+        skillCount = 0;
     }
 
     private void Start() {
@@ -47,7 +52,7 @@ public class PlayerState3D_Skill : PlayerState3D {
     }
     private void Update() {
         skillSectionInput = Input.GetAxis("SkillSection");
-        interactionInput = Input.GetAxisRaw("Climb");
+        interactionInput = Input.GetAxisRaw("Interaction");
 
         ChangeState();
     }
