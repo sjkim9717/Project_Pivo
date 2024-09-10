@@ -36,14 +36,12 @@ public class PlayerState3D_Bomb : PlayerState3D {
         }
         if (horizontalInput != 0 || verticalInput != 0) {
             isBombMoved = true;
-            Debug.Log("???????");
             Control3D.Move(horizontalInput, verticalInput);
             bomb.IBombMoving();
         }
 
         if (isBombMoved) {
             if (interactionInput != 0) {
-                Debug.Log("???!!!!!!!!!!!????");
                 bomb.IBombMoveEnd();
                 Control3D.ChangeState(PlayerState.Idle);
             }

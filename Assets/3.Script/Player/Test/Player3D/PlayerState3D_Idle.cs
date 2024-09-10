@@ -69,10 +69,10 @@ public class PlayerState3D_Idle : PlayerState3D {
                 else if (tagName == "BombSpawner") {
                     GameObject bombObj = Control3D.InteractionObject.GetComponent<BombSpawner>().Bomb;
                     bomb = bombObj.GetComponent<IBomb>();
-                    if (bomb != null) {
+                    if (bomb != null && !isBombOnGround) {
                         bomb.IBombMoveStart();
-                        Control3D.ChangeState(PlayerState.Bomb);
                         isBombOnGround = true;
+                        Control3D.ChangeState(PlayerState.Bomb);
                     }
 
                 }
@@ -90,6 +90,7 @@ public class PlayerState3D_Idle : PlayerState3D {
 
         if (isBombOnGround) {
             if (explosionInput !=0) {
+                Debug.Log("??????왜 안들어와 ???");
                 isBombOnGround = false;
                 bomb.IBombExplosion();
                 bomb = null;
