@@ -17,6 +17,8 @@ TagManager:
   - PushSwitch
   - PushTile
   - BombSpawner
+  - Bomb
+  - Destroy
   layers:
   - Default
   - TransparentFX
@@ -28,7 +30,7 @@ TagManager:
   - 2DPlayer
   - ActiveTrue
   - ActiveFalse
-  - 
+  - Destroy
   - 
   - 
   - 

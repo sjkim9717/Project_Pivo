@@ -12,6 +12,9 @@ public class ConvertMode_Item : ConvertMode {
         InitParentObjectWithTag(Tag.Objects);
         InitParentObjectWithTag(Tag.Puzzle);
         InitParentObjectWithTag(Tag.Tree);
+        InitParentObjectWithTag(Tag.Bomb);
+        InitParentObjectWithTag(Tag.PushSwitch);
+        InitParentObjectWithTag(Tag.OpenPanel);
 
         ChangeLayerAllActiveTrue();
     }

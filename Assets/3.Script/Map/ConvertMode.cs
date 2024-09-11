@@ -56,12 +56,32 @@ public abstract class ConvertMode : MonoBehaviour {
 
         foreach (GameObject parenttile in parentObject) {
             foreach (Transform child in parenttile.transform) {
-                if (!child.name.Contains("Root") && !child.name.Contains("3D"))
+                if(child.name.Contains("Root3D")) {
+                    AllObjects.Add(child.parent.gameObject);
+                }
+                else if (!child.name.Contains("Root") && !child.name.Contains("3D")) {
                     AllObjects.Add(child.gameObject);
+                }
             }
         }
     }
+    protected void InitParentDestroyObject(Tag tagName) {
+        parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
+        for (int i = 0; i < parentObject.Length; i++) {
+            parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
+        }
 
+        foreach (GameObject parenttile in parentObject) {
+            foreach (Transform child in parenttile.transform) {
+                if (child.name.Contains("Root3D")) {
+                    AllObjects.Add(child.parent.gameObject);
+                }
+                else if (!child.name.Contains("Root") && !child.name.Contains("3D")) {
+                    AllObjects.Add(child.gameObject);
+                }
+            }
+        }
+    }
 
     public virtual void ChangeActiveWithLayer() {
         foreach (GameObject each in AllObjects) {

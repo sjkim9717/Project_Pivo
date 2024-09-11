@@ -8,7 +8,11 @@ public enum Tag {
     Biscuit,
     Objects,
     Puzzle,
-    Tree
+    Tree,
+    Bomb,
+    Destroy,
+    PushSwitch,
+    OpenPanel
 }
 
 public enum ScreenMode {

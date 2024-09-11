@@ -12,7 +12,7 @@ public class TutorialController : MonoBehaviour {
     private GameObject tutorial_Bg;
 
     private double signalTime;                          // 애니메이션 중지되는 타이밍
-    private Tutorial_Camaera tutorial_Camaera;
+    private CameraManager cameraManager;
     private PlayableDirector tutorial_1_Director;
 
     private Dictionary<AnimationTrack, GameObject> trackBindings = new Dictionary<AnimationTrack, GameObject>();
@@ -36,7 +36,7 @@ public class TutorialController : MonoBehaviour {
         }
 
         tutorial_1_Director = tutorial.GetComponent<PlayableDirector>();
-        tutorial_Camaera = FindObjectOfType<Tutorial_Camaera>();
+        cameraManager = FindObjectOfType<CameraManager>();
 
         canvas = transform.GetChild(0).GetComponent<Canvas>();
         tutorialImg = canvas.GetComponentsInChildren<Image>()[1];
@@ -142,7 +142,7 @@ public class TutorialController : MonoBehaviour {
         Debug.Log("Timeline_1 has paursed playing.");
 
         // Timeline이 끝났을 때 실행할 로직
-        FindObjectOfType<Tutorial_Camaera>().SettingCamerasPriority_Tutorial_2();
+        FindObjectOfType<CameraManager>().SettingCamerasPriority_Tutorial_2();
         AddComponentWhenTimeLineEnd();
         UnbindAnimationTracks();
 
@@ -158,9 +158,10 @@ public class TutorialController : MonoBehaviour {
         StopTutorial();
 
         // Timeline이 끝났을 때 실행할 로직
-        FindObjectOfType<PlayerManager>().transform.GetChild(0).gameObject.SetActive(true);
-        tutorial_Camaera.SettingCamerasPriority_Game();
-        tutorial_Camaera.FindPlayerWhenStartGame();
+        FindObjectOfType<PlayerManage>().Player3D.SetActive(true);
+
+        cameraManager.SettingCamerasPriority_Game();
+        cameraManager.FindPlayerWhenStartGame();
     }
 
 
