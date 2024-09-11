@@ -63,7 +63,7 @@ public class PlayerState2D_Idle : PlayerState2D {
                 else if (tagName == "PushBox") {
                     Control2D.ChangeState(PlayerState.PushBox);
                 }
-                else if (tagName == "Bomb") {
+                else if (tagName == "BombSpawner") {
                     Control2D.ChangeState(PlayerState.Bomb);
                 }
                 else if (tagName == "OpenPanel") {

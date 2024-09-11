@@ -15,11 +15,15 @@ public class StageSelectController : MonoBehaviour {
     private GameObject returnToTitle;
     private StageLevel selectStageLevel = StageLevel.StageSelect;
 
+    //TODO: 별 개수 바꿔야함!!!
     private Dictionary<StageLevel, int[]> StageRequiementScore = new Dictionary<StageLevel, int[]> {
         {StageLevel.GrassStageLevel_1, new int[] { 0, 11, 15} },
         {StageLevel.GrassStageLevel_5, new int[] { 0, 8, 14} },
         {StageLevel.GrassStageLevel_7, new int[] { 0, 11, 15} },
-        {StageLevel.SnowStageLevel_3, new int[] { 0, 11, 15} }
+        {StageLevel.SnowStageLevel_3, new int[] { 0, 11, 15} },
+        {StageLevel.SnowStageLevel_4, new int[] { 0, 11, 15} },
+        {StageLevel.SnowStageLevel_6, new int[] { 0, 11, 15} },
+        {StageLevel.SnowStageLevel_7, new int[] { 0, 11, 15} }
     };
 
     private void Awake() {

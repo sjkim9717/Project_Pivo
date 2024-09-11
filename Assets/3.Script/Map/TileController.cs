@@ -15,8 +15,8 @@ public class TileController : MonoBehaviour {
         tileRenderer = GetComponent<MeshRenderer>();
         defaltMaterial = tileRenderer.materials[0];
 
-        blockTileMaterial = FindObjectOfType<ConvertMode>().BlockMaterial;
-        selectTileMaterial = FindObjectOfType<ConvertMode>().SelectMaterial;
+        blockTileMaterial = FindObjectOfType<ConvertMode_Tile>().BlockMaterial;
+        selectTileMaterial = FindObjectOfType<ConvertMode_Tile>().SelectMaterial;
         //Debug.Log(defaltMaterial.name);
     }
 

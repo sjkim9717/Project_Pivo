@@ -15,6 +15,9 @@ public enum StageLevel {
     GrassStageLevel_5,
     GrassStageLevel_7,
     SnowStageLevel_3,
+    SnowStageLevel_4,
+    SnowStageLevel_6,
+    SnowStageLevel_7,
     StageSelect
 }
 

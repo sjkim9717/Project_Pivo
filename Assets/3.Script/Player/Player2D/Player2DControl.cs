@@ -143,19 +143,19 @@ public class Player2DControl : MonoBehaviour {
 
         foreach (Collider2D each in colliders) {
 
-            if (!each.CompareTag("ClimbObj")) continue;
-
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
+            
+            if (!eachParent.transform.Find("Root3D").CompareTag("ClimbObj")) continue;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    //Debug.Log("bottomObstacle | " + eachParent.name);
+                    Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    //Debug.Log("topObstacles | " + eachParent.name);
+                    Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }

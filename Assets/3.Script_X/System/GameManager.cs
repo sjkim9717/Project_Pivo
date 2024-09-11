@@ -96,10 +96,17 @@ public class GameManager : MonoBehaviour {
             case "SnowStage_Stage3":
                 stageLevel = StageLevel.SnowStageLevel_3;
                 break;
-            case "SnowMapTest3":
-                stageLevel = StageLevel.SnowStageLevel_3;
+            case "SnowStage_Stage4":
+                stageLevel = StageLevel.SnowStageLevel_4;
+                break;
+            case "SnowStage_Stage6":
+                stageLevel = StageLevel.SnowStageLevel_6;
+                break;
+            case "SnowStage_Stage7":
+                stageLevel = StageLevel.SnowStageLevel_7;
                 break;
             default:
+                stageLevel = StageLevel.GrassStageLevel_1;
                 break;
         }
         return stageLevel;
@@ -120,6 +127,15 @@ public class GameManager : MonoBehaviour {
                 break;
             case StageLevel.SnowStageLevel_3:
                 sceneName = "SnowStage_Stage3";
+                break;
+            case StageLevel.SnowStageLevel_4:
+                sceneName = "SnowStage_Stage4";
+                break;
+            case StageLevel.SnowStageLevel_6:
+                sceneName = "SnowStage_Stage6";
+                break;
+            case StageLevel.SnowStageLevel_7:
+                sceneName = "SnowStage_Stage7";
                 break;
             case StageLevel.StageSelect:
                 break;

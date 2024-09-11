@@ -107,6 +107,10 @@ public class PlayerState3D_Skill : PlayerState3D {
                 Debug.Log("2D 모드로 전환됨");
             }
             else {
+                finishSection = startSection;
+                sectionLine.transform.position = finishSection;
+                sectionLine_First.transform.position = startSection;
+
                 ResetSelectObject();                                               // 3D 모드 유지
                 skillCount = 1;
                 return;
@@ -186,7 +190,6 @@ public class PlayerState3D_Skill : PlayerState3D {
     // convertMode가 여러개 있을 경우 전체 담아서 초기화
     public void ResetSelectObject() {
         if (selectObjects[0] == null) return;
-
 
         foreach (var item in selectObjects[0]) {
             item.GetComponentInChildren<TileController>().InitMaterial();

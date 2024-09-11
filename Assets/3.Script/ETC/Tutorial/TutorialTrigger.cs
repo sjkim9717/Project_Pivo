@@ -21,6 +21,7 @@ public class TutorialTrigger : MonoBehaviour {
     }
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player")) {
+            Debug.Log("collider enter | " + gameObject.name + " | trigger bool | " + TutorialShow);
             tutorialController.CheckTriggerSetting(TutorialTriggerSet, TutorialShow);           
         }
     }

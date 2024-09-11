@@ -68,8 +68,12 @@ public class PlayerManage : PlayerBase {
 
     private void Init() {
         dieCount = 0;
-        //if (!GameManager.instance.IsTutorialCompleted) return;
-        Change3D();
+        if (GameManager.instance.IsTutorialCompleted) {
+            Change3D();
+        }
+        else {
+            ChangeAutoMode();
+        }
     }
 
 
@@ -166,4 +170,10 @@ public class PlayerManage : PlayerBase {
         groundBomb = null;
         return bomb;
     }
+
+
+    public void Test() {
+        Change3D();
+    }
+
 }

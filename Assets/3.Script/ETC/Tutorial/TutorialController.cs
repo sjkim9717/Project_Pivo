@@ -158,7 +158,7 @@ public class TutorialController : MonoBehaviour {
         StopTutorial();
 
         // Timeline이 끝났을 때 실행할 로직
-        FindObjectOfType<PlayerManage>().Player3D.SetActive(true);
+        FindObjectOfType<PlayerManage>().Change3D();
 
         cameraManager.SettingCamerasPriority_Game();
         cameraManager.FindPlayerWhenStartGame();
