@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerState3D_Skill : PlayerState3D {
-
+    [SerializeField] private float skillDistance = 14f;
     private int skillCount = 0;
     private int blockZposCheck = 0;
 
@@ -169,7 +169,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
             // finishSection의 z 값 이동 및 클램프 적용
             finishSection.z += movingAmount;
-            finishSection.z = Mathf.Clamp(finishSection.z, startSection.z - 10f, startSection.z + 10f);
+            finishSection.z = Mathf.Clamp(finishSection.z, startSection.z - skillDistance, startSection.z + skillDistance);
 
             if (finishSection == startSection) {
                 startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, (int)Control3D.PlayerRigid.position.z - direction * 1f);
@@ -220,43 +220,39 @@ public class PlayerState3D_Skill : PlayerState3D {
         RaycastHit[] hits = Physics.BoxCastAll(center, halfExtents, direction, Quaternion.identity, 0);
 
         foreach (RaycastHit hit in hits) {
-            if (hit.transform.parent != null) {
-                if (hit.transform.parent.parent != null) {
-                    string tagName = hit.transform.parent.parent.tag;
+            Transform currentTransform = hit.transform;
 
-                    if (Enum.TryParse(tagName, out Tag tagEnum)) {
+            // 최상위 부모까지 탐색
+            while (currentTransform.parent != null) {
+                currentTransform = currentTransform.parent;
+            }
+            // 최상위 부모의 태그 확인
+            string tagName = currentTransform.tag;
 
-                        GameObject parent = hit.transform.parent.gameObject;
-                        AddSelectObjectsWithTag(tagEnum, parent);
-                    }
-
-                }
+            if (Enum.TryParse(tagName, out ConvertItem tagEnum)) {
+                GameObject parent = hit.transform.parent.gameObject;
+                AddSelectObjectsWithTag(tagEnum, parent);
             }
         }
     }
 
-    private void AddSelectObjectsWithTag(Tag tagName, GameObject parent) {
+    private void AddSelectObjectsWithTag(ConvertItem tagName, GameObject parent) {
+
         switch (tagName) {
-            case Tag.ParentTile:
+            case ConvertItem.ParentTile:
                 if (!selectObjects[0].Contains(parent)) {
                     //Debug.Log("ParentTile Hit: " + parent.name);
                     selectObjects[0].Add(parent);
                 }
                 break;
-            case Tag.Triggers:
-            case Tag.Biscuit:
-            case Tag.Objects:
-            case Tag.Puzzle:
-            case Tag.Tree:
-            case Tag.Bomb:
-            case Tag.PushSwitch:
-            case Tag.OpenPanel:
+            case ConvertItem.Objects:
+            case ConvertItem.Door:
                 if (!selectObjects[1].Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
                     selectObjects[1].Add(parent);
                 }
                 break;
-            case Tag.Destroy:
+            case ConvertItem.Destroy:
                 if (!selectObjects[2].Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
                     selectObjects[2].Add(parent);
@@ -265,6 +261,7 @@ public class PlayerState3D_Skill : PlayerState3D {
             default:
                 break;
         }
+
     }
 
     // 플레이어가 스킬로 섹션을 자르면 해당하는 역역 중 같은 선상에 있는 물체 확인

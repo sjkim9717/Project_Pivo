@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ConvertMode_Destroy : ConvertMode {
     protected override void Start() {
-        InitParentDestroyObject(Tag.Destroy);
+        InitParentObjectWithTag(ConvertItem.Destroy);
 
         ChangeLayerAllActiveTrue();
     }

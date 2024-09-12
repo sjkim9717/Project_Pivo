@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 2766957137647130341}
   m_Layer: 11
   m_Name: Interaction_Panel
-  m_TagString: Untagged
+  m_TagString: Objects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

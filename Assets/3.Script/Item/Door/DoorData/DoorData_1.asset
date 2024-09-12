@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0977a0b26fe521489ef35a7152acca8, type: 3}
   m_Name: DoorData_1
   m_EditorClassIdentifier: 
-  Password: 0
+  Password: 1
   DoorPrefab: {fileID: 1653467054448622, guid: 1be14523807745f4aba3698c77338848, type: 3}
-  DoorPosition: {x: 27.6, y: -0.97, z: -4.3}

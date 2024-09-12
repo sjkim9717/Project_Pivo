@@ -7,15 +7,15 @@ using UnityEngine;
 public class ConvertMode_Item : ConvertMode {
 
     protected override void Start() {
-        InitParentObjectWithTag(Tag.Triggers);
-        InitParentObjectWithTag(Tag.Biscuit);
-        InitParentObjectWithTag(Tag.Objects);
-        InitParentObjectWithTag(Tag.Puzzle);
-        InitParentObjectWithTag(Tag.Tree);
-        InitParentObjectWithTag(Tag.Bomb);
-        InitParentObjectWithTag(Tag.PushSwitch);
-        InitParentObjectWithTag(Tag.OpenPanel);
+        InitParentObjectWithTag(ConvertItem.Objects);
+        InitParentObjectWithTag_Door(ConvertItem.Door);
 
         ChangeLayerAllActiveTrue();
+    }
+
+    public void DeleteDestroiedObject(GameObject deleteObject) {
+        if (AllObjects.Contains(deleteObject)) {
+            AllObjects.Remove(deleteObject);
+        }
     }
 }

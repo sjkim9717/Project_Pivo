@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Tag {
+public enum ConvertItem {
     ParentTile,
-    Triggers,
-    Biscuit,
     Objects,
-    Puzzle,
-    Tree,
-    Bomb,
-    Destroy,
-    PushSwitch,
-    OpenPanel
+    Door,
+    Destroy
 }
 
 public enum ScreenMode {

@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Door_DoorPattern_Grass
-  m_Shader: {fileID: 4800000, guid: 34883db7195047c4f93154362e1b6e8b, type: 3}
-  m_ShaderKeywords:
+  m_Shader: {fileID: -6465566751694194690, guid: 81e512fd2dd3f3743bb13b2484285de6, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -19,13 +19,34 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-      _MainTex2:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
         m_Texture: {fileID: 2800000, guid: f7cb64e6f326edf43a063c79eb88b453, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2D:
+        m_Texture: {fileID: 2800000, guid: f7cb64e6f326edf43a063c79eb88b453, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
-      _PatternFill: 0.91
+    - _PatternFill: 6.8
     m_Colors:
-      _2222: {r: 0.045999944, g: 0.20999989, b: 0.43299994, a: 1}
-      _Color: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 1}
-      _Indigo: {r: 0.045999974, g: 0.20999995, b: 0.43299997, a: 1}
+    - _2222: {r: 0.045999944, g: 0.20999989, b: 0.43299994, a: 1}
+    - _Color: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 1}
+    - _Indigo: {r: 0.045999974, g: 0.20999995, b: 0.43299997, a: 1}
+  m_BuildTextureStacks: []

@@ -232,7 +232,7 @@ public class SkillController : MonoBehaviour {
                 if (hit.transform.parent.parent != null) {
                     string tagName = hit.transform.parent.parent.tag;
 
-                    if(Enum.TryParse(tagName, out Tag tagEnum)) {
+                    if(Enum.TryParse(tagName, out ConvertItem tagEnum)) {
                         
                         GameObject parent = hit.transform.parent.gameObject;
                         AddSelectObjectsWithTag(tagEnum, parent);
@@ -243,19 +243,15 @@ public class SkillController : MonoBehaviour {
         }
     }
 
-    private void AddSelectObjectsWithTag(Tag tagName, GameObject parent) {
+    private void AddSelectObjectsWithTag(ConvertItem tagName, GameObject parent) {
         switch (tagName) {
-            case Tag.ParentTile:
+            case ConvertItem.ParentTile:
                 if (!selectObjects[0].Contains(parent)) {
                     //Debug.Log("ParentTile Hit: " + parent.name);
                     selectObjects[0].Add(parent);
                 }
                 break;
-            case Tag.Triggers:
-            case Tag.Biscuit:
-            case Tag.Objects:
-            case Tag.Puzzle:
-            case Tag.Tree:
+            case ConvertItem.Objects:
                 if (!selectObjects[1].Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
                     selectObjects[1].Add(parent);

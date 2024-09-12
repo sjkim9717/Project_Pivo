@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Player2DControl : MonoBehaviour {
 
-    public float moveSpeed = 5f;
+    public float moveSpeed = 7f;
     public Animator Ani2D { get { return PlayerManage.instance.Ani2D; } }
     public GameObject Player { get { return PlayerManage.instance.Player2D; } }
     public Rigidbody2D PlayerRigid { get { return PlayerManage.instance.PlayerRigid2D; } }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class ConvertMode_Tile : ConvertMode {
 
     protected override void Start() {
-        InitParentObjectWithTag(Tag.ParentTile);
+        InitParentObjectWithTag(ConvertItem.ParentTile);
 
         ChangeLayerAllActiveTrue();
     }

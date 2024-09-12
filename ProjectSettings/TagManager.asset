@@ -6,19 +6,16 @@ TagManager:
   tags:
   - ClimbObj
   - ParentTile
-  - Biscuit
-  - Tree
-  - Puzzle
   - Objects
-  - Triggers
   - Tutorial
   - PushBox
-  - OpenPanel
   - PushSwitch
   - PushTile
   - BombSpawner
   - Bomb
   - Destroy
+  - Door
+  - OpenPanel
   layers:
   - Default
   - TransparentFX

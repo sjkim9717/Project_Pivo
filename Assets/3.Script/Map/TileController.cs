@@ -11,7 +11,7 @@ public class TileController : MonoBehaviour {
 
     private MeshRenderer tileRenderer;
 
-    private void Awake() {
+    private void Start() {
         tileRenderer = GetComponent<MeshRenderer>();
         defaltMaterial = tileRenderer.materials[0];
 

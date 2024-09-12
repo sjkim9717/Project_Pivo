@@ -10,7 +10,7 @@ Material:
   m_Name: Dumy2
   m_Shader: {fileID: -6465566751694194690, guid: 81e512fd2dd3f3743bb13b2484285de6, type: 3}
   m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 1
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1

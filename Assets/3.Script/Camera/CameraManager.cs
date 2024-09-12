@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraManager : MonoBehaviour
-{
+public class CameraManager : MonoBehaviour {
+    public bool Test;
 
     private Animator camAni;
     private PlayerManage playerManager;
@@ -28,7 +28,7 @@ public class CameraManager : MonoBehaviour
 
         // Initialize all cameras including gameCam
         cameras = new CinemachineVirtualCamera[3];
-        if (GameManager.isLoadTitle && false) {
+        if (GameManager.isLoadTitle && Test) {
             cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
             cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
             cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();

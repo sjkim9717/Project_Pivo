@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Player3DControl : MonoBehaviour {
 
-    public float moveSpeed = 5f;
+    public float moveSpeed = 7f;
 
     public Animator Ani3D { get { return PlayerManage.instance.Ani3D; } }
     public GameObject Player { get { return PlayerManage.instance.Player3D; } }
@@ -135,8 +135,8 @@ public class Player3DControl : MonoBehaviour {
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }
         else {
-            PlayerRigid.velocity = Vector3.zero;
-            PlayerRigid.constraints = RigidbodyConstraints.FreezeAll;
+            PlayerRigid.velocity = new Vector3(0, PlayerRigid.velocity.y, 0);
+            PlayerRigid.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         }
     }
 

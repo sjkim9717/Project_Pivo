@@ -8,8 +8,10 @@ public class Key : MonoBehaviour
     private bool isTouched;
     public void SetPassword(int _password) { password = _password; }
     private GateManage gateManage;
+    private ConvertMode_Item convertMode_Item;
     private void Awake() {
         gateManage = FindObjectOfType<GateManage>();
+        convertMode_Item = FindObjectOfType<ConvertMode_Item>();
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -18,6 +20,7 @@ public class Key : MonoBehaviour
                 isTouched = true;  
                 gateManage.FindDoor(password);
                 StartCoroutine(DeleteTimeDelay());
+                convertMode_Item.DeleteDestroiedObject(transform.parent.gameObject);
             }
         }
     }
@@ -28,13 +31,14 @@ public class Key : MonoBehaviour
                 isTouched = true;
                 gateManage.FindDoor(password);
                 StartCoroutine(DeleteTimeDelay());
+                convertMode_Item.DeleteDestroiedObject(transform.parent.gameObject);
             }
         }
     }
 
     private IEnumerator DeleteTimeDelay() {
-        yield return new WaitForSeconds(1f);
-        gameObject.SetActive(false);
+        yield return new WaitForSeconds(.5f);
+        transform.parent.gameObject.SetActive(false);
     }
 }
 
