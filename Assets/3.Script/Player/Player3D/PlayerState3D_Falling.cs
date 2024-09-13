@@ -21,7 +21,7 @@ public class PlayerState3D_Falling : PlayerState3D {
         }
 
 
-        if (PlayerManage.instance.isChangingModeTo3D) {          // 2d 에서 3 d 돌아왔을 때 
+        if (PlayerManage.instance.IsChangingModeTo3D) {          // 2d 에서 3 d 돌아왔을 때 
             Control3D.ChangeState(PlayerState.Holding);
         }
         else {

@@ -7,11 +7,20 @@ public class PlayerState2D_Idle : PlayerState2D {
 
     private float explosionInput;
     private GameObject interactionObj;
-
+    private GameObject holdingGroup;
+    protected override void Awake() {
+        base.Awake();
+        holdingGroup = FindObjectOfType<GameManager>().transform.GetChild(0).GetChild(2).gameObject;
+    }
     protected override void OnEnable() {
         base.OnEnable();
         Debug.Log("!!!2DIdle!!!");
         Input.ResetInputAxes();
+    }
+    public override void EnterState() {
+        base.EnterState();
+        if (holdingGroup.activeSelf)
+            holdingGroup.SetActive(false);
     }
     private void Update() {
         horizontalInput = Input.GetAxis("Horizontal");
@@ -47,11 +56,15 @@ public class PlayerState2D_Idle : PlayerState2D {
     }
 
     private void ChangeState() {
+
+        Control2D.Move(0);
         if (horizontalInput != 0) {
             Control2D.ChangeState(PlayerState.Move);
         }
         else if (skillSectionInput != 0) {
-            Control2D.ChangeState(PlayerState.Skill);
+            if (!PlayerManage.instance.IsChangingModeTo3D) {
+                Control2D.ChangeState(PlayerState.Skill);
+            }
         }
         else if (interactionInput != 0) {
             interactionObj = Control2D.CheckInteractObject();

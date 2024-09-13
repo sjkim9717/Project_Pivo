@@ -9,6 +9,7 @@ public class GateManage : MonoBehaviour {
     private void Awake() {
         int doorCounter = 1;  // 문 번호를 추적하기 위한 카운터
         foreach (GateData gate in GateDatas) {
+            Debug.Log("GateData " + ": " + gate.DoorData.name);
 
             GameObject gateParent = new GameObject("door_" + doorCounter++);
             gateParent.transform.SetParent(transform);
@@ -19,22 +20,27 @@ public class GateManage : MonoBehaviour {
             door.Add(_door);
 
             for (int i = 0; i < gate.RequreKeyNum; i++) {
+                Debug.Log("KeyData " + ": " + gate.KeyData.name);
                 Quaternion keyRotation = Quaternion.Euler(gate.KeyRotation[i]);
                 GameObject key =  Instantiate(gate.KeyData.KeyPrefab, gate.KeyPosition[i], keyRotation, gateParent.transform);
-                key.GetComponentInChildren<Key>().SetPassword(gate.KeyData.Password);
+                for (int j = 0; j < 2; j++) {
+                    key.GetComponentsInChildren<Key>()[j].SetPassword(gate.KeyData.Password);
+                }
             }
         }
     }
 
     public void FindDoor(int keyPassword) {
-        foreach (GameObject _door in door) {
-            Door _doorComponent = _door.GetComponent<Door>();
+        for (int i = 0; i < door.Count; i++) {
+            Door _doorComponent = door[i].GetComponent<Door>();
             int passwordcheck = _doorComponent.GetPassword();
             if (passwordcheck == keyPassword) {
+                Debug.Log(passwordcheck);
                 _doorComponent.CheckKeyCount();
                 return;
             }
         }
+
     }
 
 

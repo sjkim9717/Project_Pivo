@@ -27,10 +27,11 @@ public class PlayerState2D_Move : PlayerState2D {
 
          if (horizontalInput != 0) {
 
-            PlayerManage.instance.isChangingModeTo3D = false;
+            PlayerManage.instance.IsChangingModeTo3D = false;
             Control2D.Move(horizontalInput);
         }
         else if (horizontalInput == 0) {
+            Control2D.Move(0);
             Control2D.ChangeState(PlayerState.Idle);
         }
     }

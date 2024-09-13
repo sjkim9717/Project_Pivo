@@ -8,7 +8,7 @@ public class ConvertMode_Item : ConvertMode {
 
     protected override void Start() {
         InitParentObjectWithTag(ConvertItem.Objects);
-        InitParentObjectWithTag_Door(ConvertItem.Door);
+        InitParentObjectWithTag_Object2(ConvertItem.Objects_2);
 
         ChangeLayerAllActiveTrue();
     }

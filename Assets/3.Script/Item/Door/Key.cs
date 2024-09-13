@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Key : MonoBehaviour
 {
-    private int password;
+    [SerializeField] private int password;
     private bool isTouched;
     public void SetPassword(int _password) { password = _password; }
     private GateManage gateManage;

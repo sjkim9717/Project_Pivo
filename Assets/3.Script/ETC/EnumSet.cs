@@ -5,7 +5,7 @@ using UnityEngine;
 public enum ConvertItem {
     ParentTile,
     Objects,
-    Door,
+    Objects_2,
     Destroy
 }
 

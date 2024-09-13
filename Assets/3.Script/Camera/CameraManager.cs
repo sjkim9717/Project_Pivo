@@ -1,7 +1,9 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraManager : MonoBehaviour {
     public bool Test;
@@ -35,12 +37,15 @@ public class CameraManager : MonoBehaviour {
             DefaultCameraSetting();
         }
         else {
-            //cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+            if(!Test) cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
             SettingCamerasPriority_Game();
         }
-        FindGameCameraPlayer();
     }
 
+    private void Start() {
+        SettingCameraView();
+        FindGameCameraPlayer();
+    }
 
     private void Update() {
 
@@ -80,11 +85,24 @@ public class CameraManager : MonoBehaviour {
             Debug.LogWarning("CinemachineVirtualCamera is null");
         }
     }
+    private void SettingCameraView() {
+        playerMode = gameCam.GetComponentsInChildren<CinemachineVirtualCamera>();
+        CinemachineTransposer transposer = playerMode[0].GetCinemachineComponent<CinemachineTransposer>();
+
+        if (transposer != null) {
+            // StageLevel에 따른 Follow Offset의 x 값을 설정
+            float offsetX = (GameManager.instance.currentStage == StageLevel.GrassStageLevel_7) ? -35f : 70f;
+
+            Vector3 newOffset = transposer.m_FollowOffset;
+            newOffset.x = offsetX;
+            transposer.m_FollowOffset = newOffset;
+        }
+
+    }
 
     private void SettingGameCameraPlayer() {
 
         // Dead Zone 비활성화 (카메라가 플레이어를 정확히 중앙에 위치시키도록)
-        Debug.Log("?????????");
         playerMode[1].Follow = PlayerManage.instance.Player2D.transform;
         playerMode[1].LookAt = PlayerManage.instance.Player2D.transform;
 

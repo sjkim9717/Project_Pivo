@@ -16,6 +16,9 @@ public abstract class ConvertMode : MonoBehaviour {
     [SerializeField]
     protected List<GameObject> AllObjects = new List<GameObject>();
 
+    public List<GameObject> SelectObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
+
+
     protected virtual void Awake() {
         activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
         activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
@@ -42,7 +45,7 @@ public abstract class ConvertMode : MonoBehaviour {
 
         foreach (GameObject parenttile in parentObject) {
             foreach (Transform child in parenttile.transform) {
-                if(child.name.Contains("Root3D")) {
+                if (child.name.Contains("Root3D")) {
                     AllObjects.Add(child.parent.gameObject);
                 }
                 else if (!child.name.Contains("Root") && !child.name.Contains("3D")) {
@@ -52,15 +55,19 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
-    protected void InitParentObjectWithTag_Door(ConvertItem tagName) {
-
-        parentObject[0] = GameObject.FindGameObjectsWithTag($"{tagName}")[0];
-
-        foreach (Transform child in parentObject[0].transform) {
-            foreach (Transform item in child) {
-                AllObjects.Add(item.gameObject);
+    protected void InitParentObjectWithTag_Object2(ConvertItem tagName) {
+        parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
+        for (int i = 0; i < parentObject.Length; i++) {
+            parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
+        }
+        for (int i = 0; i < parentObject.Length; i++) {
+            foreach (Transform child in parentObject[i].transform) {
+                foreach (Transform item in child) {
+                    AllObjects.Add(item.gameObject);
+                }
             }
         }
+
     }
 
     public virtual void ChangeActiveWithLayer() {
@@ -83,7 +90,18 @@ public abstract class ConvertMode : MonoBehaviour {
     public void ChangeLayerAllActiveTrue() {
         foreach (GameObject each in AllObjects) {
             each.layer = activeTrueLayerIndex;
-            //Debug.LogWarning(" ChangeLayer | " + each.name + " | " + each.layer);
         }
     }
+
+    public void ChangeLayerActiveTrueWhen3DModeCancle() {
+        foreach (GameObject each in AllObjects) {
+            if (SelectObjects.Contains(each)) {
+                each.layer = activeTrueLayerIndex;
+            }
+            else {
+                each.layer = activeFalseLayerIndex;
+            }
+        }
+    }
+
 }

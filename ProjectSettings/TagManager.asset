@@ -14,8 +14,11 @@ TagManager:
   - BombSpawner
   - Bomb
   - Destroy
-  - Door
   - OpenPanel
+  - Tree
+  - Triggers
+  - Puzzle
+  - Objects_2
   layers:
   - Default
   - TransparentFX

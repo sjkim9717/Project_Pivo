@@ -12,7 +12,7 @@ public class PlayerManage : PlayerBase {
 
     private int dieCount;
 
-    public bool isChangingModeTo3D = false;                                             // 2D에서 3D로 넘어갈 경우 -> fall 조절
+    public bool IsChangingModeTo3D = false;                                             // 2D에서 3D로 넘어갈 경우 -> fall 조절
 
     public bool IsBombOnGround;
     private IBomb groundBomb;
@@ -29,8 +29,6 @@ public class PlayerManage : PlayerBase {
 
     public UnityEvent<Vector3> onPlayerEnterTile;
 
-    //private StageClearController stageClear;
-
     protected override void Awake() {
 
         if (_instance == null) {
@@ -44,16 +42,12 @@ public class PlayerManage : PlayerBase {
 
         respawnposition = new GameObject("RespawnPosition").transform;
 
-        //stageClear = FindObjectOfType<StageClearController>();
     }
 
     private void Start() {
         Init();
 
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
-
-        //stageClear.StageClear += ChangeAutoMode;
-
 
         // restart 초기화 값 - diecount, 플레이어 위치, 플레이어 모드
         StaticManager.Restart += Init;

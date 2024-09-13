@@ -19,7 +19,7 @@ public class StaticManager : MonoBehaviour {
     public GameObject PanelGroup;
     public GameObject PauseGroup;
 
-    private PlayerManager playerManager;
+    private PlayerManage playerManager;
     private List<BiscuitController> biscuitControllers = new List<BiscuitController>();
     public int GetBiscuitCount() { return biscuitCount; }
 
@@ -69,12 +69,11 @@ public class StaticManager : MonoBehaviour {
         biscuitCount = 0;
     }
 
-    //TODO: [GameManager] 옮기기 stage 클리어시 secen변경이 일어남 ->변경되는 오브젝트 다시 받아와야함(초기화 다시해야함)
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
         Debug.Log($"Scene loaded: {scene.name}");
         Debug.Log($"Load mode: {mode}");
 
-        playerManager = FindObjectOfType<PlayerManager>();
+        playerManager = FindObjectOfType<PlayerManage>();
 
         LevelInitWhenRestart();
 

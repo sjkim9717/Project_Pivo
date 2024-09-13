@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Door : MonoBehaviour {
-    [SerializeField] private float moveYpos = 7f;
     private float moveSpeed = 3.5f;
-    private int password;
-    private int checkCount;
-    private int requireKeyNum;
+    [SerializeField] private float moveYpos = 7f;
+
+    [SerializeField] private int password;
+    [SerializeField] private int checkCount;
+    [SerializeField] private int requireKeyNum;
+
+    private bool isDoorNeddMove;
+
     public int GetPassword() { return password; }
     public void SetPassword(int _password) { password = _password; }
     public void SetRequireKeyNum(int _requireKeyNum) { requireKeyNum = _requireKeyNum; }
 
     private Vector3 originPos;
     private Vector3 posToMove;
-    private GameObject activeDoor;
+    [SerializeField] private GameObject activeDoor;
     [SerializeField] private List<GameObject> activeDoorKeys = new List<GameObject>();
+
+    private float journeyLength;
+    private float startTime;
 
     private void Awake() {
         activeDoor = transform.Find("Root3D/Activate_Door/Activate_Door_Door").gameObject;
@@ -24,6 +31,7 @@ public class Door : MonoBehaviour {
 
         originPos = activeDoor.transform.position;
         posToMove = new Vector3(activeDoor.transform.position.x, activeDoor.transform.position.y - moveYpos, activeDoor.transform.position.z);
+        journeyLength = Vector3.Distance(originPos, posToMove);
     }
 
     private void Traverse(Transform parent) {
@@ -41,6 +49,25 @@ public class Door : MonoBehaviour {
         HideKeyInRandom(requireKeyNum);
     }
 
+    private void Update() {
+        if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+            if (isDoorNeddMove) {
+                // 현재 시간과 여정을 계산
+                float distanceCovered = (Time.time - startTime) * moveSpeed;
+                float fractionOfJourney = distanceCovered / journeyLength;
+
+                // 문 위치를 보간하여 이동
+                activeDoor.transform.position = Vector3.Lerp(originPos, posToMove, fractionOfJourney);
+
+                // 이동 완료 체크
+                if (fractionOfJourney >= 1f) {
+                    activeDoor.transform.position = posToMove; // 최종 위치 설정
+                    isDoorNeddMove = false; // 이동 완료 후 플래그 리셋
+                }
+            }
+        }
+    }
+
     public void CheckKeyCount() {
         checkCount++;
         // 문 filling 할수있으면 할 것
@@ -49,8 +76,8 @@ public class Door : MonoBehaviour {
 
         if (checkCount >= requireKeyNum) {
             // 문이 내려가야함
-            StartCoroutine(MoveActiveDoorWhenKeyFound());
-
+            isDoorNeddMove = true;
+            startTime = Time.time;
             if (checkCount > requireKeyNum) {
                 Debug.LogWarning("확인된 키가 필요한 키의 갯수보다 많음");
             }
@@ -84,17 +111,12 @@ public class Door : MonoBehaviour {
     private void HideKeyInRandom(int keysToHide) {
 
         int randomNumber = Random.Range(0, activeDoorKeys.Count);
+        int keysHidden = 0;
 
-        for (int i = 0; i < activeDoorKeys.Count; i++) {
-            if (i == randomNumber) {
-                activeDoorKeys[i].SetActive(false);
-                if (i == activeDoorKeys.Count - 1) {
-                    activeDoorKeys[0].SetActive(false);
-                }
-                else {
-                    activeDoorKeys[i + 1].SetActive(false);
-                }
-            }
+        while (keysHidden < keysToHide) {
+            int indexToHide = (randomNumber + keysHidden) % activeDoorKeys.Count;
+            activeDoorKeys[indexToHide].SetActive(false);
+            keysHidden++;
         }
     }
 

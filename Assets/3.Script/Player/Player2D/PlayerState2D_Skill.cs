@@ -18,7 +18,7 @@ public class PlayerState2D_Skill : PlayerState2D {
         }
 
         PlayerManage.instance.CurrentMode = PlayerMode.Player3D;
-        PlayerManage.instance.isChangingModeTo3D = true;
+        PlayerManage.instance.IsChangingModeTo3D = true;
         PlayerManage.instance.SwitchMode();
 
         //ChangeState();
@@ -34,7 +34,7 @@ public class PlayerState2D_Skill : PlayerState2D {
             }
 
             PlayerManage.instance.CurrentMode = PlayerMode.Player3D;
-            PlayerManage.instance.isChangingModeTo3D = true; 
+            PlayerManage.instance.IsChangingModeTo3D = true; 
             PlayerManage.instance.SwitchMode();
         }
 

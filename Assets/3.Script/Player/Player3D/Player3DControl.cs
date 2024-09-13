@@ -124,7 +124,7 @@ public class Player3DControl : MonoBehaviour {
         positionToMove = Vector3.zero;
 
         if (horizontalInput != 0 || verticalInput != 0) {
-            PlayerRigid.constraints = RigidbodyConstraints.None;
+            PlayerRigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             // 방향 벡터를 생성
             Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
 

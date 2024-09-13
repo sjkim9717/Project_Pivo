@@ -8,18 +8,26 @@ public class PlayerState3D_Holding : PlayerState3D {
     [SerializeField] private float stayTime = 0.5f;
 
     private GameObject holdingGroup;
-    private StaticManager staticManager;
+
+    private ConvertMode[] convertMode;
+
     protected override void OnEnable() {
         base.OnEnable();
     }
 
-    private void Start() {
-        staticManager = FindObjectOfType<StaticManager>();
-        holdingGroup = staticManager.gameObject.transform.GetChild(2).gameObject;
+    protected override void Awake() {
+        base.Awake();
+        holdingGroup = FindObjectOfType<GameManager>().transform.GetChild(0).GetChild(2).gameObject;
+
+        convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
+
+        convertMode[0] = FindObjectOfType<ConvertMode_Tile>();
+        convertMode[1] = FindObjectOfType<ConvertMode_Item>();
+        convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
     }
 
     public override void EnterState() {
-        PlayerManage.instance.isChangingModeTo3D = false;
+        PlayerManage.instance.IsChangingModeTo3D = false;
         Control3D.Ani3D.SetBool("IsFalling", true);
         holdingGroup.SetActive(true);
 
@@ -47,9 +55,14 @@ public class PlayerState3D_Holding : PlayerState3D {
                     Control3D.ChangeState(PlayerState.Falling);
                 }
                 else if (skillSectionInput != 0) {
-
+                    PlayerManage.instance.IsChangingModeTo3D = true;
+                    //TODO: 2D로 변경되면 잘려있는 친구들은 남아있어야함
                     PlayerManage.instance.CurrentMode = PlayerMode.Player2D;
-                    PlayerManage.instance.SwitchMode();
+                    foreach (ConvertMode item in convertMode) {
+                        item.ChangeLayerActiveTrueWhen3DModeCancle();
+                        item.ChangeActiveWithLayer();
+                    }
+                    PlayerManage.instance.Change2D();
                     Debug.Log("2D 모드로 전환됨");
                 }
             }

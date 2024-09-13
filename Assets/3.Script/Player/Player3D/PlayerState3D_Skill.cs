@@ -15,8 +15,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
     private GameObject sectionLine;
     private GameObject sectionLine_First;
-    [SerializeField]
-    private List<GameObject>[] selectObjects;              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
+
     private List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
 
     private ConvertMode[] convertMode;
@@ -42,10 +41,6 @@ public class PlayerState3D_Skill : PlayerState3D {
         convertMode[1] = FindObjectOfType<ConvertMode_Item>();
         convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
 
-        selectObjects = new List<GameObject>[convertMode.Length];
-        for (int i = 0; i < selectObjects.Length; i++) {
-            selectObjects[i] = new List<GameObject>();
-        }
     }
 
     public override void EnterState() {
@@ -98,8 +93,8 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
 
-                for (int i = 0; i < selectObjects.Length; i++) {
-                    convertMode[i].ChangeLayerActiveFalse(selectObjects[i]);
+                for (int i = 0; i < convertMode.Length; i++) {
+                    convertMode[i].ChangeLayerActiveFalse(convertMode[i].SelectObjects);
                 }
 
                 PlayerManage.instance.CurrentMode = PlayerMode.Player2D;
@@ -134,7 +129,7 @@ public class PlayerState3D_Skill : PlayerState3D {
             sectionLine.SetActive(false);
             sectionLine_First.SetActive(false);
 
-            PlayerManage.instance.isChangingModeTo3D = false;
+            PlayerManage.instance.IsChangingModeTo3D = false;
             Control3D.ChangeState(PlayerState.Idle);
         }
         else if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -189,16 +184,16 @@ public class PlayerState3D_Skill : PlayerState3D {
 
     // convertMode가 여러개 있을 경우 전체 담아서 초기화
     public void ResetSelectObject() {
-        if (selectObjects[0] == null) return;
+        if (convertMode[0].SelectObjects == null) return;
 
-        foreach (var item in selectObjects[0]) {
+        foreach (var item in convertMode[0].SelectObjects) {
             item.GetComponentInChildren<TileController>().InitMaterial();
         }
 
         blockObjects.Clear();
 
         for (int i = 0; i < convertMode.Length; i++) {
-            selectObjects[i].Clear();
+            convertMode[i].SelectObjects.Clear();
         }
 
         foreach (ConvertMode item in convertMode) {
@@ -230,8 +225,14 @@ public class PlayerState3D_Skill : PlayerState3D {
             string tagName = currentTransform.tag;
 
             if (Enum.TryParse(tagName, out ConvertItem tagEnum)) {
-                GameObject parent = hit.transform.parent.gameObject;
-                AddSelectObjectsWithTag(tagEnum, parent);
+
+                Transform parent = hit.transform.parent;
+                if (parent.CompareTag("PushBox")) {
+                    AddSelectObjectsWithTag(tagEnum, parent.parent.gameObject);
+                }
+                else {
+                    AddSelectObjectsWithTag(tagEnum, parent.gameObject);
+                }
             }
         }
     }
@@ -240,22 +241,22 @@ public class PlayerState3D_Skill : PlayerState3D {
 
         switch (tagName) {
             case ConvertItem.ParentTile:
-                if (!selectObjects[0].Contains(parent)) {
+                if (!convertMode[0].SelectObjects.Contains(parent)) {
                     //Debug.Log("ParentTile Hit: " + parent.name);
-                    selectObjects[0].Add(parent);
+                    convertMode[0].SelectObjects.Add(parent);
                 }
                 break;
             case ConvertItem.Objects:
-            case ConvertItem.Door:
-                if (!selectObjects[1].Contains(parent)) {
+            case ConvertItem.Objects_2:
+                if (!convertMode[1].SelectObjects.Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
-                    selectObjects[1].Add(parent);
+                    convertMode[1].SelectObjects.Add(parent);
                 }
                 break;
             case ConvertItem.Destroy:
-                if (!selectObjects[2].Contains(parent)) {
+                if (!convertMode[2].SelectObjects.Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
-                    selectObjects[2].Add(parent);
+                    convertMode[2].SelectObjects.Add(parent);
                 }
                 break;
             default:
@@ -271,10 +272,10 @@ public class PlayerState3D_Skill : PlayerState3D {
     }
 
     private void ChangeBlockObjectMaterial() {
-        if (selectObjects == null) return;
+        if (convertMode[0].SelectObjects == null) return;
         blockObjects.Clear();
 
-        foreach (GameObject each in selectObjects[0]) {
+        foreach (GameObject each in convertMode[0].SelectObjects) {
             Vector2 playerXYpos = new Vector2(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y);
             Vector2 eachXYpos = new Vector2(each.transform.position.x, each.transform.position.y);
 

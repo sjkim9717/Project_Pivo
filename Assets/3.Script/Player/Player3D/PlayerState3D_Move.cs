@@ -31,7 +31,7 @@ public class PlayerState3D_Move : PlayerState3D {
         }
         else if (horizontalInput != 0 || verticalInput != 0) {
             
-            PlayerManage.instance.isChangingModeTo3D = false;
+            PlayerManage.instance.IsChangingModeTo3D = false;
             Control3D.Move(horizontalInput, verticalInput);
         }
         else if (horizontalInput == 0 && verticalInput == 0) {

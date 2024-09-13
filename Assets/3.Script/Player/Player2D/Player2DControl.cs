@@ -88,13 +88,18 @@ public class Player2DControl : MonoBehaviour {
         positionToMove = Vector3.zero;
 
         if (horizontalInput != 0) {
+            PlayerRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
             transform.localScale = new Vector3(moveDirection, 1f, 1f);
             positionToMove = Vector3.right * moveSpeed * horizontalInput * Time.fixedDeltaTime;
 
             PlayerRigid.MovePosition(PlayerRigid.position + (Vector2)positionToMove);
         }
+        else {
+            PlayerRigid.velocity = new Vector3(0, PlayerRigid.velocity.y, 0);
+            PlayerRigid.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
 
+        }
     }
 
     // 바닥 오브젝트 확인
@@ -148,14 +153,14 @@ public class Player2DControl : MonoBehaviour {
             if (!eachParent.transform.Find("Root3D").CompareTag("ClimbObj")) continue;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    Debug.Log("bottomObstacle | " + eachParent.name);
+                    //Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    Debug.Log("topObstacles | " + eachParent.name);
+                    //Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
