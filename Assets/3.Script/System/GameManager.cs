@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour {
     public StageLevel currentStage;
     private GameObject staticGroup;
     //private GameObject UI_Title;
+
+    private PlayableDirector StageClear_Director;
 
     private StageClearController[] stageClearController;
 
@@ -56,7 +59,6 @@ public class GameManager : MonoBehaviour {
             staticGroup.SetActive(true);
 
             stageClearController = FindObjectsOfType<StageClearController>();
-
             // StageClear 이벤트 구독
             foreach (var controller in stageClearController) {
                 if (controller != null) {
@@ -64,6 +66,15 @@ public class GameManager : MonoBehaviour {
                     if (!controller.StageClear.GetInvocationList().Contains((Action)OnStageClear)) {
                         controller.StageClear += OnStageClear;
                     }
+                }
+            }
+
+            // StageClear시 재생될 Timeline 불러오기
+            PlayableDirector[] playableDirectors = FindObjectsOfType<PlayableDirector>();
+            foreach (PlayableDirector item in playableDirectors) {
+                if (item.name.Contains("StageClear_TimeLine")) {
+                    StageClear_Director = item.GetComponent<PlayableDirector>();
+                    break;
                 }
             }
         }
@@ -76,7 +87,13 @@ public class GameManager : MonoBehaviour {
         //TODO: outro
         Save.instance.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
         Save.instance.SaveGame();
-        SceneManager.LoadScene("StageSelect_Grass");
+
+
+        FindObjectOfType<CameraManager>().SettingCamerasPriority_StageClear();
+        StageClear_Director.Play();
+
+
+        //SceneManager.LoadScene("StageSelect_Grass");
     }
 
     // scene이 로드될경우 해당씬 확인

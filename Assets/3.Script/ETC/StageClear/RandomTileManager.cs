@@ -4,15 +4,11 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 public class RandomTileManager : MonoBehaviour {
-
-    private double signalTime;
-
+    [SerializeField] private float movingSpeed = 0.1f;                              // y좌표를 0으로 이동시킬 시간
     private Transform randomTileParent;
     [SerializeField]private List<GameObject> tileGroups = new List<GameObject>();
-    private PlayableDirector stageClearDirector;
 
     private void Awake() {
-        stageClearDirector = GetComponent<PlayableDirector>();
         randomTileParent = transform.GetChild(1);
 
         foreach (Transform child in randomTileParent) {
@@ -25,9 +21,6 @@ public class RandomTileManager : MonoBehaviour {
 
     //TODO: palyable director - random tile 활성화 타임 + signal 추가해서 메소드 연결해야함 
     public void MoveRandomTile() {
-        signalTime = stageClearDirector.time;
-        stageClearDirector.Pause();
-        Debug.LogWarning(" i need play Pause ");
 
         StartCoroutine(MoveTilesSequentially());
 
@@ -38,20 +31,15 @@ public class RandomTileManager : MonoBehaviour {
         foreach (var tileGroup in tileGroups) {
             yield return StartCoroutine(MoveTileToZeroY(tileGroup));
         }
-
-        // 타일 이동이 완료된 후 time을 설정하고 재생
-        stageClearDirector.time = signalTime + 0.05;
-        stageClearDirector.Play();
     }
 
     public IEnumerator MoveTileToZeroY(GameObject tileGroup) {
-        float duration = 0.5f; // y좌표를 0으로 이동시킬 시간
         float elapsedTime = 0f;
         Vector3 startPos = tileGroup.transform.localPosition; // 시작 위치
 
-        while (elapsedTime < duration) {
+        while (elapsedTime < movingSpeed) {
             elapsedTime += Time.deltaTime;
-            float newY = Mathf.Lerp(startPos.y, 0, elapsedTime / duration);
+            float newY = Mathf.Lerp(startPos.y, 0, elapsedTime / movingSpeed);
             tileGroup.transform.localPosition = new Vector3(startPos.x, newY, startPos.z);
             yield return null;
         }

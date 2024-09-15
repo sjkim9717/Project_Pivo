@@ -20,7 +20,7 @@ public class CameraManager : MonoBehaviour {
     private CinemachineVirtualCamera[] playerMode;
     private bool isCentered = false; // 플레이어를 한 번만 중앙에 고정하기 위한 플래그
 
-    private enum CameraType { CanvasCamera, IntroCam1, IntroCam2, GameCam }
+    private enum CameraType { CanvasCamera, IntroCam1, IntroCam2, StageClearCam, GameCam }
 
     private void Awake() {
         camAni = GetComponent<Animator>();
@@ -29,15 +29,19 @@ public class CameraManager : MonoBehaviour {
         gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
 
         // Initialize all cameras including gameCam
-        cameras = new CinemachineVirtualCamera[3];
+        cameras = new CinemachineVirtualCamera[4];
         if (GameManager.isLoadTitle && Test) {
             cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
             cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
             cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+            cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
             DefaultCameraSetting();
         }
         else {
-            if(!Test) cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+            if (!Test) {
+                cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+                cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
+            }
             SettingCamerasPriority_Game();
         }
     }
@@ -160,6 +164,11 @@ public class CameraManager : MonoBehaviour {
     // 게임 카메라 설정
     public void SettingCamerasPriority_Game() {
         SetCameraPriority(CameraType.GameCam);  // 게임 카메라 활성화
+    }
+        
+    // StageClear 카메라 설정
+    public void SettingCamerasPriority_StageClear() {
+        SetCameraPriority(CameraType.StageClearCam);  // 게임 카메라 활성화
     }
 
 

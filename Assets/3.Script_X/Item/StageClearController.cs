@@ -19,6 +19,11 @@ public class StageClearController : MonoBehaviour {
             StageClear?.Invoke();
         }
     }
+
+    //TODO: stage clear test 지울것
+    public void StageClearTest() {
+        StageClear?.Invoke();
+    }
 }
 
 /*
