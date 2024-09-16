@@ -108,6 +108,8 @@ public class StaticManager : MonoBehaviour {
     }
     public void ButtonOnClick_StageSelect() {
         SceneManager.LoadScene("StageSelect_Grass");
+        //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
+
     }
 }
 

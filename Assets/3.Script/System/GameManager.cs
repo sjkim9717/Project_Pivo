@@ -74,10 +74,15 @@ public class GameManager : MonoBehaviour {
             foreach (PlayableDirector item in playableDirectors) {
                 if (item.name.Contains("StageClear_TimeLine")) {
                     StageClear_Director = item.GetComponent<PlayableDirector>();
+                    StageClear_Director.stopped += StageClear_Director_Finished;
                     break;
                 }
             }
         }
+    }
+
+    private void StageClear_Director_Finished(PlayableDirector obj) {
+        transform.GetChild(3).gameObject.SetActive(true);
     }
 
     // StageClear 이벤트가 호출될 때 실행될 메서드
@@ -92,8 +97,6 @@ public class GameManager : MonoBehaviour {
         FindObjectOfType<CameraManager>().SettingCamerasPriority_StageClear();
         StageClear_Director.Play();
 
-
-        //SceneManager.LoadScene("StageSelect_Grass");
     }
 
     // scene이 로드될경우 해당씬 확인

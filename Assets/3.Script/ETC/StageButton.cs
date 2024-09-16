@@ -13,6 +13,7 @@ public class StageButton : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Player")) {
+            stageSelect.SelectStageLevel_Stage(ButtonStageLevel);
             stageSelect.SelectStageLevel(ButtonStageLevel);
         }
     }

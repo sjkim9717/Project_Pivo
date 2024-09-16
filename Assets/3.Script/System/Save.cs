@@ -31,6 +31,15 @@ public class Save : MonoBehaviour
         InitializeData();
     }
 
+    private void InitializeData() {
+        foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
+            GameSaveData.Add(new StageLevelData {
+                StageLevel = level,
+                IsStageClear = false,
+                StageScore = 0
+            });
+        }
+    }
 
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
@@ -52,15 +61,6 @@ public class Save : MonoBehaviour
         File.WriteAllText(SaveJsonFilePath, jsonData);
     }
 
-    private void InitializeData() {
-        foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
-            GameSaveData.Add(new StageLevelData {
-                StageLevel = level,
-                IsStageClear = false,
-                StageScore = 0
-            });
-        }
-    }
 
 
     public StageLevelData GetStageLevelData(StageLevel level) {
