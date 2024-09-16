@@ -38139,7 +38139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d059c735f27512b4ba31b04079ea24e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Test: 0
+  Test: 1
 --- !u!95 &510609385
 Animator:
   serializedVersion: 3
@@ -60500,9 +60500,7 @@ MonoBehaviour:
   m_AnimatedTarget: {fileID: 510609385}
   m_LayerIndex: 0
   m_ShowDebugText: 0
-  m_ChildCameras:
-  - {fileID: 195312856}
-  - {fileID: 221541522}
+  m_ChildCameras: []
   m_Instructions:
   - m_FullHash: -309722836
     m_VirtualCamera: {fileID: 195312856}
@@ -139351,7 +139349,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 419563673}
         m_TargetAssemblyTypeName: StageClearController, Assembly-CSharp
         m_MethodName: StageClearTest
         m_Mode: 1
@@ -149493,6 +149491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsTutorialCompleted: 0
   currentStage: 0
+  PreviousGameStage: 0
 --- !u!114 &6147655752209370986
 MonoBehaviour:
   m_ObjectHideFlags: 0

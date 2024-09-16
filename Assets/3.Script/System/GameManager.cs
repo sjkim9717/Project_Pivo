@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour {
 
     public static bool isLoadTitle=true;
     public bool IsTutorialCompleted;
-    public StageLevel currentStage;
+    public StageLevel currentStage;                         // 현재 씬
+    public StageLevel PreviousGameStage;                    // select scene에서 확인할 이전 게임 씬 이름
     private GameObject staticGroup;
     //private GameObject UI_Title;
 
@@ -46,6 +47,9 @@ public class GameManager : MonoBehaviour {
     private void FindScenLevelWhenLevelChange(Scene scene, LoadSceneMode mode) {
         string sceneName = SceneManager.GetActiveScene().name;
         currentStage  =  SelectSceneLevelWithSceneName( sceneName);
+
+        if (currentStage!=StageLevel.StageSelect) PreviousGameStage = currentStage;
+        else PreviousGameStage = StageLevel.GrassStageLevel_1;
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
@@ -161,6 +165,7 @@ public class GameManager : MonoBehaviour {
                 sceneName = "SnowStage_Stage7";
                 break;
             case StageLevel.StageSelect:
+                sceneName = "StageSelect_Grass";
                 break;
             default:
                 break;
