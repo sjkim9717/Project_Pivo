@@ -10,15 +10,14 @@ public class UserData : MonoBehaviour {
 
     protected StageLevel selectStageLevel = StageLevel.StageSelect;
 
-    //TODO: 별 개수 바꿔야함!!!
     protected Dictionary<StageLevel, int[]> StageRequiementScore = new Dictionary<StageLevel, int[]> {
         {StageLevel.GrassStageLevel_1, new int[] { 0, 11, 15} },
         {StageLevel.GrassStageLevel_5, new int[] { 0, 8, 14} },
         {StageLevel.GrassStageLevel_7, new int[] { 0, 11, 15} },
-        {StageLevel.SnowStageLevel_3, new int[] { 0, 11, 15} },
-        {StageLevel.SnowStageLevel_4, new int[] { 0, 11, 15} },
-        {StageLevel.SnowStageLevel_6, new int[] { 0, 11, 15} },
-        {StageLevel.SnowStageLevel_7, new int[] { 0, 11, 15} }
+        {StageLevel.SnowStageLevel_3, new int[] { 0, 10, 17} },
+        {StageLevel.SnowStageLevel_4, new int[] { 0, 10, 17 } },
+        {StageLevel.SnowStageLevel_6, new int[] { 0, 10, 23} },
+        {StageLevel.SnowStageLevel_7, new int[] { 0, 8, 18} }
     };
 
     public void SelectStageLevel(StageLevel stageLevel) {

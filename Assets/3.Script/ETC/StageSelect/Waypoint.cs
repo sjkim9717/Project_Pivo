@@ -41,7 +41,7 @@ public class Waypoint : MonoBehaviour {
             StageLevel.SnowStageLevel_3,
             new Dictionary<Direction, StageLevel> {
                 { Direction.Left, StageLevel.GrassStageLevel_7 },
-                { Direction.Right, StageLevel.SnowStageLevel_4 }
+                { Direction.Up, StageLevel.SnowStageLevel_4 }
             }
         },
         {
@@ -97,7 +97,7 @@ public class Waypoint : MonoBehaviour {
             // 변경가능한 방향 배열 중 입력된 방향의 스테이지를 들고옴
             if (validDirections.TryGetValue(direction, out StageLevel stage)) {
                 selectLevel = stage;
-                Debug.Log(" 입력된 방향 스테이지 확인 | " + stage);
+                //Debug.Log(" 입력된 방향 스테이지 확인 | " + stage);
                 return true;
             }
         }
@@ -111,14 +111,14 @@ public class Waypoint : MonoBehaviour {
         if (Save.instance.TryGetStageClear(currentLevel, out isClear)) {            // 고른 스테이지가 현재 스테이지보다 높은 경우
             if (isClear) {
                 nextWaypoint = FindCurrentPosition(selectLevel);
-                Debug.Log("  고른 스테이지가 현재 스테이지보다 높은 경우 스테이지 확인 | " + selectLevel);
+                //Debug.Log("  고른 스테이지가 현재 스테이지보다 높은 경우 스테이지 확인 | " + selectLevel);
                 return true;
             }
             else {
                 if (Save.instance.TryGetStageClear(selectLevel, out isClear)) {     // 고른 스테이지가 현재 스테이지보다 낮은 경우
                     if (isClear) {
                         nextWaypoint = FindCurrentPosition(selectLevel);
-                        Debug.Log(" 고른 스테이지가 현재 스테이지보다 낮은 경우 스테이지 확인 | " + selectLevel);
+                        //Debug.Log(" 고른 스테이지가 현재 스테이지보다 낮은 경우 스테이지 확인 | " + selectLevel);
                         return true;
                     }
                 }

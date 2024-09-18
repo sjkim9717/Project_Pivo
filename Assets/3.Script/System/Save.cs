@@ -5,16 +5,15 @@ using System;
 using System.IO;
 
 
-public class Save : MonoBehaviour
-{
+public class Save : MonoBehaviour {
     public static Save instance = null;
 
-    public List<StageLevelData> GameSaveData = new List<StageLevelData>();
+    public GameData GameData = new GameData();
 
     private string SaveJsonFilePath;
 
     private void Awake() {
-        if(instance == null) {
+        if (instance == null) {
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -27,19 +26,36 @@ public class Save : MonoBehaviour
             Directory.CreateDirectory(Path.GetDirectoryName(SaveJsonFilePath));
         }
         Debug.Log("Save file path :" + SaveJsonFilePath);
-
-        InitializeData();
+        LoadGame();
     }
 
     private void InitializeData() {
+        GameData.GameSaveData.Clear();
         foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
-            GameSaveData.Add(new StageLevelData {
+            Debug.Log($"Adding level: {level}");
+            GameData.GameSaveData.Add(new StageLevelData {
                 StageLevel = level,
                 IsStageClear = false,
                 StageScore = 0
             });
         }
     }
+
+    private void LoadGame() {
+        if (File.Exists(SaveJsonFilePath)) {
+            string jsonData = File.ReadAllText(SaveJsonFilePath);
+            GameData loadedData = JsonUtility.FromJson<GameData>(jsonData);
+
+            // 로드한 데이터로 GameSaveData 업데이트
+            GameData.GameSaveData = loadedData.GameSaveData;
+            Debug.Log("Game data loaded successfully.");
+        }
+        else {
+            Debug.LogWarning("Save file does not exist, initializing new data.");
+            InitializeData();
+        }
+    }
+
 
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
@@ -52,19 +68,25 @@ public class Save : MonoBehaviour
 
     public void MakeNewGame() {
         GameManager.instance.IsTutorialCompleted = false;
-        GameSaveData = new List<StageLevelData>();
+        // 기존 데이터 삭제
+        if (File.Exists(SaveJsonFilePath)) {
+            File.Delete(SaveJsonFilePath); // 기존 파일 삭제
+        }
+        GameData = new GameData();
+        InitializeData();
         SaveGame();  // 새로 만든 데이터를 저장
     }
 
     public void SaveGame() {
-        string jsonData = JsonUtility.ToJson(GameSaveData, true);
+        GameData gameData = new GameData { GameSaveData = GameData.GameSaveData };
+        string jsonData = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(SaveJsonFilePath, jsonData);
     }
 
 
 
     public StageLevelData GetStageLevelData(StageLevel level) {
-        return GameSaveData.Find(data => data.StageLevel == level);
+        return GameData.GameSaveData.Find(data => data.StageLevel == level);
     }
     public bool TryGetStageClear(StageLevel level, out bool isClear) {
         var data = GetStageLevelData(level);

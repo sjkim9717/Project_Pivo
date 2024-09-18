@@ -95,6 +95,7 @@ public class GameManager : MonoBehaviour {
         PlayerManage.instance.ChangeAutoMode();
         //TODO: outro
         Save.instance.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
+        Debug.LogWarning("save Data | " + Save.instance.GameData);
         Save.instance.SaveGame();
 
 
@@ -172,9 +173,6 @@ public class GameManager : MonoBehaviour {
         }
         SceneManager.LoadScene(sceneName);
     }
-
-
-
 
 }
 

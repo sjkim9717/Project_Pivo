@@ -355,7 +355,7 @@
     },
     "m_Name": "IsStageClear",
     "m_DefaultReferenceName": "Boolean_0b525480bf584f7da9bb96b18336a27d",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_IsStageClear",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
     "overrideHLSLDeclaration": false,

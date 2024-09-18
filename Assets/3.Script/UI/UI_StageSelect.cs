@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class StageSelectController : UserData {
+public class UI_StageSelect : UserData {
 
     public RectTransform ScoreTexts;
 
