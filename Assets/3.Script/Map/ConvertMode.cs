@@ -26,17 +26,6 @@ public abstract class ConvertMode : MonoBehaviour {
 
     protected abstract void Start();
 
-    private Material LoadMaterial(string path) {
-        Material material = Resources.Load<Material>(path);
-        if (material != null) {
-            Debug.Log($"Loaded Material: {material.name}");
-        }
-        else {
-            Debug.LogWarning($"Material not found at path: {path}");
-        }
-        return material;
-    }
-
     protected void InitParentObjectWithTag(ConvertItem tagName) {
         parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
         for (int i = 0; i < parentObject.Length; i++) {
@@ -46,10 +35,15 @@ public abstract class ConvertMode : MonoBehaviour {
         foreach (GameObject parenttile in parentObject) {
             foreach (Transform child in parenttile.transform) {
                 if (child.name.Contains("Root3D")) {
-                    AllObjects.Add(child.parent.gameObject);
+                    GameObject parentGameObject = child.parent.gameObject;
+                    if (!AllObjects.Contains(parentGameObject)) {
+                        AllObjects.Add(parentGameObject);
+                    }
                 }
                 else if (!child.name.Contains("Root") && !child.name.Contains("3D")) {
-                    AllObjects.Add(child.gameObject);
+                    if (!AllObjects.Contains(child.gameObject)) {
+                        AllObjects.Add(child.gameObject);
+                    }
                 }
             }
         }
@@ -63,7 +57,9 @@ public abstract class ConvertMode : MonoBehaviour {
         for (int i = 0; i < parentObject.Length; i++) {
             foreach (Transform child in parentObject[i].transform) {
                 foreach (Transform item in child) {
-                    AllObjects.Add(item.gameObject);
+                    if (!AllObjects.Contains(item.gameObject)) {
+                        AllObjects.Add(item.gameObject);
+                    }
                 }
             }
         }

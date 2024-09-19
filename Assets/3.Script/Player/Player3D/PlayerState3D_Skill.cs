@@ -91,6 +91,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
 
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
+
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
 
                 for (int i = 0; i < convertMode.Length; i++) {
@@ -187,9 +188,8 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (convertMode[0].SelectObjects == null) return;
 
         foreach (var item in convertMode[0].SelectObjects) {
-            if (item.TryGetComponent(out TileController tile)) {
-                tile.InitMaterial();
-            }
+            TileController tile = item.GetComponentInChildren<TileController>();
+            tile?.InitMaterial();
         }
 
         blockObjects.Clear();
@@ -223,6 +223,10 @@ public class PlayerState3D_Skill : PlayerState3D {
             while (currentTransform.parent != null) {
                 currentTransform = currentTransform.parent;
             }
+
+            //TODO: 최상위 부모가 select object에 잡히는 이유를 모르겠음 
+            if (currentTransform == hit.transform) continue;
+
             // 최상위 부모의 태그 확인
             string tagName = currentTransform.tag;
 

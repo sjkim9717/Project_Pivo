@@ -100,15 +100,21 @@ public class Bomb : MonoBehaviour, IBomb {
             RaycastHit[] hits = Physics.BoxCastAll(transform.position, boxSize, transform.up, Quaternion.identity, 0);
 
             foreach (RaycastHit item in hits) {
-                if (item.collider.CompareTag("Destroy") || item.transform.parent.CompareTag("Destroy")) {
-                    item.collider.gameObject.SetActive(false);
-                    destroyComponent.DeleteDestroiedObject(item.collider.gameObject);
+                if (!item.collider.name.Contains("Root3D")) {
+                    if (item.collider.CompareTag("Destroy") ) {
+                        Debug.LogWarning("IBombExplosion | " + item.collider.name);
+
+                        item.collider.gameObject.SetActive(false);
+                        destroyComponent.DeleteDestroiedObject(item.collider.gameObject);
+                    }
                 }
+
             }
         }
         else if (PlayerManage.instance.CurrentMode == PlayerMode.Player2D) {
             Vector2 boxSize = new Vector3(4f, 4f, 2f);
             RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, boxSize, 0, transform.up, 0);
+
             Debug.Log(" 2D 모드 hits length | " + hits.Length);
             foreach (RaycastHit2D item in hits) {
                 if (item.transform.parent.CompareTag("Destroy")) {

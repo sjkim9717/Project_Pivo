@@ -31,7 +31,6 @@ public class TileController : MonoBehaviour {
         if (tileRenderer.materials[0] == defaltMaterial) return;
         Material[] newMaterials = new Material[tileRenderer.materials.Length];
         newMaterials[0] = defaltMaterial;
-
         tileRenderer.materials = newMaterials;
     }
 
