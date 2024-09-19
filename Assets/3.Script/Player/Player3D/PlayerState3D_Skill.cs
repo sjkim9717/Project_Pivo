@@ -125,7 +125,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
         if (interactionInput != 0) {       // cancle
             skillCount = 0;
-
+            ResetSelectObject();
             sectionLine.SetActive(false);
             sectionLine_First.SetActive(false);
 
@@ -187,7 +187,9 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (convertMode[0].SelectObjects == null) return;
 
         foreach (var item in convertMode[0].SelectObjects) {
-            item.GetComponentInChildren<TileController>().InitMaterial();
+            if (item.TryGetComponent(out TileController tile)) {
+                tile.InitMaterial();
+            }
         }
 
         blockObjects.Clear();
@@ -227,12 +229,11 @@ public class PlayerState3D_Skill : PlayerState3D {
             if (Enum.TryParse(tagName, out ConvertItem tagEnum)) {
 
                 Transform parent = hit.transform.parent;
-                if (parent.CompareTag("PushBox")) {
-                    AddSelectObjectsWithTag(tagEnum, parent.parent.gameObject);
-                }
-                else {
-                    AddSelectObjectsWithTag(tagEnum, parent.gameObject);
-                }
+
+                // 부모의 두 번째 레벨까지 확인
+                Transform targetTransform = parent?.parent != null && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
+
+                AddSelectObjectsWithTag(tagEnum, targetTransform.gameObject);
             }
         }
     }

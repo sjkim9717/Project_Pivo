@@ -89,7 +89,14 @@ public abstract class ConvertMode : MonoBehaviour {
 
     public void ChangeLayerAllActiveTrue() {
         foreach (GameObject each in AllObjects) {
+            //TODO: object2에서 자식객체 레이어 돌려야함
+
             each.layer = activeTrueLayerIndex;
+            if (each.CompareTag("PushBox")) {
+                foreach (Transform item in each.transform) {
+                    item.gameObject.layer = activeTrueLayerIndex;
+                }
+            }
         }
     }
 
