@@ -29,6 +29,7 @@ public class CameraManager : MonoBehaviour {
         gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
 
         // Initialize all cameras including gameCam
+        //TODO: Test 지울것!!!!!!!!!!!!!!!!!
         cameras = new CinemachineVirtualCamera[4];
         if (GameManager.isLoadTitle && Test) {
             cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();

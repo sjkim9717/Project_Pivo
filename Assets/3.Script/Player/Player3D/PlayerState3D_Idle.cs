@@ -27,12 +27,6 @@ public class PlayerState3D_Idle : PlayerState3D {
         if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
             return;
         }
-        else if (PlayerManage.instance.CurrentState == PlayerState.Disable) {
-            if (Input.GetKeyDown(KeyCode.Escape)) {
-                Control3D.ChangeState(PlayerState.Idle);
-            }
-            else return;
-        }
 
 
         if (Control3D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인

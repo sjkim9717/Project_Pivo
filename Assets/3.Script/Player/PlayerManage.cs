@@ -8,13 +8,17 @@ public class PlayerManage : PlayerBase {
     private static PlayerManage _instance;
     public static PlayerManage instance { get { return _instance; } }
 
+    public Action IsSwitchMode;
     public static Action PlayerDead;
+    public UnityEvent<Vector3> onPlayerEnterTile;
+
+    private Transform respawnposition;                                                  // 큐브위로 올라갈때 위치가 변경될 경우만 잡아서 갱신할 것 \=
+    public Transform Respawnposition { get { return respawnposition; } }
 
     private int dieCount;
-
-    public bool IsChangingModeTo3D = false;                                             // 2D에서 3D로 넘어갈 경우 -> fall 조절
-
     public bool IsBombOnGround;
+    public bool IsChangingModeTo3D = false;                                             // 2D에서 3D로 넘어갈 경우 -> fall 조절
+    
     private IBomb groundBomb;
 
     public int GetPlayerDieCount() {
@@ -24,10 +28,7 @@ public class PlayerManage : PlayerBase {
 
     public void SetPlayerDieCount() { dieCount++; }                                     // 죽었을 경우 Die Count 증가
 
-    private Transform respawnposition;                                                  // 큐브위로 올라갈때 위치가 변경될 경우만 잡아서 갱신할 것 \=
-    public Transform Respawnposition { get { return respawnposition; } }
 
-    public UnityEvent<Vector3> onPlayerEnterTile;
 
     protected override void Awake() {
 
@@ -88,6 +89,7 @@ public class PlayerManage : PlayerBase {
     }
 
     public void SwitchMode() {
+        IsSwitchMode?.Invoke();
 
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
         foreach (ConvertMode mode in convertModes) {

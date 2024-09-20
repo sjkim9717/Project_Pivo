@@ -58,14 +58,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
             return;
         }
-        else if (PlayerManage.instance.CurrentState == PlayerState.Disable) {
-            if (Input.GetKeyDown(KeyCode.Escape)) {
-                Control3D.ChangeState(PlayerState.Idle);
-            }
-            else {
-                return;
-            }
-        }
+
 
 
         if (skillSectionInput != 0 && !isSkillButtonPressed) { // 스킬 버튼이 눌렸는지 감지

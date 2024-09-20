@@ -15,7 +15,8 @@ public enum PlayerState {
     Falling,
     Holding,
     Dead,
-    Disable
+    Disable,
+    Attacked
 }
 
 public interface IPushBox {
