@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,9 @@ using UnityEngine.AI;
 public abstract class MonsterControl : MonoBehaviour {
     [SerializeField] private float radius;
     private Vector3 originPos;
+
+    public Camera MainCamera { get; private set; }
+    public GameObject Monster { get; private set; }
     public NavMeshAgent NavMesh { get; private set; }
     public Transform Player2D { get { return PlayerManage.instance.Player2D.transform; } }
     public Transform Player3D { get { return PlayerManage.instance.Player3D.transform; } }
@@ -29,17 +33,29 @@ public abstract class MonsterControl : MonoBehaviour {
     #endregion
 
     protected virtual void Awake() {
+        CinemachineBrain brain = GameObject.Find("CameraGroup/MainCamera").GetComponent<CinemachineBrain>();
+        if (brain == null) {
+            Debug.LogError("CinemachineVirtualCamera not found!");
+        }
+
+        MainCamera = brain.GetComponent<Camera>();
+        if (MainCamera == null) {
+            Debug.LogError("Camera not found on CinemachineVirtualCamera!");
+        }
+
+        Monster = base.gameObject;
         originPos = base.transform.position;
         Debug.LogWarning("origin position | " + originPos);
 
-        NavMesh = base.transform.GetComponentInParent<NavMeshAgent>();
-        radius = Vector3.Distance(transform.position, MonsterManager.instance.PutPoint.position) - 0.5f;
+        NavMesh = base.transform.GetComponent<NavMeshAgent>();
+
+        radius = Vector3.Distance(transform.position, MonsterManager.instance.PutPoint.position) - 0.7f;
 
         // 상태 인스턴스 생성 및 캐싱
-        Idle3DState = new Monster3DState_Idle(originPos, radius);
-        Chase3DState = new Monster3DState_Chase(NavMesh, Player3D, originPos, radius);
-        Attack3DState = new Monster3DState_Attack(Player3D, MonsterManager.instance.PutPoint.position);
-        PassOut3DState = new Monster3DState_PassOut();
+        Idle3DState = new Monster3DState_Idle(MainCamera, NavMesh, Monster, originPos, radius);
+        Chase3DState = new Monster3DState_Chase(MainCamera, NavMesh, Monster, Player3D, originPos, radius);
+        Attack3DState = new Monster3DState_Attack(MainCamera,NavMesh, Monster, Player3D, MonsterManager.instance.PutPoint.position);
+        PassOut3DState = new Monster3DState_PassOut(MainCamera, Monster);
 
 
         Idle2DState = new Monster2DState_Idle();

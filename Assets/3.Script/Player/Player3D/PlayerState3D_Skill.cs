@@ -26,6 +26,9 @@ public class PlayerState3D_Skill : PlayerState3D {
         isSkillButtonPressed = false;
         blockZposCheck = 0;
         skillCount = 0;
+
+        PlayerManage.instance.StartSection = Vector3.zero;
+        PlayerManage.instance.FinishSection = Vector3.zero;
     }
 
     private void Start() {
@@ -90,6 +93,9 @@ public class PlayerState3D_Skill : PlayerState3D {
                 for (int i = 0; i < convertMode.Length; i++) {
                     convertMode[i].ChangeLayerActiveFalse(convertMode[i].SelectObjects);
                 }
+
+                PlayerManage.instance.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
+                PlayerManage.instance.FinishSection = finishSection;
 
                 PlayerManage.instance.CurrentMode = PlayerMode.Player2D;
                 PlayerManage.instance.SwitchMode();
@@ -194,6 +200,9 @@ public class PlayerState3D_Skill : PlayerState3D {
         foreach (ConvertMode item in convertMode) {
             item.ChangeLayerAllActiveTrue();
         }
+
+        PlayerManage.instance.StartSection = Vector3.zero;
+        PlayerManage.instance.FinishSection = Vector3.zero;
     }
 
     // 플레이어가 스킬 자르면 해당하는 영역을 확인해야함

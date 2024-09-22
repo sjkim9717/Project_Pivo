@@ -26,6 +26,8 @@ public class MonsterBase : MonoBehaviour {
     public Animator Ani3D { get { return ani3D; } }
     public IMonsterStateBase CurrentState { get { return currentState; } set { currentState = value; } }
 
+    private Vector3 moveposition;
+
     protected virtual void Awake() {
         monster2D = base.transform.Find("Root2D").gameObject;
         monster3D = base.transform.Find("Root3D").gameObject;
@@ -40,24 +42,28 @@ public class MonsterBase : MonoBehaviour {
         effect = base.transform.GetChild(5).gameObject;
     }
 
-
     public virtual void Change2D() {
-
         monster3D.SetActive(false);
         monster2D.SetActive(true);
 
-        //TODO: effect
+        moveposition = monster3D.transform.position;
+        monster2D.transform.position = moveposition;
     }
 
     public virtual void Change3D() {
-
         monster2D.SetActive(false);
         monster3D.SetActive(true);
 
+        moveposition = monster2D.transform.position;
+        monster3D.transform.position = moveposition;
     }
     public virtual void ChangeAutoMode() {
         monster2D.SetActive(false);
         monster3D.SetActive(false);
+
+        moveposition = transform.position;
+        monster2D.transform.position = moveposition;
+        monster3D.transform.position = moveposition;
     }
 
 

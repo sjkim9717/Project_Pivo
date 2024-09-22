@@ -30,6 +30,12 @@ public class PlayerBase : MonoBehaviour {
 
     private Vector3 moveposition;
 
+    private Vector3 startSection = Vector3.zero;
+    private Vector3 finishSection = Vector3.zero;
+
+    public Vector3 StartSection { get { return startSection; } set { startSection = value; } }
+    public Vector3 FinishSection { get { return finishSection; } set { finishSection = value; } }
+
     protected virtual void Awake() {
         player2D = base.transform.Find("Root2D").gameObject;
         player3D = base.transform.Find("Root3D").gameObject;

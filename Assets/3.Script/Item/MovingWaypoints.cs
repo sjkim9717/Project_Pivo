@@ -27,8 +27,8 @@ public class MovingWaypoints : MonoBehaviour {
             elapsedTime += Time.deltaTime * moveSpeed;
             transform.position = Vector3.Slerp(startPosition, endPosition, elapsedTime);
 
-            Debug.Log("StartMove | " + transform.name);
-            Debug.Log("StartMove | " + transform.position);
+            //Debug.Log("StartMove | " + transform.name);
+            //Debug.Log("StartMove | " + transform.position);
             yield return null;
         }
         transform.position = waypoint;
