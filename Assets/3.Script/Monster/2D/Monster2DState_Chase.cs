@@ -36,7 +36,7 @@ public class Monster2DState_Chase : IMonsterStateBase {
         emotionOriginPos.gameObject.SetActive(true);
         MonsterManager.instance.Ani2D.SetBool("IsMove", true);
     }
-    //TODO: [수정 필요] rotation 꺼야함  
+
     public void UpdateState(MonsterControl MControl) {
         navMesh.SetDestination(player2d.position); // 목표를 다시 설정
 

@@ -66,5 +66,44 @@ public class MonsterBase : MonoBehaviour {
         monster3D.transform.position = moveposition;
     }
 
+    public void SettingEffectActiveTrue() {
+        effect.SetActive(true);
+
+        Transform start = effect.transform.GetChild(0);
+        Transform end = effect.transform.GetChild(1);
+
+        foreach (Transform child in start) {
+            if (child.TryGetComponent(out Collider col)) {
+                col.gameObject.SetActive(true);
+            }
+            else if (child.TryGetComponent(out ParticleSystem particle)) {
+                particle.Play();
+            }
+        }
+
+
+        foreach (Transform child in end) {
+            if (child.TryGetComponent(out ParticleSystem particle)) {
+                particle.Play();
+            }
+        }
+
+        StartCoroutine(EffectDelayTime(effect, start));
+    }
+
+
+    private IEnumerator EffectDelayTime(GameObject effect, Transform start) {
+
+        yield return new WaitForSeconds(0.5f);
+
+        effect.SetActive(false);
+
+        foreach (Transform child in start) {
+            if (child.TryGetComponent(out Collider col)) {
+                col.gameObject.SetActive(false);
+                break;
+            }
+        }
+    }
 
 }

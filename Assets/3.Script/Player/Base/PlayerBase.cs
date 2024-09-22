@@ -15,6 +15,8 @@ public class PlayerBase : MonoBehaviour {
     private Animator ani2D;
     private Animator ani3D;
 
+    private GameObject effect;
+
     public PlayerMode CurrentMode { get { return currentMode; } set { currentMode = value; } }
     public PlayerState CurrentState { get { return currentState; } set { currentState = value; } }
 
@@ -26,6 +28,7 @@ public class PlayerBase : MonoBehaviour {
 
     public Animator Ani2D { get { return ani2D; } }
     public Animator Ani3D { get { return ani3D; } }
+    public GameObject Effect { get { return effect; } }
 
 
     private Vector3 moveposition;
@@ -47,6 +50,8 @@ public class PlayerBase : MonoBehaviour {
 
         ani2D = player2D.GetComponent<Animator>();
         ani3D = player3D.GetComponentInChildren<Animator>();
+
+        effect = base.transform.GetChild(5).gameObject;
 
         currentState = PlayerState.Idle;
     }
@@ -79,6 +84,47 @@ public class PlayerBase : MonoBehaviour {
         moveposition = transform.position;
         player2D.transform.position = moveposition;
         player3D.transform.position = moveposition;
+    }
+
+
+    public void SettingEffectActiveTrue() {
+        effect.SetActive(true);
+
+        Transform start = effect.transform.GetChild(0);
+        Transform end = effect.transform.GetChild(1);
+
+        foreach (Transform child in start) {
+            if (child.TryGetComponent(out Collider col)) {
+                col.gameObject.SetActive(true);
+            }
+            else if (child.TryGetComponent(out ParticleSystem particle)) {
+                particle.Play();
+            }
+        }
+
+
+        foreach (Transform child in end) {
+            if (child.TryGetComponent(out ParticleSystem particle)) {
+                particle.Play();
+            }
+        }
+
+        StartCoroutine(EffectDelayTime(effect, start));
+    }
+
+
+    private IEnumerator EffectDelayTime(GameObject effect, Transform start) {
+
+        yield return new WaitForSeconds(0.5f);
+
+        effect.SetActive(false);
+
+        foreach (Transform child in start) {
+            if (child.TryGetComponent(out Collider col)) {
+                col.gameObject.SetActive(false);
+                break;
+            }
+        }
     }
 
 }

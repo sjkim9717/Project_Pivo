@@ -24,8 +24,9 @@ public class MonsterManager : MonsterBase {
     }
 
     public void SwitchMode() {
-        //TODO: effect
-        Effect.SetActive(true);
+       
+        SettingEffectActiveTrue();               // effect
+
         if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
             Change3D();
         }

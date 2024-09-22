@@ -91,6 +91,8 @@ public class PlayerManage : PlayerBase {
     public void SwitchMode() {
         IsSwitchMode?.Invoke();
 
+        if (CurrentMode != PlayerMode.AutoMode) SettingEffectActiveTrue();
+
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
         foreach (ConvertMode mode in convertModes) {
             mode.ChangeActiveWithLayer();
@@ -99,7 +101,7 @@ public class PlayerManage : PlayerBase {
         if (CurrentMode == PlayerMode.Player3D) {
             Change3D();
         }
-        else {
+        else if (CurrentMode == PlayerMode.Player2D) {
             Change2D();
         }
 
