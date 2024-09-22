@@ -17,7 +17,6 @@ public class MonsterManager : MonsterBase {
     }
 
     private void Start() {
-        Debug.Log(Monster3D.name);
         Change3D();
         //TODO: 모드 변경
         PlayerManage.instance.IsSwitchMode += SwitchMode;

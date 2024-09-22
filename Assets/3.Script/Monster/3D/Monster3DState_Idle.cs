@@ -27,7 +27,6 @@ public class Monster3DState_Idle : IMonsterStateBase {
         layerMask = LayerMask.GetMask("3DPlayer");
         emotionPos = MonsterManager.instance.EmotionPoint3D.position;
         emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(1).GetComponent<RectTransform>();
-
     }
 
     public void EnterState(MonsterControl MControl) {

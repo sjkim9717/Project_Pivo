@@ -1,8 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Monster3DControl : MonsterControl {
+
+    protected override void Awake() {
+        base.Awake();
+
+        Monster = base.gameObject;
+        NavMesh = base.transform.GetComponent<NavMeshAgent>();
+
+        // 상태 인스턴스 생성 및 캐싱
+        Idle3DState = new Monster3DState_Idle(MainCamera, NavMesh, Monster, originPos, radius);
+        Chase3DState = new Monster3DState_Chase(MainCamera, NavMesh, Monster, Player3D, originPos, radius);
+        Attack3DState = new Monster3DState_Attack(MainCamera, NavMesh, Monster, Player3D, MonsterManager.instance.PutPoint.position);
+        PassOut3DState = new Monster3DState_PassOut(MainCamera, Monster);
+    }
+
     protected override void Start() {
         ChangeState(Idle3DState);
     }
