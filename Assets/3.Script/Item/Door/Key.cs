@@ -6,12 +6,19 @@ public class Key : MonoBehaviour
 {
     [SerializeField] private int password;
     private bool isTouched;
+    private bool isBlueColor;
     public void SetPassword(int _password) { password = _password; }
+    public void SetColor(bool _isBlueColor) { isBlueColor = _isBlueColor; }
+
     private GateManage gateManage;
     private ConvertMode_Item convertMode_Item;
     private void Awake() {
         gateManage = FindObjectOfType<GateManage>();
         convertMode_Item = FindObjectOfType<ConvertMode_Item>();
+        Debug.Log(" color check | key | " + isBlueColor);
+    }
+    private void Start() {
+        SettingColor(isBlueColor);
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -40,6 +47,21 @@ public class Key : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         transform.parent.gameObject.SetActive(false);
     }
+
+
+    public void SettingColor(bool isblueColor) {
+
+        Color targetColor = isblueColor ? Color.cyan : Color.red;
+
+        if(transform.TryGetComponent(out Renderer renderer)) {
+            renderer.material.color = targetColor;
+        }
+
+        if (transform.parent.TryGetComponent(out Renderer parentrenderer)) {
+            parentrenderer.material.color = targetColor;
+        }
+    }
+
 }
 
 /*

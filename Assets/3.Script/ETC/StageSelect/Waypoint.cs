@@ -3,14 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Direction {
-    Up,
-    Down,
-    Left,
-    Right
-}
-
-
 public class Waypoint : MonoBehaviour {
 
     public Transform[] LevelWaypoint;    // 버튼이 들고있는 위치들

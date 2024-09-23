@@ -15,6 +15,8 @@ public class GateManage : MonoBehaviour {
             gateParent.transform.SetParent(transform);
 
             GameObject _door = Instantiate(gate.DoorData.DoorPrefab, gate.DoorPosition, Quaternion.identity, gateParent.transform);
+            Debug.Log(" color check | GateManage | " + gate.IsBlueColor);
+            _door.GetComponent<Door>().SetColor(gate.IsBlueColor);
             _door.GetComponent<Door>().SetPassword(gate.DoorData.Password);
             _door.GetComponent<Door>().SetRequireKeyNum(gate.RequreKeyNum);
             door.Add(_door);
@@ -24,6 +26,7 @@ public class GateManage : MonoBehaviour {
                 Quaternion keyRotation = Quaternion.Euler(gate.KeyRotation[i]);
                 GameObject key =  Instantiate(gate.KeyData.KeyPrefab, gate.KeyPosition[i], keyRotation, gateParent.transform);
                 for (int j = 0; j < 2; j++) {
+                    key.GetComponentsInChildren<Key>()[j].SetColor(gate.IsBlueColor);
                     key.GetComponentsInChildren<Key>()[j].SetPassword(gate.KeyData.Password);
                 }
             }

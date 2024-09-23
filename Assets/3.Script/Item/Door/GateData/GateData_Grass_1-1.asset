@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: GateData_Grass_1-1
   m_EditorClassIdentifier: 
   StageLevel: 0
+  IsBlueColor: 1
   DoorData: {fileID: 11400000, guid: bbf90330715ef584c9ed8be771770025, type: 2}
+  RequreKeyNum: 2
   DoorPosition: {x: 27.6, y: -0.97, z: -4.3}
   KeyData: {fileID: 11400000, guid: 57967969f26512f46b99662e78068ccd, type: 2}
-  RequreKeyNum: 2
   KeyPosition:
   - {x: 5.82, y: 5.17, z: 6.7}
   - {x: 10.9, y: -7.83, z: -21.15}

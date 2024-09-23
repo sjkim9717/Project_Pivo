@@ -8,6 +8,7 @@ public class GateData : ScriptableObject {
     [Space(5)]
     [Header("Scene Stage")]
     public StageLevel StageLevel;
+    public bool IsBlueColor;
 
     [Space(5)]
     [Header("Door Info")]

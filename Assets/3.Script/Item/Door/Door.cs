@@ -11,9 +11,11 @@ public class Door : MonoBehaviour {
     [SerializeField] private int requireKeyNum;
 
     private bool isDoorNeddMove;
+    private bool isBlueColor;
 
     public int GetPassword() { return password; }
     public void SetPassword(int _password) { password = _password; }
+    public void SetColor(bool _isBlueColor) { isBlueColor = _isBlueColor; }
     public void SetRequireKeyNum(int _requireKeyNum) { requireKeyNum = _requireKeyNum; }
 
     private Vector3 originPos;
@@ -47,6 +49,7 @@ public class Door : MonoBehaviour {
 
     private void Start() {
         HideKeyInRandom(requireKeyNum);
+        SettingColor(isBlueColor);
     }
 
     private void Update() {
@@ -128,7 +131,21 @@ public class Door : MonoBehaviour {
             }
         }
     }
+    
+    public void SettingColor(bool isblueColor){
 
+        Color targetColor = isblueColor ? Color.cyan : Color.red;
+
+        foreach (GameObject each in activeDoorKeys) {    
+            Renderer[] renderers = each.GetComponentsInChildren<Renderer>();
+            foreach (Renderer renderer in renderers) {
+                if (renderer.gameObject != each) {
+                    renderer.material.color = targetColor;
+                }
+            }
+        }
+
+    }
 }
 
 /*
