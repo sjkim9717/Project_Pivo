@@ -83,7 +83,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BloomColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BloomColor: {r: 0.101960786, g: 0.7764706, b: 1.137255, a: 1}
     - _Color: {r: 0, g: 0.54482746, b: 1, a: 1}
     - _Color2: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
