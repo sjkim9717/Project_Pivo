@@ -45,7 +45,8 @@ public class MonsterManager : MonsterBase {
         }
     }
 
-    // 플레이어가 선택한 범위 안에 있는지
+    // 플레이어가 선택한 범위 안에 있는지 
+    //TODO: 활성화는 따로임
     private bool IsInSelectArea() {
         if (PlayerManage.instance.StartSection.z >= PlayerManage.instance.FinishSection.z) {
             if (Monster3D.transform.position.z <= PlayerManage.instance.StartSection.z && Monster3D.transform.position.z >= PlayerManage.instance.FinishSection.z) return true;

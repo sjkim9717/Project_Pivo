@@ -6,17 +6,29 @@ using UnityEngine;
 
 
 public class PipeObject : MonoBehaviour {
-    private Color originColor = Color.white;
-    private Color emissionColor = new Color(0.5f, 0.5f, 0.7f);
     public enum Terminal { Start, Mid, End };
 
+    private Color originColor = Color.white;
+    private Color midEmissionColor = new Color(0.5f, 0.5f, 0.7f);
+    private Color endColor = new Color(0.67f, 0.996f, 0.996f);
+
     public Terminal State;
+    private Renderer[] renderers;
+    private Material midMaterial;
+    private Material endMaterial;
 
     public PipeWaypoint Waypoint = new PipeWaypoint();
 
     private void Awake() {
         Waypoint.SettingPosition(gameObject, Waypoint.Start, ref Waypoint.StartPos);
         Waypoint.SettingPosition(gameObject, Waypoint.End, ref Waypoint.EndPos);
+
+        renderers = transform.GetComponentsInChildren<Renderer>();
+
+        midMaterial = renderers[0].material;
+        if (renderers.Length >1) {
+            endMaterial = renderers[1].material;
+        }
 
         PlayerManage.instance.IsSwitchMode += SwitchMode;
 
@@ -27,31 +39,61 @@ public class PipeObject : MonoBehaviour {
             //TODO: 가운데는 모드가 변경될 경우 연결되어있는지 확인해서 불 밝혀야함
             if (gameObject.activeSelf) {
                 if (State == Terminal.Mid) {
-                    Material material = transform.GetComponentInChildren<Renderer>().material;
-                    if (Waypoint.IsStartConnect && Waypoint.IsEndConnect) {
-                        if (material.shader.name == "Shader Graph/WorldObject") {
-                            material.SetColor("_EmissionMask", emissionColor);
+                    if (Waypoint.IsStartConnect && Waypoint.IsEndConnect) {                        
+                        if (midMaterial.shader.name == "Shader Graphs/WorldObject") {
+                            midMaterial.SetColor("_EmissionMask", midEmissionColor);
                         }
                     }
-                    else {
-                        if (material.shader.name == "Shader Graph/WorldObject") {
-                            material.SetColor("_EmissionMask", originColor);
+                }
+                else if(State == Terminal.End) {
+                    if (Waypoint.IsStartConnect ) {
+                        if (endMaterial.shader.name == "Shader Graphs/Color") {
+                            endMaterial.SetColor("_Color", endColor);
                         }
                     }
                 }
             }
         }
+        else if(PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+            if (gameObject.activeSelf) {
+                if (State == Terminal.Mid) {
+                    if (!(Waypoint.IsStartConnect && Waypoint.IsEndConnect)) {
+                        if (midMaterial.shader.name == "Shader Graphs/WorldObject") {
+                            Debug.LogWarning(" 해제가 되어야하는 시점임" + gameObject.name);
+                            midMaterial.SetColor("_EmissionMask", originColor);
+                        }
+                    }
+                }
+                else if (State == Terminal.End) {
+                    if (Waypoint.IsStartConnect) {
+                        if (endMaterial.shader.name == "Shader Graphs/Color") {
+                            endMaterial.SetColor("_Color", originColor);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
-    #region 활성화
+    #region active / component add
 
     private void SwitchMode() {
-        gameObject.SetActive(IsInSelectArea());
-        if (gameObject.activeSelf) {
-            StartCoroutine(SwitchModeCoroutine());
+        if (PlayerManage.instance.CurrentMode is PlayerMode.Player2D) {
+            if (IsInSelectArea()) {
+                gameObject.SetActive(true);
+                StartCoroutine(SwitchModeCoroutine());
+            }
+            else {
+                gameObject.SetActive(false);
+            }
+        }
+        else {
+            gameObject.SetActive(true);
         }
     }
-    //TODO: 박스들이 도망다님
+
+    // component
     private IEnumerator SwitchModeCoroutine() {
 
         Debug.Log("Switching mode...");
@@ -82,36 +124,29 @@ public class PipeObject : MonoBehaviour {
 
     private void AddIfNotExists<T>() where T : Component {
         if (gameObject.GetComponent<T>() == null) {
-            gameObject.AddComponent<T>();
+            T component = gameObject.AddComponent<T>();
+            ConfigureComponent(component);
         }
     }
 
-    /*
-    private void SwitchMode() {
-        gameObject.SetActive(IsInSelectArea());
-        if (gameObject.activeSelf) {
-            Debug.Log("????????????");
-            bool is3DMode = PlayerManage.instance.CurrentMode == PlayerMode.Player3D;
-
-            if (is3DMode) {
-                // 3D 컴포넌트 처리
-                if (gameObject.GetComponent<Rigidbody2D>() != null) Destroy(gameObject.GetComponent<Rigidbody2D>());
-                if (gameObject.GetComponent<BoxCollider2D>() != null) Destroy(gameObject.GetComponent<BoxCollider2D>());
-
-                if (gameObject.GetComponent<Rigidbody>() == null) gameObject.AddComponent<Rigidbody>();
-                if (gameObject.GetComponent<BoxCollider>() == null) gameObject.AddComponent<BoxCollider>();
-            }
-            else {
-                if (gameObject.GetComponent<Rigidbody>() != null) Destroy(gameObject.GetComponent<Rigidbody>());
-                if (gameObject.GetComponent<BoxCollider>() != null) Destroy(gameObject.GetComponent<BoxCollider>());
-
-                // 2D 컴포넌트 처리
-                if (gameObject.GetComponent<Rigidbody2D>() == null) gameObject.AddComponent<Rigidbody2D>();
-                if (gameObject.GetComponent<BoxCollider2D>() == null) gameObject.AddComponent<BoxCollider2D>();
-            }
+    private void ConfigureComponent<T>(T component) where T : Component {
+        if (component is BoxCollider boxCollider) {
+            boxCollider.isTrigger = true;
+            boxCollider.size = new Vector3(2, 2, 2); // 3D 콜라이더의 크기 설정
+        }
+        else if (component is BoxCollider2D boxCollider2D) {
+            boxCollider2D.isTrigger = true;
+            boxCollider2D.size = new Vector2(2, 2); // 2D 콜라이더의 크기 설정
+        }
+        else if (component is Rigidbody) {
+            ((Rigidbody)(object)component).isKinematic = true;
+        }
+        else if (component is Rigidbody2D) {
+            ((Rigidbody2D)(object)component).isKinematic = true;
         }
     }
-    */
+
+
     //TODO: [수정 필요] 문제가 있구만
     private bool IsInSelectArea() {
         if (PlayerManage.instance.StartSection.z >= PlayerManage.instance.FinishSection.z) {
@@ -193,6 +228,7 @@ public class PipeObject : MonoBehaviour {
 
     private void OnTriggerExit(Collider other) {
         if (other.transform.TryGetComponent(out PipeObject pipe)) {
+            Debug.Log("PipeObject | Trigger Exit | " + gameObject.name + " | " + other.name);
             if (State == Terminal.Start) {
                 if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
                     Waypoint.IsEndConnect = false;
@@ -200,7 +236,7 @@ public class PipeObject : MonoBehaviour {
                 }
             }
             else if (State == Terminal.Mid) {
-                if (Waypoint.IsStartConnect) {
+                if (!Waypoint.IsStartConnect) {
                     if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
                         Waypoint.IsEndConnect = false;
                         if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
@@ -212,6 +248,7 @@ public class PipeObject : MonoBehaviour {
     }
     private void OnTriggerExit2D(Collider2D collision) {
         if (collision.transform.TryGetComponent(out PipeObject pipe)) {
+            Debug.Log("PipeObject | Trigger Exit | " + gameObject.name + " | " + collision.name);
             if (State == Terminal.Start) {
                 if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
                     Waypoint.IsEndConnect = false;
@@ -219,7 +256,7 @@ public class PipeObject : MonoBehaviour {
                 }
             }
             else if (State == Terminal.Mid) {
-                if (Waypoint.IsStartConnect) {
+                if (!Waypoint.IsStartConnect) {
                     if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
                         Waypoint.IsEndConnect = false;
                         if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
@@ -231,87 +268,6 @@ public class PipeObject : MonoBehaviour {
     }
 
 
-    /*
-     
-    private void OnCollisionEnter(Collision collision) {
-        if (collision.transform.TryGetComponent(out PipeObject pipe)) {
-            if (State == Terminal.Start) {
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Waypoint.IsEndConnect = true;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-                }
-            }
-            else if (State == Terminal.Mid) {
-                if (Waypoint.IsStartConnect) {
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Waypoint.IsEndConnect = true;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-
-                    }
-                }
-            }
-        }
-    }
-    private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.transform.TryGetComponent(out PipeObject pipe)) {
-            if (State == Terminal.Start) {
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Waypoint.IsEndConnect = true;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-                }
-            }
-            else if (State == Terminal.Mid) {
-                if (Waypoint.IsStartConnect) {
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Waypoint.IsEndConnect = true;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-
-                    }
-                }
-            }
-        }
-    }
-
-    private void OnCollisionExit(Collision collision) {
-        if (collision.transform.TryGetComponent(out PipeObject pipe)) {
-            if (State == Terminal.Start) {
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Waypoint.IsEndConnect = false;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-                }
-            }
-            else if (State == Terminal.Mid) {
-                if (Waypoint.IsStartConnect) {
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Waypoint.IsEndConnect = false;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-
-                    }
-                }
-            }
-        }
-    }
-    private void OnCollisionExit2D(Collision2D collision) {
-        if (collision.transform.TryGetComponent(out PipeObject pipe)) {
-            if (State == Terminal.Start) {
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Waypoint.IsEndConnect = false;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-                }
-            }
-            else if (State == Terminal.Mid) {
-                if (Waypoint.IsStartConnect) {
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Waypoint.IsEndConnect = false;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-
-                    }
-                }
-            }
-        }
-    }
-     
-     */
     #endregion
 }
 

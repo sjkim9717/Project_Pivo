@@ -95,6 +95,9 @@ public class PipeWaypoint {
     public Vector3 EndPos;
     public bool IsStartConnect;
     public bool IsEndConnect;
+    [SerializeField] private GameObject start;
+    [SerializeField] private GameObject end;
+    public void SettingObject(Direction direction, GameObject gameObject) { }
 
     public void SettingPosition(GameObject gameObject, Direction direction, ref Vector3 position) {
         if (Waypoint.TryGetValue(direction, out Vector2 pos)) {
