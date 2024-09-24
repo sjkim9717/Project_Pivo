@@ -6,7 +6,6 @@ using UnityEngine;
 
 
 public class PipeObject : MonoBehaviour {
-    public Action PipeLineFinish;
     public enum Terminal { Start, Mid, End };
 
     private Color originColor = Color.white;
@@ -76,8 +75,6 @@ public class PipeObject : MonoBehaviour {
 
         // 현재 오브젝트가 mid일 경우 앞 커넥션 확인해서 끊겨있으면 뒤로 전달
         Waypoint.CheckObjectWhenIsConnectOff(this);
-
-        if(State is Terminal.End) { if (Waypoint.IsStartConnect) PipeLineFinish?.Invoke(); }
     }
 
     #region active / component add

@@ -5,23 +5,26 @@ using UnityEngine;
 
 public class PipeManager : MonoBehaviour {
     [SerializeField] private float radius;                          // 몬스터의 상태를 변경시키는 반경
+    [SerializeField] private bool isFinished;
+
     [SerializeField] private Transform start;
     [SerializeField] private Transform finish;
     [SerializeField] private Transform magicStrone;
-    [SerializeField] private bool isFinished;
+
+    private PipeObject finishPipeObject;
     private void Awake() {
         foreach (Transform child in transform) {
             if (child.name.Contains("Start")) start = child;
-            else if (child.name.Contains("Finish")) {
-                finish = child;
-                child.GetComponent<PipeObject>().PipeLineFinish += CheckEndObject;
-            }
+            else if (child.name.Contains("Finish")) finish = child;        
             else if (child.name.Contains("MagicStone")) magicStrone = child;
         }
+
+        finishPipeObject = finish.GetComponent<PipeObject>();
     }
 
 
     private void Update() {
+
         if (isFinished) {
             if (PlayerManage.instance.CurrentMode is PlayerMode.Player3D) {
                 Collider[] colliders = Physics.OverlapSphere(magicStrone.position, radius);
@@ -40,34 +43,54 @@ public class PipeManager : MonoBehaviour {
                 }
             }
         }
+        else {
+            CheckEndObject(finishPipeObject);
+        }
     }
 
-    private void CheckEndObject() {
-        if (finish.TryGetComponent(out PipeObject pipeObject)) {
-            if (pipeObject.Waypoint.IsStartConnect) {
-                //TODO: 마지막 오브젝트가 연결됬을 경우 -> magic stone의 색 변경, monster 상태변화 => update
-                isFinished = true;
-
-                Renderer[] renderers = magicStrone.GetComponentsInChildren<Renderer>();
-                foreach (Renderer item in renderers) {
-                    // 렌더러의 머티리얼을 가져옴
-                    Material material = item.material;
-
-                    // material.shader.name이 URP Lit인지 확인
-                    if (material.shader.name == "Universal Render Pipeline/Lit") {
-                        // Emission을 활성화
-                        material.EnableKeyword("_EMISSION");
-
-                        //// Emission Color 설정 (필요에 따라 값을 변경)
-                        //material.SetColor("_EmissionColor", Color.white * 1.5f);
+    //TODO: 마지막 오브젝트가 연결됬을 경우 -> 처음부터 끝까지 연결됬는지 확인
+    private void CheckEndObject(PipeObject pipeObject) {
+        switch (pipeObject.State) {
+            case PipeObject.Terminal.Start:
+                ChangeMaterialWhenFinish();
+                break;
+            case PipeObject.Terminal.Mid:
+            case PipeObject.Terminal.End:
+                if (pipeObject.Waypoint.IsStartConnect) {
+                    if (pipeObject.Waypoint.PrevObject != null) {
+                        PipeObject prevPipeObject = pipeObject.Waypoint.PrevObject.GetComponent<PipeObject>();
+                        CheckEndObject(prevPipeObject);
                     }
                 }
+                break;
+            default:
+                break;
+        }
+    }
 
+    private void ChangeMaterialWhenFinish() {
+        isFinished = true;
+
+        Renderer[] renderers = magicStrone.GetComponentsInChildren<Renderer>();
+        foreach (Renderer item in renderers) {
+            // 렌더러의 머티리얼을 가져옴
+            Material material = item.material;
+
+            // material.shader.name이 URP Lit인지 확인
+            if (material.shader.name == "Universal Render Pipeline/Lit") {
+                // Emission을 활성화
+                material.EnableKeyword("_EMISSION");
+
+                //// Emission Color 설정 (필요에 따라 값을 변경)
+                //material.SetColor("_EmissionColor", Color.white * 1.5f);
             }
         }
     }
 
-
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.yellow;        // Set the Gizmo color
+        Gizmos.DrawWireSphere(magicStrone.position, radius);
+    }
 }
 
 /*

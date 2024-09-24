@@ -49,7 +49,7 @@ public class PushBox : MonoBehaviour, IPushBox {
 
     private void FindMinMaxCount() {
         if (isMoveXpos) {
-            for (int i = 1; i < tileObject.Count ; i++) {
+            for (int i = 1; i < tileObject.Count; i++) {
                 if (tileObject[i].transform.position.x >= pushBox.transform.position.x) {
                     moveMaxCount += 1;
                 }
@@ -59,7 +59,7 @@ public class PushBox : MonoBehaviour, IPushBox {
             }
         }
         else {
-            for (int i = 1; i < tileObject.Count ; i++) {
+            for (int i = 1; i < tileObject.Count; i++) {
                 if (tileObject[i].transform.position.z >= pushBox.transform.position.z) {
                     moveMaxCount += 1;
                 }
@@ -143,10 +143,10 @@ public class PushBox : MonoBehaviour, IPushBox {
         }
 
         if (isMoveXpos) {
-            BoxToMove.x = Mathf.Clamp(BoxToMove.x + up * (2), startPos.x - 0.2f, finishPos.x + 0.2f);
+            BoxToMove.x = Mathf.Clamp(BoxToMove.x + up * (2), (int)(startPos.x), (int)(finishPos.x));
         }
         else {
-            BoxToMove.z = Mathf.Clamp(BoxToMove.z + up * (2), startPos.z - 0.2f, finishPos.z + 0.2f);
+            BoxToMove.z = Mathf.Clamp(BoxToMove.z + up * (2), (int)(startPos.z), (int)(finishPos.z));
         }
     }
 }
