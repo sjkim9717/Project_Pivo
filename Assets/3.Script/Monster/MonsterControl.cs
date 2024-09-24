@@ -14,6 +14,8 @@ public abstract class MonsterControl : MonoBehaviour {
     public Transform Player2D { get { return PlayerManage.instance.Player2D.transform; } }
     public Transform Player3D { get { return PlayerManage.instance.Player3D.transform; } }
 
+    protected MonsterManager mManager;
+
     protected IMonsterStateBase currentState;
     public IMonsterStateBase CurrentState { get { return currentState; } }
 
@@ -45,7 +47,9 @@ public abstract class MonsterControl : MonoBehaviour {
         originPos = base.transform.position;
         Debug.LogWarning("origin position | " + originPos);
 
-        radius = Vector3.Distance(transform.position, MonsterManager.instance.PutPoint.position) - 0.7f;
+        mManager = GetComponentInParent<MonsterManager>();
+
+        radius = Vector3.Distance(transform.position, mManager.PutPoint.position) - 0.7f;
     }
 
     protected abstract void Start();

@@ -16,21 +16,23 @@ public class Monster2DState_Idle : IMonsterStateBase {
 
     private Camera camera;
     private NavMeshAgent navMesh;
+    private MonsterManager mManager;
     private RectTransform emotionOriginPos;
 
-    public Monster2DState_Idle(Camera camera, NavMeshAgent navMesh, GameObject monster, Vector3 originPos, float radius) {
+    public Monster2DState_Idle(MonsterManager mManager, Camera camera, NavMeshAgent navMesh, GameObject monster, Vector3 originPos, float radius) {
         this.monster = monster;
         this.navMesh = navMesh;
         this.originPos = originPos;
         this.radius = radius;
         this.camera = camera;
+        this.mManager = mManager;
         layerMask = LayerMask.GetMask("2DPlayer");
-        emotionPos = MonsterManager.instance.EmotionPoint2D.position;
-        emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(1).GetComponent<RectTransform>();
+        emotionPos = mManager.EmotionPoint2D.position;
+        emotionOriginPos = mManager.Emotion.transform.GetChild(1).GetComponent<RectTransform>();
     }
 
     public void EnterState(MonsterControl MControl) {
-        MonsterManager.instance.Ani2D.Rebind();
+        mManager.Ani2D.Rebind();
 
         navMesh.isStopped = true;                               // 이동 중지
         navMesh.ResetPath();                                    // 경로 초기화
@@ -55,6 +57,7 @@ public class Monster2DState_Idle : IMonsterStateBase {
                 }
             }
         }
+        else emotionOriginPos.gameObject.SetActive(false);
     }
 
     public void ExitState(MonsterControl MControl) {

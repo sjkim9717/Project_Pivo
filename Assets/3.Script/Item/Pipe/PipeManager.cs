@@ -6,36 +6,44 @@ using UnityEngine;
 public class PipeManager : MonoBehaviour {
     [SerializeField] private float radius;                          // 몬스터의 상태를 변경시키는 반경
     [SerializeField] private bool isFinished;
+    private bool isChangeState;
 
     [SerializeField] private Transform start;
     [SerializeField] private Transform finish;
-    [SerializeField] private Transform magicStrone;
+    [SerializeField] private Transform magicStone;
 
     private PipeObject finishPipeObject;
     private void Awake() {
         foreach (Transform child in transform) {
             if (child.name.Contains("Start")) start = child;
             else if (child.name.Contains("Finish")) finish = child;        
-            else if (child.name.Contains("MagicStone")) magicStrone = child;
+            else if (child.name.Contains("MagicStone")) magicStone = child;
         }
 
         finishPipeObject = finish.GetComponent<PipeObject>();
+
+        PlayerManage.instance.IsSwitchMode += ChangeMonsterMode;
     }
 
+    private void ChangeMonsterMode() {
+        isChangeState = false;
+    }
 
     private void Update() {
 
-        if (isFinished) {
+        if (isFinished && !isChangeState) {
+            isChangeState = true;
+
             if (PlayerManage.instance.CurrentMode is PlayerMode.Player3D) {
-                Collider[] colliders = Physics.OverlapSphere(magicStrone.position, radius);
+                Collider[] colliders = Physics.OverlapSphere(magicStone.position, radius);
                 foreach (Collider each in colliders) {
                     if (each.transform.TryGetComponent(out Monster3DControl monster3D)) {
                         monster3D.ChangeState(monster3D.PassOut3DState);
                     }
                 }
             }
-            else if (PlayerManage.instance.CurrentMode is PlayerMode.Player3D) {
-                Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(magicStrone.position, radius);
+            else if (PlayerManage.instance.CurrentMode is PlayerMode.Player2D) {
+                Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(magicStone.position, radius);
                 foreach (Collider2D each in collider2Ds) {
                     if (each.transform.TryGetComponent(out Monster2DControl monster2D)) {
                         monster2D.ChangeState(monster2D.PassOut2DState);
@@ -71,7 +79,7 @@ public class PipeManager : MonoBehaviour {
     private void ChangeMaterialWhenFinish() {
         isFinished = true;
 
-        Renderer[] renderers = magicStrone.GetComponentsInChildren<Renderer>();
+        Renderer[] renderers = magicStone.GetComponentsInChildren<Renderer>();
         foreach (Renderer item in renderers) {
             // 렌더러의 머티리얼을 가져옴
             Material material = item.material;
@@ -89,7 +97,7 @@ public class PipeManager : MonoBehaviour {
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.yellow;        // Set the Gizmo color
-        Gizmos.DrawWireSphere(magicStrone.position, radius);
+        Gizmos.DrawWireSphere(magicStone.position, radius);
     }
 }
 

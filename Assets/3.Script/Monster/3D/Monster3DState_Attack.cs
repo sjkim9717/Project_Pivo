@@ -19,24 +19,26 @@ public class Monster3DState_Attack : IMonsterStateBase {
 
     private Camera camera;
     private NavMeshAgent navMesh;
+    private MonsterManager mManager;
     private RectTransform emotionOriginPos;
 
-    public Monster3DState_Attack(Camera camera, NavMeshAgent navMesh, GameObject monster, Transform player3d, Vector3 putPoint) {
+    public Monster3DState_Attack(MonsterManager mManager, Camera camera, NavMeshAgent navMesh, GameObject monster, Transform player3d, Vector3 putPoint) {
         this.monster = monster;
         this.navMesh = navMesh;
         this.player3d = player3d;
         this.putPoint = putPoint;
         this.camera = camera;
+        this.mManager = mManager;
 
-        emotionPos = MonsterManager.instance.EmotionPoint3D.position;
-        emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
+        emotionPos = mManager.EmotionPoint3D.position;
+        emotionOriginPos = mManager.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
     }
 
 
     public void EnterState(MonsterControl MControl) {
         //MonsterManager.instance.Emotion.transform.GetChild(0).position = MonsterManager.instance.EmotionPoint3D.position;
         emotionOriginPos.gameObject.SetActive(true);
-        MonsterManager.instance.Ani3D.SetBool("IsAttack", true); 
+        mManager.Ani3D.SetBool("IsAttack", true);
 
         player3d.GetComponent<Player3DControl>().ChangeState(PlayerState.Attacked);
 
@@ -48,10 +50,11 @@ public class Monster3DState_Attack : IMonsterStateBase {
 
     public void UpdateState(MonsterControl MControl) {
         if (CheckMonsterInCamera(monster)) SettingEmotion();
+        else emotionOriginPos.gameObject.SetActive(false);
 
         Vector3 targetPlayerPosition = putPoint + distance * distanceToPlayer;
 
-        float tIncrement = moveSpeed * Time.deltaTime; 
+        float tIncrement = moveSpeed * Time.deltaTime;
         currentT += tIncrement;
         //Debug.Log($"CurrentT: {currentT}, Player Position: {player3d.position}");
 
@@ -71,7 +74,7 @@ public class Monster3DState_Attack : IMonsterStateBase {
         emotionOriginPos.gameObject.SetActive(false);
 
         player3d.GetComponent<Player3DControl>().ChangeState(PlayerState.Idle);
-        MonsterManager.instance.Ani3D.SetBool("IsAttack", false);
+        mManager.Ani3D.SetBool("IsAttack", false);
     }
     public bool CheckMonsterInCamera(GameObject gameObject) {
         if (camera == null) return false;

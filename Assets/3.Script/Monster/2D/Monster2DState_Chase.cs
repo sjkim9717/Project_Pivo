@@ -17,24 +17,26 @@ public class Monster2DState_Chase : IMonsterStateBase {
     private Camera camera;
     private Transform player2d;
     private NavMeshAgent navMesh;
+    private MonsterManager mManager;
     private RectTransform emotionOriginPos;
 
-    public Monster2DState_Chase(Camera camera, NavMeshAgent navMesh, GameObject monster, Transform player2d, Vector3 originPos, float radius) {
+    public Monster2DState_Chase(MonsterManager mManager, Camera camera, NavMeshAgent navMesh, GameObject monster, Transform player2d, Vector3 originPos, float radius) {
         this.monster = monster;
         this.navMesh = navMesh;
         this.player2d = player2d;
         this.originPos = originPos;
         this.radius = radius;
         this.camera = camera;
+        this.mManager = mManager;
         layerMask = LayerMask.GetMask("2DPlayer");
-        emotionPos = MonsterManager.instance.EmotionPoint2D.position;
-        emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
+        emotionPos = mManager.EmotionPoint2D.position;
+        emotionOriginPos = mManager.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
     }
 
     public void EnterState(MonsterControl MControl) {
         navMesh.isStopped = false;
         emotionOriginPos.gameObject.SetActive(true);
-        MonsterManager.instance.Ani2D.SetBool("IsMove", true);
+        mManager.Ani2D.SetBool("IsMove", true);
     }
 
     public void UpdateState(MonsterControl MControl) {
@@ -45,6 +47,7 @@ public class Monster2DState_Chase : IMonsterStateBase {
         }
 
         if (CheckMonsterInCamera(monster)) SettingEmotion();
+        else emotionOriginPos.gameObject.SetActive(false);
 
 
         // 플레이어가 멀어졌을 경우 idle 상태로 돌아가야 함
@@ -67,7 +70,7 @@ public class Monster2DState_Chase : IMonsterStateBase {
         navMesh.isStopped = true;                               // 이동 중지
         navMesh.ResetPath();                                    // 경로 초기화
         emotionOriginPos.gameObject.SetActive(false);
-        MonsterManager.instance.Ani2D.SetBool("IsMove", false);
+        mManager.Ani2D.SetBool("IsMove", false);
     }
 
     public bool CheckMonsterInCamera(GameObject gameObject) {

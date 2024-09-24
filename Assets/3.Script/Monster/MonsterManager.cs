@@ -3,16 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterManager : MonsterBase {
-    private static MonsterManager _instance;
-    public static MonsterManager instance { get { return _instance; } }
 
     protected override void Awake() {
-        if (_instance == null) {
-            _instance = this;
-        }
-        else {
-            Destroy(gameObject);
-        }
         base.Awake();
     }
 
@@ -24,7 +16,7 @@ public class MonsterManager : MonsterBase {
     }
 
     public void SwitchMode() {
-       
+
         SettingEffectActiveTrue();               // effect
 
         if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {

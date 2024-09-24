@@ -10,10 +10,10 @@ public class Monster2DControl : MonsterControl {
         Monster = base.gameObject;
         NavMesh = base.transform.GetComponent<NavMeshAgent>();
 
-        Idle2DState = new Monster2DState_Idle(MainCamera, NavMesh, Monster, originPos, radius);
-        Chase2DState = new Monster2DState_Chase(MainCamera, NavMesh, Monster, Player2D, originPos, radius);
-        Attack2DState = new Monster2DState_Attack(MainCamera, NavMesh, Monster, Player2D, MonsterManager.instance.PutPoint.position);
-        PassOut2DState = new Monster2DState_PassOut(MainCamera, Monster);
+        Idle2DState = new Monster2DState_Idle(mManager, MainCamera, NavMesh, Monster, originPos, radius);
+        Chase2DState = new Monster2DState_Chase(mManager, MainCamera, NavMesh, Monster, Player2D, originPos, radius);
+        Attack2DState = new Monster2DState_Attack(mManager, MainCamera, NavMesh, Monster, Player2D, mManager.PutPoint.position);
+        PassOut2DState = new Monster2DState_PassOut(mManager, MainCamera, Monster);
     }
     private void OnEnable() {
         ChangeState(Idle2DState);

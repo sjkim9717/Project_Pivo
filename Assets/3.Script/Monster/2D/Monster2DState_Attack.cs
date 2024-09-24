@@ -19,21 +19,23 @@ public class Monster2DState_Attack : IMonsterStateBase {
 
     private Camera camera;
     private NavMeshAgent navMesh;
+    private MonsterManager mManager;
     private RectTransform emotionOriginPos;
-    public Monster2DState_Attack(Camera camera, NavMeshAgent navMesh, GameObject monster, Transform player2d, Vector3 putPoint) {
+    public Monster2DState_Attack(MonsterManager mManager, Camera camera, NavMeshAgent navMesh, GameObject monster, Transform player2d, Vector3 putPoint) {
         this.monster = monster;
         this.navMesh = navMesh;
         this.player2d = player2d;
         this.putPoint = putPoint;
         this.camera = camera;
+        this.mManager = mManager;
 
-        emotionPos = MonsterManager.instance.EmotionPoint2D.position;
-        emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
+        emotionPos = mManager.EmotionPoint2D.position;
+        emotionOriginPos = mManager.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
     }
 
     public void EnterState(MonsterControl MControl) {
         emotionOriginPos.gameObject.SetActive(true);
-        MonsterManager.instance.Ani2D.SetBool("IsAttack", true);
+        mManager.Ani2D.SetBool("IsAttack", true);
 
         player2d.GetComponent<Player2DControl>().ChangeState(PlayerState.Attacked);
 
@@ -44,6 +46,7 @@ public class Monster2DState_Attack : IMonsterStateBase {
     }
     public void UpdateState(MonsterControl MControl) {
         if (CheckMonsterInCamera(monster)) SettingEmotion();
+        else emotionOriginPos.gameObject.SetActive(false);
 
         Vector3 targetPlayerPosition = putPoint + distance * distanceToPlayer;
 
@@ -67,7 +70,7 @@ public class Monster2DState_Attack : IMonsterStateBase {
         emotionOriginPos.gameObject.SetActive(false);
 
         player2d.GetComponent<Player2DControl>().ChangeState(PlayerState.Idle);
-        MonsterManager.instance.Ani2D.SetBool("IsAttack", false);
+        mManager.Ani2D.SetBool("IsAttack", false);
     }
 
 

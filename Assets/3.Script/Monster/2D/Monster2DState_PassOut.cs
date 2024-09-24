@@ -9,18 +9,19 @@ public class Monster2DState_PassOut : IMonsterStateBase {
     private Vector3 emotionPos;
 
     private Camera camera;
+    private MonsterManager mManager;
     private RectTransform emotionOriginPos;
 
-    public Monster2DState_PassOut(Camera camera, GameObject monster) {
+    public Monster2DState_PassOut(MonsterManager mManager, Camera camera, GameObject monster) {
         this.monster = monster;
         this.camera = camera;
-        emotionPos = MonsterManager.instance.EmotionPoint2D.position;
-        emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(2).GetComponent<RectTransform>();
+        emotionPos = mManager.EmotionPoint2D.position;
+        emotionOriginPos = mManager.Emotion.transform.GetChild(2).GetComponent<RectTransform>();
     }
 
     public void EnterState(MonsterControl MControl) {
         emotionOriginPos.gameObject.SetActive(true);
-        MonsterManager.instance.Ani2D.SetBool("IsDead", true);
+        mManager.Ani2D.SetBool("IsDead", true);
     }
 
     public void UpdateState(MonsterControl MControl) {
@@ -29,7 +30,7 @@ public class Monster2DState_PassOut : IMonsterStateBase {
 
     public void ExitState(MonsterControl MControl) {
         emotionOriginPos.gameObject.SetActive(false);
-        MonsterManager.instance.Ani2D.SetBool("IsDead", false);
+        mManager.Ani2D.SetBool("IsDead", false);
     }
 
     public bool CheckMonsterInCamera(GameObject gameObject) {

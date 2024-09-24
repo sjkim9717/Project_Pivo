@@ -10,23 +10,26 @@ public class Monster3DState_PassOut : IMonsterStateBase {
 
     private Camera camera;
     private RectTransform emotionOriginPos;
+    private MonsterManager mManager;
 
-    public Monster3DState_PassOut(Camera camera, GameObject monster) {
+    public Monster3DState_PassOut(MonsterManager mManager, Camera camera, GameObject monster) {
         this.monster = monster;
         this.camera = camera;
-        emotionPos = MonsterManager.instance.EmotionPoint3D.position;
-        emotionOriginPos = MonsterManager.instance.Emotion.transform.GetChild(2).GetComponent<RectTransform>();
+        this.mManager = mManager;
+        emotionPos = mManager.EmotionPoint3D.position;
+        emotionOriginPos = mManager.Emotion.transform.GetChild(2).GetComponent<RectTransform>();
     }
     public void EnterState(MonsterControl MControl) {
         emotionOriginPos.gameObject.SetActive(true);
-        MonsterManager.instance.Ani3D.SetBool("IsDead", true);
+        mManager.Ani3D.SetBool("IsDead", true);
     }
     public void UpdateState(MonsterControl MControl) {
         if (CheckMonsterInCamera(monster)) SettingEmotion();
+        else emotionOriginPos.gameObject.SetActive(false);
     }
     public void ExitState(MonsterControl MControl) {
         emotionOriginPos.gameObject.SetActive(false);
-        MonsterManager.instance.Ani3D.SetBool("IsDead", false);
+        mManager.Ani3D.SetBool("IsDead", false);
     }
 
 
