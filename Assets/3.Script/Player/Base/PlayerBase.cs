@@ -57,22 +57,31 @@ public class PlayerBase : MonoBehaviour {
     }
 
     public virtual void Change2D() {
+        moveposition = player3D.transform.position;
+
+        effect.transform.position = moveposition;
+        SettingEffectActiveTrue();
+
         currentMode = PlayerMode.Player2D;
 
         player3D.SetActive(false);
         player2D.SetActive(true);
 
-        moveposition = player3D.transform.position;
         player2D.transform.position = moveposition;
+
     }
 
     public virtual void Change3D() {
+        moveposition = player2D.transform.position;
+
+        effect.transform.position = moveposition;
+        SettingEffectActiveTrue();
+
         currentMode = PlayerMode.Player3D;
 
         player2D.SetActive(false);
         player3D.SetActive(true);
 
-        moveposition = player2D.transform.position;
         player3D.transform.position = moveposition;
     }
     public virtual void ChangeAutoMode() {

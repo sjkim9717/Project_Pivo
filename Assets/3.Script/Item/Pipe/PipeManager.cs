@@ -3,22 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PipeManager : MonoBehaviour
-{
+public class PipeManager : MonoBehaviour {
     [SerializeField] private float radius;                          // 몬스터의 상태를 변경시키는 반경
     [SerializeField] private Transform start;
     [SerializeField] private Transform finish;
     [SerializeField] private Transform magicStrone;
     [SerializeField] private bool isFinished;
     private void Awake() {
-        foreach(Transform child in transform) {
+        foreach (Transform child in transform) {
             if (child.name.Contains("Start")) start = child;
-            else if (child.name.Contains("Finish")) finish = child;
+            else if (child.name.Contains("Finish")) {
+                finish = child;
+                child.GetComponent<PipeObject>().PipeLineFinish += CheckEndObject;
+            }
             else if (child.name.Contains("MagicStone")) magicStrone = child;
         }
-
-        PlayerManage.instance.IsSwitchMode += CheckEndObject;
-
     }
 
 
@@ -34,13 +33,13 @@ public class PipeManager : MonoBehaviour
             }
             else if (PlayerManage.instance.CurrentMode is PlayerMode.Player3D) {
                 Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(magicStrone.position, radius);
-                foreach(Collider2D each in collider2Ds) {
-                    if(each.transform.TryGetComponent(out Monster2DControl monster2D)) {
+                foreach (Collider2D each in collider2Ds) {
+                    if (each.transform.TryGetComponent(out Monster2DControl monster2D)) {
                         monster2D.ChangeState(monster2D.PassOut2DState);
                     }
                 }
             }
-            }
+        }
     }
 
     private void CheckEndObject() {
@@ -95,9 +94,9 @@ public class PipeWaypoint {
     public Vector3 EndPos;
     public bool IsStartConnect;
     public bool IsEndConnect;
-    [SerializeField] private GameObject start;
-    [SerializeField] private GameObject end;
-    public void SettingObject(Direction direction, GameObject gameObject) { }
+    public GameObject PrevObject;
+    public GameObject NextObject;
+    public void SettingObject_Start(GameObject gameObject) { }
 
     public void SettingPosition(GameObject gameObject, Direction direction, ref Vector3 position) {
         if (Waypoint.TryGetValue(direction, out Vector2 pos)) {
@@ -105,9 +104,9 @@ public class PipeWaypoint {
         }
     }
 
-    public void SettingConnection(Direction direction, ref bool isConnection) {
-        if (direction == Start) IsStartConnect = true;
-        else if (direction == End) IsEndConnect = true;
+    public void SettingPositionAdditional(Vector3 addPosition) {
+        StartPos = addPosition;
+        EndPos = addPosition;
     }
 
     // 거리 확인해서 가까우면 true
@@ -129,4 +128,76 @@ public class PipeWaypoint {
         return distance <= 0.1f;
 
     }
+
+    // pipe line이 연결되면, 해당하는 gameobject에 담고 bool값을 바꿈
+    public void StartingPipeLine(PipeObject Current, PipeObject nextTer) {
+
+        switch (Current.State) {
+            case PipeObject.Terminal.Start:
+                SettingObjectWhenStartPipeLine(Current, nextTer);
+                break;
+            case PipeObject.Terminal.Mid:
+                if (Current.Waypoint.IsStartConnect) {
+                    SettingObjectWhenStartPipeLine(Current, nextTer);
+                }
+                break;
+            case PipeObject.Terminal.End:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void SettingObjectWhenStartPipeLine(PipeObject Current, PipeObject nextTer) {
+        if (Current.Waypoint.MatchConnection(Current.State, nextTer.Waypoint)) {
+            Current.Waypoint.NextObject = nextTer.gameObject;
+            Current.Waypoint.IsEndConnect = true;
+
+            if (nextTer.State != PipeObject.Terminal.Start) {
+                nextTer.Waypoint.PrevObject = Current.gameObject;
+                nextTer.Waypoint.IsStartConnect = true;
+            }
+        }
+    }
+
+    // pipe line이 끊기면 해당하는 gameobject를 null로 변경하고 bool값 변경함 
+    public void EndingPipeLine(PipeObject Current, PipeObject nextTer) {
+        switch (Current.State) {
+            case PipeObject.Terminal.Start:
+                SettingObjectWhenEndingPipeLine(Current, nextTer);
+                break;
+            case PipeObject.Terminal.Mid:
+                SettingObjectWhenEndingPipeLine(Current, nextTer);
+                break;
+            case PipeObject.Terminal.End:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void SettingObjectWhenEndingPipeLine(PipeObject Current, PipeObject nextTer) {
+        if (Current.Waypoint.NextObject == nextTer.gameObject) {
+            Current.Waypoint.IsEndConnect = false;
+            nextTer.Waypoint.IsStartConnect = false;
+
+            Current.Waypoint.NextObject = null;
+            nextTer.Waypoint.PrevObject = null;
+        }
+    }
+
+    public void CheckObjectWhenIsConnectOff(PipeObject Current) {
+        if (Current.State is PipeObject.Terminal.Mid) {
+            if (!Current.Waypoint.IsStartConnect && Current.Waypoint.IsEndConnect) {
+                Current.Waypoint.IsEndConnect = false;
+
+                PipeObject nextPipeobject = Current.Waypoint.NextObject.GetComponent<PipeObject>();
+                nextPipeobject.Waypoint.IsStartConnect = false;
+                nextPipeobject.Waypoint.PrevObject = null;
+
+                Current.Waypoint.NextObject = null;
+            }
+        }
+    }
+
 }

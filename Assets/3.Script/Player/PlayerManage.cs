@@ -91,8 +91,6 @@ public class PlayerManage : PlayerBase {
     public void SwitchMode() {
         IsSwitchMode?.Invoke();
 
-        if (CurrentMode != PlayerMode.AutoMode) SettingEffectActiveTrue();
-
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
         foreach (ConvertMode mode in convertModes) {
             mode.ChangeActiveWithLayer();

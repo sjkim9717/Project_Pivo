@@ -6,6 +6,7 @@ using UnityEngine;
 
 
 public class PipeObject : MonoBehaviour {
+    public Action PipeLineFinish;
     public enum Terminal { Start, Mid, End };
 
     private Color originColor = Color.white;
@@ -26,27 +27,27 @@ public class PipeObject : MonoBehaviour {
         renderers = transform.GetComponentsInChildren<Renderer>();
 
         midMaterial = renderers[0].material;
-        if (renderers.Length >1) {
+        if (renderers.Length > 1) {
             endMaterial = renderers[1].material;
         }
 
         PlayerManage.instance.IsSwitchMode += SwitchMode;
 
     }
-
+    private void Start() {
+        SwitchMode();
+    }
     private void Update() {
         if (PlayerManage.instance.CurrentMode == PlayerMode.Player2D) {
             //TODO: 가운데는 모드가 변경될 경우 연결되어있는지 확인해서 불 밝혀야함
             if (gameObject.activeSelf) {
-                if (State == Terminal.Mid) {
-                    if (Waypoint.IsStartConnect && Waypoint.IsEndConnect) {                        
+                if (Waypoint.IsStartConnect) {
+                    if (State is Terminal.Mid) {
                         if (midMaterial.shader.name == "Shader Graphs/WorldObject") {
                             midMaterial.SetColor("_EmissionMask", midEmissionColor);
                         }
                     }
-                }
-                else if(State == Terminal.End) {
-                    if (Waypoint.IsStartConnect ) {
+                    else if (State == Terminal.End) {
                         if (endMaterial.shader.name == "Shader Graphs/Color") {
                             endMaterial.SetColor("_Color", endColor);
                         }
@@ -54,12 +55,11 @@ public class PipeObject : MonoBehaviour {
                 }
             }
         }
-        else if(PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        else if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
             if (gameObject.activeSelf) {
                 if (State == Terminal.Mid) {
                     if (!(Waypoint.IsStartConnect && Waypoint.IsEndConnect)) {
                         if (midMaterial.shader.name == "Shader Graphs/WorldObject") {
-                            Debug.LogWarning(" 해제가 되어야하는 시점임" + gameObject.name);
                             midMaterial.SetColor("_EmissionMask", originColor);
                         }
                     }
@@ -74,29 +74,31 @@ public class PipeObject : MonoBehaviour {
             }
         }
 
+        // 현재 오브젝트가 mid일 경우 앞 커넥션 확인해서 끊겨있으면 뒤로 전달
+        Waypoint.CheckObjectWhenIsConnectOff(this);
+
+        if(State is Terminal.End) { if (Waypoint.IsStartConnect) PipeLineFinish?.Invoke(); }
     }
 
     #region active / component add
 
     private void SwitchMode() {
         if (PlayerManage.instance.CurrentMode is PlayerMode.Player2D) {
-            if (IsInSelectArea()) {
-                gameObject.SetActive(true);
-                StartCoroutine(SwitchModeCoroutine());
-            }
-            else {
-                gameObject.SetActive(false);
-            }
+            gameObject.SetActive(IsInSelectArea());
         }
         else {
             gameObject.SetActive(true);
+        }
+
+        if (gameObject.activeSelf) {
+            StartCoroutine(SwitchModeCoroutine());
+
         }
     }
 
     // component
     private IEnumerator SwitchModeCoroutine() {
 
-        Debug.Log("Switching mode...");
         bool is3DMode = PlayerManage.instance.CurrentMode == PlayerMode.Player3D;
 
         if (is3DMode) {
@@ -165,105 +167,39 @@ public class PipeObject : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other) {
         if (other.transform.TryGetComponent(out PipeObject pipe)) {
-            Debug.Log("PipeObject | Trigger Enter | " + gameObject.name + " | " + other.name);
-            if (State == Terminal.Start) {
-                Debug.Log("PipeObject | Trigger Enter | Stat = Start | " + gameObject.name + " | " + other.name);
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Debug.Log("PipeObject | Trigger Enter | Stat = Start |  waypoint.MatchConnection | " + gameObject.name + " | " + other.name);
-                    Waypoint.IsEndConnect = true;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-                }
-                else {
-                    Debug.Log("PipeObject | Trigger Enter | Stat = Start |  waypoint.MatchConnection => error|  " + gameObject.name + " | " + other.name);
-                }
-            }
-            else if (State == Terminal.Mid) {
-                Debug.Log("PipeObject | Trigger Enter | Stat = Mid | " + gameObject.name + " | " + other.name);
-                if (Waypoint.IsStartConnect) {
-                    Debug.Log("PipeObject | Trigger Enter | Stat = Mid | Start? | " + gameObject.name + " | " + other.name);
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Debug.Log("PipeObject | Trigger Enter |  Stat = Mid | Start? |  waypoint.MatchConnection | " + gameObject.name + " | " + other.name);
-                        Waypoint.IsEndConnect = true;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-
-                    }
-                    else {
-                        Debug.Log("PipeObject | Trigger Enter | Stat = Start |  waypoint.MatchConnection => error|  " + gameObject.name + " | " + other.name);
-                    }
-                }
-            }
+            if (State == Terminal.Start)
+                Waypoint.StartingPipeLine(this, pipe);
         }
     }
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.transform.TryGetComponent(out PipeObject pipe)) {
-            Debug.Log("PipeObject | Trigger Enter | " + gameObject.name + " | " + collision.name);
-            if (State == Terminal.Start) {
-                Debug.Log("PipeObject | Trigger Enter | Stat = Start | " + gameObject.name + " | " + collision.name);
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Debug.Log("PipeObject | Trigger Enter | Stat = Start |  waypoint.MatchConnection | " + gameObject.name + " | " + collision.name);
-                    Waypoint.IsEndConnect = true;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-                }
-                else {
-                    Debug.Log("PipeObject | Trigger Enter | Stat = Start |  waypoint.MatchConnection => error|  " + gameObject.name + " | " + collision.name);
-                }
-            }
-            else if (State == Terminal.Mid) {
-                Debug.Log("PipeObject | Trigger Enter | Stat = Mid | " + gameObject.name + " | " + collision.name);
-                if (Waypoint.IsStartConnect) {
-                    Debug.Log("PipeObject | Trigger Enter | Stat = Mid | Start? | " + gameObject.name + " | " + collision.name);
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Debug.Log("PipeObject | Trigger Enter |  Stat = Mid | Start? |  waypoint.MatchConnection | " + gameObject.name + " | " + collision.name);
-                        Waypoint.IsEndConnect = true;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = true;
-
-                    }
-                    else {
-                        Debug.Log("PipeObject | Trigger Enter | Stat = Start |  waypoint.MatchConnection => error|  " + gameObject.name + " | " + collision.name);
-                    }
-                }
-            }
+            if (State == Terminal.Start)
+                Waypoint.StartingPipeLine(this, pipe);
         }
     }
 
+    private void OnTriggerStay(Collider other) {
+        if (other.transform.TryGetComponent(out PipeObject pipe)) {
+            if (State == Terminal.Mid)
+                Waypoint.StartingPipeLine(this, pipe);
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision) {
+        if (collision.transform.TryGetComponent(out PipeObject pipe)) {
+            if (State == Terminal.Mid)
+                Waypoint.StartingPipeLine(this, pipe);
+        }
+    }
+
+
     private void OnTriggerExit(Collider other) {
         if (other.transform.TryGetComponent(out PipeObject pipe)) {
-            Debug.Log("PipeObject | Trigger Exit | " + gameObject.name + " | " + other.name);
-            if (State == Terminal.Start) {
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Waypoint.IsEndConnect = false;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-                }
-            }
-            else if (State == Terminal.Mid) {
-                if (!Waypoint.IsStartConnect) {
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Waypoint.IsEndConnect = false;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-
-                    }
-                }
-            }
+            Waypoint.EndingPipeLine(this, pipe);
         }
     }
     private void OnTriggerExit2D(Collider2D collision) {
         if (collision.transform.TryGetComponent(out PipeObject pipe)) {
-            Debug.Log("PipeObject | Trigger Exit | " + gameObject.name + " | " + collision.name);
-            if (State == Terminal.Start) {
-                if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                    Waypoint.IsEndConnect = false;
-                    if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-                }
-            }
-            else if (State == Terminal.Mid) {
-                if (!Waypoint.IsStartConnect) {
-                    if (Waypoint.MatchConnection(State, pipe.Waypoint)) {
-                        Waypoint.IsEndConnect = false;
-                        if (pipe.State != Terminal.Start) pipe.Waypoint.IsStartConnect = false;
-
-                    }
-                }
-            }
+            Waypoint.EndingPipeLine(this, pipe);
         }
     }
 
