@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class DynamicManager : MonoBehaviour {
 
-    private PlayerManager playerManager;
+    private PlayerManage playerManager;
 
     public GameObject BombGroup;
     public GameObject DeadGroup;

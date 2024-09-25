@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +15,8 @@ public class GameManager : MonoBehaviour {
     public StageLevel currentStage;                         // 현재 씬
     public StageLevel PreviousGameStage;                    // select scene에서 확인할 이전 게임 씬 이름
     private GameObject staticGroup;
+    private GameObject loadingGroup;
+    private GameObject fadeGroup;
     //private GameObject UI_Title;
 
     private PlayableDirector StageClear_Director;
@@ -30,6 +33,8 @@ public class GameManager : MonoBehaviour {
         }
 
         staticGroup = transform.GetChild(0).gameObject;
+        fadeGroup = transform.GetChild(4).gameObject;
+        loadingGroup = transform.GetChild(5).gameObject;
         //UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
     }
 
@@ -171,9 +176,40 @@ public class GameManager : MonoBehaviour {
             default:
                 break;
         }
-        SceneManager.LoadScene(sceneName);
-    }
 
+        StartCoroutine(LoadGameSceneAsync(sceneName));
+    }
+    IEnumerator LoadGameSceneAsync(string sceneName) {
+        // 비동기적으로 GameScene 로드 시작
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        //TODO: [추가] loading 화면 띄워야함ㅠㅠ
+        Image fade = fadeGroup.GetComponentInChildren<Image>(true);
+        Image loading = loadingGroup.GetComponentInChildren<Image>();
+
+        fade.gameObject.SetActive(true);
+        Color fadeAlpha = fade.color;
+        Color loadingAlpha = loading.color;
+        loadingGroup.SetActive(true);
+
+        // 로드가 완료될 때까지 대기
+        while (!asyncLoad.isDone) {
+            fadeAlpha.a += Time.deltaTime * 2f; // Adjust speed if needed
+            fadeAlpha.a = Mathf.Clamp01(fadeAlpha.a); // Clamp between 0 and 1
+            fade.color = fadeAlpha;
+
+            loadingAlpha.a = Mathf.PingPong(Time.time * 5, 0.2f) + 0.8f; // Pulses between 0.8 and 1.0
+            Debug.Log(fadeAlpha.a + " | "+ loadingAlpha.a);
+            loading.color = loadingAlpha;
+
+            yield return null;
+        }
+
+        loadingGroup.SetActive(false);
+        fade.gameObject.SetActive(false);
+        fadeAlpha.a = 0;
+        fade.color = fadeAlpha; 
+    }
 }
 
 /*  목적 : 씬 변경되는 시점의 stagelevel data 들고옴 + clear 시 정보저장

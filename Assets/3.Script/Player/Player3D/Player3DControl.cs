@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player3DControl : MonoBehaviour {
 
     public float moveSpeed = 7f;
+    private float gravity = -9.8f;
 
     public Animator Ani3D { get { return PlayerManage.instance.Ani3D; } }
     public GameObject Player { get { return PlayerManage.instance.Player3D; } }
@@ -121,57 +122,42 @@ public class Player3DControl : MonoBehaviour {
 
 
     public void Move(float horizontalInput, float verticalInput) {
-        positionToMove = Vector3.zero;
 
-        if (horizontalInput != 0 || verticalInput != 0) {
-            PlayerRigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            // 방향 벡터를 생성
-            Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
+        PlayerRigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-            // 캐릭터 회전
+        Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
+
+        if (dir != Vector3.zero) {
+
+            // player rotation
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.fixedDeltaTime * moveSpeed);
 
+            // player movement
             positionToMove = dir * moveSpeed * Time.fixedDeltaTime;
+            if (CheckGroundPointsEmpty(1f)) {
+                positionToMove.y += gravity * Time.deltaTime * moveSpeed;
+            }
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }
         else {
-            PlayerRigid.velocity = new Vector3(0, PlayerRigid.velocity.y, 0);
-            PlayerRigid.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+            // when player doesn't move
+            Vector3 currentVelocity = PlayerRigid.velocity;
+            PlayerRigid.velocity = new Vector3(0, currentVelocity.y, 0);
+
         }
     }
 
     // 바닥 오브젝트 확인
     public bool CheckGroundPointsEmpty(float rayLength) {
 
-        bool[] hitsbool = new bool[groundPoint.transform.childCount];
-        int falseCount = 0;
-
-        for (int i = 0; i < groundPoint.transform.childCount; i++) {
-            Transform child = groundPoint.transform.GetChild(i);
-
-            RaycastHit[] hits = Physics.RaycastAll(child.position, -child.up, rayLength);
-
-            List<RaycastHit> filteredHits = new List<RaycastHit>();          // `hits` 배열에서 태그가 "Player"인 오브젝트를 제외
-
-            foreach (RaycastHit hit in hits) {
-                if (!hit.collider.CompareTag("Player")) {
-                    filteredHits.Add(hit);
+        foreach (Transform each in groundPoint.transform) {
+            if(Physics.Raycast(each.position, Vector3.down, out RaycastHit hit, rayLength)) {
+                if (hit.collider.gameObject != Player) {
+                    return false;
                 }
             }
-
-            // 필터링된 배열로 `hitsbool` 업데이트
-            if (filteredHits.Count <= 0) hitsbool[i] = false;               // 오브젝트가 없을 경우 false
-            else hitsbool[i] = true;                                        // 나머지 경우에는 true
-
         }
-
-        for (int i = 0; i < hitsbool.Length; i++) {
-            if (hitsbool[i] == false) {
-                falseCount++;
-            }
-        }
-
-        return falseCount == hitsbool.Length ? true : false;
+        return true;
     }
 
     public bool IsAnimationFinished(string flagName) {

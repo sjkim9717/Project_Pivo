@@ -36,7 +36,7 @@ public class UI_StageSelect : UserData {
             returnToTitle.SetActive(true);
         }
 
-        if (Input.GetKeyDown(KeyCode.X)) {
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.Return)) {
             GameManager.isLoadTitle = false;
             GameManager.instance.LoadSelectStage(selectStageLevel);
         }
@@ -44,13 +44,14 @@ public class UI_StageSelect : UserData {
 
     public void OnButtonClick_ReturnTitle() {
         GameManager.isLoadTitle = true;
-        SceneManager.LoadScene("GrassStage_Stage1");
+        GameManager.instance.LoadSelectStage(StageLevel.StageSelect);
     }
 
     public void SelectStageLevel_Stage(StageLevel stageLevel) {
         selectStageLevel = stageLevel;
         stage.text = stageLevel.ToString();
     }
+
 
 }
 
