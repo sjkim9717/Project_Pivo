@@ -6,6 +6,8 @@ using UnityEngine;
 public class Player2DControl : MonoBehaviour {
 
     public float moveSpeed = 7f;
+    private float gravity = -9.8f;
+    private LayerMask layerMaskIndex;
     public Animator Ani2D { get { return PlayerManage.instance.Ani2D; } }
     public GameObject Player { get { return PlayerManage.instance.Player2D; } }
     public Rigidbody2D PlayerRigid { get { return PlayerManage.instance.PlayerRigid2D; } }
@@ -24,7 +26,7 @@ public class Player2DControl : MonoBehaviour {
         playerManager = transform.parent.GetComponent<PlayerManage>();
         Debug.LogWarning("PlayerManage | " + PlayerManage.instance.name);
         groundPoint = Player.transform.GetChild(1).gameObject;
-
+        layerMaskIndex = 1 << LayerMask.NameToLayer("Ground");
         InitializeStates();
     }
     private void OnEnable() {
@@ -46,11 +48,8 @@ public class Player2DControl : MonoBehaviour {
                     stateDic.Add(state, stateComponent);
                 }
                 else {
-                    Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
+                    //Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
                 }
-            }
-            else {
-                Debug.LogWarning($"State class {stateClassName} not found");
             }
         }
 
@@ -62,7 +61,7 @@ public class Player2DControl : MonoBehaviour {
 
     // 플레이어 상태 변경 메서드
     public void ChangeState(PlayerState newState) {
-        Debug.Log(newState);
+        //Debug.Log(newState);
         // 현재 상태가 null이 아니면 비활성화
         if (currentStateComponent != null) {
             currentStateComponent.ExitState();
@@ -83,21 +82,25 @@ public class Player2DControl : MonoBehaviour {
     }
 
     public void Move(float horizontalInput) {
-        PlayerRigid.velocity = new Vector2(0, PlayerRigid.velocity.y);
+        PlayerRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        positionToMove = Vector3.zero;
+        Vector3 dir = new Vector3(horizontalInput, 0, 0).normalized;
 
         if (horizontalInput != 0) {
-            PlayerRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
             transform.localScale = new Vector3(moveDirection, 1f, 1f);
-            positionToMove = Vector3.right * moveSpeed * horizontalInput * Time.fixedDeltaTime;
+            positionToMove = dir * moveSpeed * Time.fixedDeltaTime;
+
+            if (CheckGroundPointsEmpty(1f)) {
+                positionToMove.y += gravity * Time.deltaTime * moveSpeed;
+            }
 
             PlayerRigid.MovePosition(PlayerRigid.position + (Vector2)positionToMove);
         }
         else {
-            PlayerRigid.velocity = new Vector3(0, PlayerRigid.velocity.y, 0);
-            PlayerRigid.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
+            Vector3 currentVelocity = PlayerRigid.velocity;
+            PlayerRigid.velocity = new Vector3(0, currentVelocity.y, 0);
 
         }
     }
@@ -105,35 +108,14 @@ public class Player2DControl : MonoBehaviour {
     // 바닥 오브젝트 확인
     public bool CheckGroundPointsEmpty(float rayLength) {
 
-        bool[] hitsbool = new bool[groundPoint.transform.childCount];
-        int falseCount = 0;
-
-        for (int i = 0; i < groundPoint.transform.childCount; i++) {
-            Transform child = groundPoint.transform.GetChild(i);
-
-            RaycastHit2D[] hits = Physics2D.RaycastAll(child.position, -child.up, rayLength);
-
-            List<RaycastHit2D> filteredHits = new List<RaycastHit2D>();          // `hits` 배열에서 태그가 "Player"인 오브젝트를 제외
-
-            foreach (RaycastHit2D hit in hits) {
-                if (!hit.collider.CompareTag("Player") && hit.collider.gameObject.name !="Bottom") {
-                    filteredHits.Add(hit);
-                }
-            }
-
-            // 필터링된 배열로 `hitsbool` 업데이트
-            if (filteredHits.Count <= 0) hitsbool[i] = false;               // 오브젝트가 없을 경우 false
-            else hitsbool[i] = true;                                        // 나머지 경우에는 true
-
-        }
-
-        for (int i = 0; i < hitsbool.Length; i++) {
-            if (hitsbool[i] == false) {
-                falseCount++;
+        foreach (Transform each in groundPoint.transform) {
+            RaycastHit2D hit = Physics2D.Raycast(each.position, Vector2.down, rayLength, layerMaskIndex);
+            if (hit.collider != null ) {
+                return false;
             }
         }
 
-        return falseCount == hitsbool.Length ? true : false;
+        return true;
     }
 
 
@@ -149,8 +131,11 @@ public class Player2DControl : MonoBehaviour {
         foreach (Collider2D each in colliders) {
 
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
-            
-            if (!eachParent.transform.Find("Root3D").CompareTag("ClimbObj")) continue;
+
+            Transform rootTransform = eachParent.transform.Find("Root3D");
+            if (rootTransform == null || !rootTransform.CompareTag("ClimbObj")) {
+                continue; // Skip if not a climable object
+            }
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
                 //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
@@ -213,7 +198,4 @@ public class Player2DControl : MonoBehaviour {
         Gizmos.color = Color.green;        // Set the Gizmo color
         Gizmos.DrawWireSphere(transform.position, 2.7f);
     }
-
-
-
 }

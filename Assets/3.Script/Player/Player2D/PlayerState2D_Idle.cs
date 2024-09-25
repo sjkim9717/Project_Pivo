@@ -56,7 +56,6 @@ public class PlayerState2D_Idle : PlayerState2D {
     }
 
     private void ChangeState() {
-
         Control2D.Move(0);
         if (horizontalInput != 0) {
             Control2D.ChangeState(PlayerState.Move);
@@ -85,6 +84,9 @@ public class PlayerState2D_Idle : PlayerState2D {
                 else {
                     Debug.LogWarning(tagName);
                 }
+            }
+            else {
+                Debug.Log(" 상호작용 오브젝트 null ");
             }
         }
         else if (Input.GetKeyDown(KeyCode.Escape)) {

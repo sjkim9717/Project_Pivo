@@ -9,7 +9,6 @@ public class PlayerState3D_Idle : PlayerState3D {
     private GameObject interactionObj;
     protected override void OnEnable() {
         base.OnEnable();
-        Debug.Log("!!!!!!");
         Input.ResetInputAxes();
     }
 

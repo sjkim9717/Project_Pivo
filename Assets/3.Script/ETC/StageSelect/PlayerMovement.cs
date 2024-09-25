@@ -69,6 +69,7 @@ public class PlayerMovement : MonoBehaviour {
         Vector3 startPosition = playerRigid.position;
         Vector3 endPosition = new Vector3(nextWaypoint.position.x, playerRigid.position.y, nextWaypoint.position.z);
         float elapsedTime = 0f;
+        float moveDuration = 1f;
 
         Quaternion startRotation = playerRigid.rotation;                    // 현재 방향 저장
 
@@ -76,34 +77,39 @@ public class PlayerMovement : MonoBehaviour {
         Quaternion targetRotation = Quaternion.LookRotation(direction);
 
         playerRigid.MoveRotation(targetRotation);
-        bool isClimbing = false;
 
-        while (elapsedTime < 1f && !isClimbing) {
+        while (elapsedTime < moveDuration) {
 
-            if (CheckGroundPointsEmpty(1f)) {
-                endPosition.y += gravity * Time.deltaTime * moveSpeed;
-            }
-            elapsedTime += Time.deltaTime * moveSpeed;
-            playerRigid.MovePosition(Vector3.Lerp(startPosition, endPosition, elapsedTime));
 
             if (Physics.Raycast(climbTransfrom.position, transform.forward, out RaycastHit hit, 1f)) {
                 if (hit.collider.CompareTag("ClimbObj")) {
-                    isClimbing = true;
                     playerRigid.velocity = Vector3.zero;
 
                     Debug.Log("Run TestRoutine");
                     yield return StartCoroutine(Climb_Co());
                     Debug.Log("Finish TestRoutine");
                     climbTransfrom.localPosition = Vector3.zero;
-                    isClimbing = false;
+
                     //Debug.Log(" Finnish | elapsedTime | " + elapsedTime + " | " + isClimbing);
 
                     playerAni.SetBool("IsMove", true);
-                    startPosition = playerRigid.position; // 현재 위치를 새로운 시작 위치로 설정
-                    elapsedTime = 0f; // 다시 이동 시작
 
+                    startPosition = playerRigid.position;
+                    endPosition = new Vector3(nextWaypoint.position.x, playerRigid.position.y, nextWaypoint.position.z);
+                    elapsedTime = 0f; // Reset elapsed time                
+
+                    continue;
                 }
             }
+
+            if (CheckGroundPointsEmpty(1f)) {
+                endPosition.y += gravity * Time.deltaTime * moveSpeed;
+            }
+
+            elapsedTime += Time.deltaTime * moveSpeed;
+            float t = Mathf.Clamp01(elapsedTime / moveDuration);
+            playerRigid.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
+
 
             yield return null;
         }
@@ -131,35 +137,14 @@ public class PlayerMovement : MonoBehaviour {
     public bool CheckGroundPointsEmpty(float rayLength) {
 
         groundPoint.transform.localPosition = Vector3.zero;
-        bool[] hitsbool = new bool[groundPoint.transform.childCount];
-        int falseCount = 0;
-
-        for (int i = 0; i < groundPoint.transform.childCount; i++) {
-            Transform child = groundPoint.transform.GetChild(i);
-
-            RaycastHit[] hits = Physics.RaycastAll(child.position, -child.up, rayLength);
-
-            List<RaycastHit> filteredHits = new List<RaycastHit>();          // `hits` 배열에서 태그가 "Player"인 오브젝트를 제외
-
-            foreach (RaycastHit hit in hits) {
-                if (!hit.collider.CompareTag("Player")) {
-                    filteredHits.Add(hit);
+        foreach (Transform each in groundPoint.transform) {
+            if (Physics.Raycast(each.position, Vector3.down, out RaycastHit hit, rayLength)) {
+                if (hit.collider.gameObject != transform.gameObject) {
+                    return false;
                 }
             }
-
-            // 필터링된 배열로 `hitsbool` 업데이트
-            if (filteredHits.Count <= 0) hitsbool[i] = false;               // 오브젝트가 없을 경우 false
-            else hitsbool[i] = true;                                        // 나머지 경우에는 true
-
         }
-
-        for (int i = 0; i < hitsbool.Length; i++) {
-            if (hitsbool[i] == false) {
-                falseCount++;
-            }
-        }
-
-        return falseCount == hitsbool.Length ? true : false;
+        return true;
     }
 
     private void OnDrawGizmos() {

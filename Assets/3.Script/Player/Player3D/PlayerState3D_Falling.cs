@@ -32,7 +32,7 @@ public class PlayerState3D_Falling : PlayerState3D {
 
         Control3D.PlayerRigid.constraints = RigidbodyConstraints.FreezeRotation;
 
-        if (Control3D.PlayerRigid.position.y <= -20f) {
+        if (Control3D.PlayerRigid.position.y <= -15f) {
             // respawn
             PlayerManage.instance.SetPlayerDieCount();
 
