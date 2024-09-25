@@ -81,15 +81,17 @@ public class Door : MonoBehaviour {
             // 문이 내려가야함
             isDoorNeddMove = true;
             startTime = Time.time;
+            /*
             if (checkCount > requireKeyNum) {
                 Debug.LogWarning("확인된 키가 필요한 키의 갯수보다 많음");
             }
             else if (checkCount == requireKeyNum) {
                 Debug.LogWarning("확인된 키가 필요한 키의 개수와 동일");
             }
+            */
         }
         else {
-            Debug.LogWarning("확인된 키가 필요한 키의 개수보다 부족함 | " + requireKeyNum + " | " + checkCount);
+            //Debug.LogWarning("확인된 키가 필요한 키의 개수보다 부족함 | " + requireKeyNum + " | " + checkCount);
         }
     }
 

@@ -31,7 +31,7 @@ public class PlayerBase : MonoBehaviour {
     public GameObject Effect { get { return effect; } }
 
 
-    private Vector3 moveposition;
+    protected Vector3 moveposition;
 
     private Vector3 startSection = Vector3.zero;
     private Vector3 finishSection = Vector3.zero;
@@ -56,6 +56,10 @@ public class PlayerBase : MonoBehaviour {
         currentState = PlayerState.Idle;
     }
 
+    private void OnEnable() {
+        moveposition = Vector3.zero;
+    }
+
     public virtual void Change2D() {
         moveposition = player3D.transform.position;
 
@@ -72,7 +76,10 @@ public class PlayerBase : MonoBehaviour {
     }
 
     public virtual void Change3D() {
-        moveposition = player2D.transform.position;
+        //TODO: player 사망시 player2d가 파괴되어있는 상태
+        if (player2D.activeSelf) {
+            moveposition = player2D.transform.position;
+        }
 
         effect.transform.position = moveposition;
         SettingEffectActiveTrue();

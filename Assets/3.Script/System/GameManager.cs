@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
 
     public static bool isLoadTitle=true;
-    public bool IsTutorialCompleted;
+    public bool IsTutorialCompleted;                        // stage clear 후 UI 꺼져야할 경우
+    //public bool IsIntroCompleted;                           // 애니메이션만 꺼지면 되는 경우
     public StageLevel currentStage;                         // 현재 씬
     public StageLevel PreviousGameStage;                    // select scene에서 확인할 이전 게임 씬 이름
     private GameObject staticGroup;
@@ -50,7 +51,10 @@ public class GameManager : MonoBehaviour {
 
     // 씬이 변경될때마다 씬 레벨 확인
     private void FindScenLevelWhenLevelChange(Scene scene, LoadSceneMode mode) {
+        Debug.LogWarning($"Scene loaded: {scene.name}");
         string sceneName = SceneManager.GetActiveScene().name;
+        Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
+
         currentStage  =  SelectSceneLevelWithSceneName( sceneName);
 
         if (currentStage!=StageLevel.StageSelect) PreviousGameStage = currentStage;
@@ -65,8 +69,6 @@ public class GameManager : MonoBehaviour {
         }
 
         else {
-            staticGroup.SetActive(true);
-
             stageClearController = FindObjectsOfType<StageClearController>();
             // StageClear 이벤트 구독
             foreach (var controller in stageClearController) {
@@ -177,15 +179,18 @@ public class GameManager : MonoBehaviour {
                 break;
         }
 
+        //SceneManager.LoadScene(sceneName);
         StartCoroutine(LoadGameSceneAsync(sceneName));
     }
     IEnumerator LoadGameSceneAsync(string sceneName) {
-        // 비동기적으로 GameScene 로드 시작
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
-
-        //TODO: [추가] loading 화면 띄워야함ㅠㅠ
         Image fade = fadeGroup.GetComponentInChildren<Image>(true);
         Image loading = loadingGroup.GetComponentInChildren<Image>();
+
+        // 비동기적으로 GameScene 로드 시작
+        staticGroup.SetActive(true);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = true;  // 씬 활성화 허용
+
 
         fade.gameObject.SetActive(true);
         Color fadeAlpha = fade.color;
@@ -194,12 +199,11 @@ public class GameManager : MonoBehaviour {
 
         // 로드가 완료될 때까지 대기
         while (!asyncLoad.isDone) {
-            fadeAlpha.a += Time.deltaTime * 2f; // Adjust speed if needed
+            fadeAlpha.a += Time.deltaTime * 0.7f; // Adjust speed if needed
             fadeAlpha.a = Mathf.Clamp01(fadeAlpha.a); // Clamp between 0 and 1
             fade.color = fadeAlpha;
 
             loadingAlpha.a = Mathf.PingPong(Time.time * 5, 0.2f) + 0.8f; // Pulses between 0.8 and 1.0
-            Debug.Log(fadeAlpha.a + " | "+ loadingAlpha.a);
             loading.color = loadingAlpha;
 
             yield return null;
@@ -208,7 +212,10 @@ public class GameManager : MonoBehaviour {
         loadingGroup.SetActive(false);
         fade.gameObject.SetActive(false);
         fadeAlpha.a = 0;
-        fade.color = fadeAlpha; 
+        fade.color = fadeAlpha;
+
+        // 로드된 씬을 활성화
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
     }
 }
 

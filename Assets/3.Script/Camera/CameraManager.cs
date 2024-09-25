@@ -6,8 +6,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CameraManager : MonoBehaviour {
-    public bool Test;
-
     private Animator camAni;
     private PlayerManage playerManager;
 
@@ -29,22 +27,10 @@ public class CameraManager : MonoBehaviour {
         gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
 
         // Initialize all cameras including gameCam
-        //TODO: Test 지울것!!!!!!!!!!!!!!!!!
         cameras = new CinemachineVirtualCamera[4];
-        if (GameManager.isLoadTitle && Test) {
-            cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
-            cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
-            cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
-            cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
-            DefaultCameraSetting();
-        }
-        else {
-            if (!Test) {
-                cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
-                cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
-            }
-            SettingCamerasPriority_Game();
-        }
+        InitSetting();
+
+        StaticManager.Restart += SettingCamerasPriority_Game;
     }
 
     private void Start() {
@@ -74,6 +60,25 @@ public class CameraManager : MonoBehaviour {
             else {
                 Debug.LogWarning("Main camera not found.");
             }
+        }
+    }
+    private void InitSetting() {
+        if (GameManager.instance.currentStage == StageLevel.GrassStageLevel_1) {
+            if (GameManager.isLoadTitle) {
+                cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
+                cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
+                cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+                cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
+                DefaultCameraSetting();
+            }
+            else {
+                SettingCamerasPriority_Game();
+            }
+        }
+        else {
+            cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+            cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
+            SettingCamerasPriority_Game();
         }
     }
 
@@ -166,9 +171,10 @@ public class CameraManager : MonoBehaviour {
     public void SettingCamerasPriority_Game() {
         SetCameraPriority(CameraType.GameCam);  // 게임 카메라 활성화
     }
-        
+
     // StageClear 카메라 설정
     public void SettingCamerasPriority_StageClear() {
+        Debug.LogWarning(" 뒤졌으면 불러져야함");
         SetCameraPriority(CameraType.StageClearCam);  // 게임 카메라 활성화
     }
 

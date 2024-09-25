@@ -7,6 +7,7 @@ public class Player2DControl : MonoBehaviour {
 
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
+    private LayerMask layerMaskIndex;
     public Animator Ani2D { get { return PlayerManage.instance.Ani2D; } }
     public GameObject Player { get { return PlayerManage.instance.Player2D; } }
     public Rigidbody2D PlayerRigid { get { return PlayerManage.instance.PlayerRigid2D; } }
@@ -25,7 +26,7 @@ public class Player2DControl : MonoBehaviour {
         playerManager = transform.parent.GetComponent<PlayerManage>();
         Debug.LogWarning("PlayerManage | " + PlayerManage.instance.name);
         groundPoint = Player.transform.GetChild(1).gameObject;
-
+        layerMaskIndex = 1 << LayerMask.NameToLayer("Ground");
         InitializeStates();
     }
     private void OnEnable() {
@@ -47,11 +48,8 @@ public class Player2DControl : MonoBehaviour {
                     stateDic.Add(state, stateComponent);
                 }
                 else {
-                    Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
+                    //Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
                 }
-            }
-            else {
-                Debug.LogWarning($"State class {stateClassName} not found");
             }
         }
 
@@ -63,7 +61,7 @@ public class Player2DControl : MonoBehaviour {
 
     // 플레이어 상태 변경 메서드
     public void ChangeState(PlayerState newState) {
-        Debug.Log(newState);
+        //Debug.Log(newState);
         // 현재 상태가 null이 아니면 비활성화
         if (currentStateComponent != null) {
             currentStateComponent.ExitState();
@@ -111,11 +109,9 @@ public class Player2DControl : MonoBehaviour {
     public bool CheckGroundPointsEmpty(float rayLength) {
 
         foreach (Transform each in groundPoint.transform) {
-            RaycastHit2D hit = Physics2D.Raycast(each.position, Vector2.down, rayLength);
+            RaycastHit2D hit = Physics2D.Raycast(each.position, Vector2.down, rayLength, layerMaskIndex);
             if (hit.collider != null ) {
-                if ( hit.collider.gameObject != Player) {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -134,15 +130,12 @@ public class Player2DControl : MonoBehaviour {
 
         foreach (Collider2D each in colliders) {
 
-            GameObject eachParent;
-            if(each.name is "Root2D") {
-                eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
-            }
-            else {
-                eachParent = each.gameObject;          
-            }
+            GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
-            if (!eachParent.transform.Find("Root3D").CompareTag("ClimbObj")) continue;
+            Transform rootTransform = eachParent.transform.Find("Root3D");
+            if (rootTransform == null || !rootTransform.CompareTag("ClimbObj")) {
+                continue; // Skip if not a climable object
+            }
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
                 //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
@@ -205,7 +198,4 @@ public class Player2DControl : MonoBehaviour {
         Gizmos.color = Color.green;        // Set the Gizmo color
         Gizmos.DrawWireSphere(transform.position, 2.7f);
     }
-
-
-
 }

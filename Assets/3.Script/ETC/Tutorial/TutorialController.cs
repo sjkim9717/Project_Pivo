@@ -153,7 +153,7 @@ public class TutorialController : MonoBehaviour {
     // Timeline이 종료될 때 실행되는 메서드
     private void OnTimeline_1_Stopped(PlayableDirector director) {
         Debug.Log("Timeline_1 has finished playing.");
-
+        //GameManager.instance.IsIntroCompleted=true;
         FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(false);
         StopTutorial();
 

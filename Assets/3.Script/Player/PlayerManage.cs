@@ -16,6 +16,7 @@ public class PlayerManage : PlayerBase {
     public Transform Respawnposition { get { return respawnposition; } }
 
     private int dieCount;
+    private bool isDieActionDone;
     public bool IsBombOnGround;
     public bool IsChangingModeTo3D = false;                                             // 2D에서 3D로 넘어갈 경우 -> fall 조절
     
@@ -51,13 +52,13 @@ public class PlayerManage : PlayerBase {
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
 
         // restart 초기화 값 - diecount, 플레이어 위치, 플레이어 모드
-        StaticManager.Restart += Init;
-        StaticManager.Restart += PositionInit;
+        StaticManager.Restart += Restart;
     }
     private void Update() {
-        if (dieCount >= 3) {
-            SwitchMode_Dead();
+        if (dieCount >= 3 && !isDieActionDone) {
+            isDieActionDone = true;
             PlayerDead?.Invoke();
+            SwitchMode_Dead();
         }
     }
 
@@ -70,15 +71,17 @@ public class PlayerManage : PlayerBase {
             ChangeAutoMode();
         }
     }
-
-
-    public void PositionInit() {                                                    // Restart 연결? 씬넘어가면 전부 풀리겠지?
+    private void Restart() {
+        dieCount = 0;
+        Debug.LogWarning(" 뒤졌으면 불러져야함");
+        Change3D();
         base.PlayerRigid3D.position = transform.position;
         base.PlayerRigid2D.position = transform.position;
+        isDieActionDone = false;
     }
 
+
     private void SwitchMode_Dead() {
-        dieCount = 0;
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
         foreach (ConvertMode mode in convertModes) {
             mode.ChangeLayerAllActiveTrue();

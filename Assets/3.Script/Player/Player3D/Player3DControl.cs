@@ -33,6 +33,12 @@ public class Player3DControl : MonoBehaviour {
 
     private void Start() {
         PlayerManage.PlayerDead += PlayerDead;
+        StaticManager.Restart += Restart;
+    }
+
+    private void Restart() {
+        Ani3D.Rebind();
+        ChangeState(PlayerState.Idle);
     }
 
     private void OnEnable() {
@@ -85,11 +91,8 @@ public class Player3DControl : MonoBehaviour {
                     stateDic.Add(state, stateComponent);
                 }
                 else {
-                    Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
+                    //Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
                 }
-            }
-            else {
-                Debug.LogWarning($"State class {stateClassName} not found");
             }
         }
 
