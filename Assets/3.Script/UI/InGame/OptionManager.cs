@@ -30,7 +30,7 @@ public class OptionManager : MonoBehaviour {
     private int[] selectScreenSize = new int[2]; // 사용자 설정 너비
     private int[] currentScreenSize = new int[2]; // 현재 화면 설정 너비
 
-    private int[] deviceScreenSize = new int[] { 1920, 1080}; // 화면 사이즈 저장
+    private int[] deviceScreenSize = new int[] { 1920, 1080 }; // 화면 사이즈 저장
 
     private void Awake() {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -60,6 +60,7 @@ public class OptionManager : MonoBehaviour {
         }
     }
 
+    // 사이즈 혹은 모드가 변경됬는지 확인
     private bool CheckSelectModeChange() {
         if (currentScreenMode != selectScreenMode || selectScreenSize != currentScreenSize) {
             return true;
@@ -67,8 +68,7 @@ public class OptionManager : MonoBehaviour {
         return false;
     }
 
-    //TODO: 창모드 화면 사이즈 결정 해서 버튼 눌릴 경우 변경되어야함
-    //TODO: [Text 추가해야함] 
+    // 창모드 화면 사이즈 결정 해서 버튼 눌릴 경우 변경
     public void ButtonOnClick_ScreenMode(bool RightArrow) {
 
         int maxCount = Enum.GetValues(typeof(ScreenMode)).Length;
@@ -94,7 +94,7 @@ public class OptionManager : MonoBehaviour {
     }
 
 
-    //TODO: [Text 추가해야함] 
+    // screen size 설정 버튼 눌릴 경우 변경
     public void ButtonOnClick_ScreenSize(bool RightArrow) {
         int maxCount = screenSizeList.Count;
         if (RightArrow) {
@@ -125,9 +125,8 @@ public class OptionManager : MonoBehaviour {
     }
 
 
-
+    //TODO: 창모드, 사운드 조정하는 메소드
     public void ButtonOnClick_Apply() {
-        //TODO: 창모드, 사운드 조정하는 메소드
 
         if (selectScreenSizeIndex < 0 || selectScreenSizeIndex >= screenSizeList.Count) {
             Debug.LogError("Invalid resolution index.");
@@ -137,7 +136,7 @@ public class OptionManager : MonoBehaviour {
         int width = screenSizeList[selectScreenSizeIndex][0];
         int height = screenSizeList[selectScreenSizeIndex][1];
 
-        UpdateCanvasScaler();
+        //UpdateCanvasScaler();
 
         // 화면 모드에 따른 설정 적용
         switch (selectScreenMode) {
@@ -155,7 +154,7 @@ public class OptionManager : MonoBehaviour {
         currentScreenMode = selectScreenMode;
         currentScreenSize = selectScreenSize;
 
-        Debug.Log("currentScreenSize | " + currentScreenSize[0] + currentScreenSize[1]);
+        Debug.Log(" Window Mode | " + selectScreenMode + "currentScreenSize | " + currentScreenSize[0] + currentScreenSize[1]);
 
     }
 
