@@ -30,6 +30,10 @@ public class Save : MonoBehaviour {
     }
 
     private void InitializeData() {
+
+        GameData.ScreenMode = ScreenMode.FullScreen;
+        GameData.ScreenSize = new int[] { 1920, 1080 };
+
         GameData.GameSaveData.Clear();
         foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
             Debug.Log($"Adding level: {level}");
@@ -47,6 +51,10 @@ public class Save : MonoBehaviour {
             GameData loadedData = JsonUtility.FromJson<GameData>(jsonData);
 
             // 로드한 데이터로 GameSaveData 업데이트
+            GameData.ScreenMode = loadedData.ScreenMode;
+            GameData.ScreenSize = loadedData.ScreenSize;
+            Screen.SetResolution(GameData.ScreenSize[0], GameData.ScreenSize[1], MatchMode(GameData.ScreenMode));
+
             GameData.GameSaveData = loadedData.GameSaveData;
             Debug.Log("Game data loaded successfully.");
         }
@@ -56,6 +64,19 @@ public class Save : MonoBehaviour {
         }
     }
 
+    private FullScreenMode MatchMode(ScreenMode screenMode) {
+        switch (screenMode) {
+            case ScreenMode.Window:
+                return FullScreenMode.Windowed;
+            case ScreenMode.FullScreen:
+                return FullScreenMode.ExclusiveFullScreen;
+            case ScreenMode.FullScreenWindow:
+                return FullScreenMode.FullScreenWindow;
+            default:
+                return FullScreenMode.FullScreenWindow;
+        }
+
+    }
 
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
@@ -78,12 +99,26 @@ public class Save : MonoBehaviour {
     }
 
     public void SaveGame() {
-        GameData gameData = new GameData { GameSaveData = GameData.GameSaveData };
+        GameData gameData = new GameData {
+            ScreenMode = GameData.ScreenMode,
+            ScreenSize = GameData.ScreenSize,
+            GameSaveData = GameData.GameSaveData
+        };
         string jsonData = JsonUtility.ToJson(gameData, true);
         File.WriteAllText(SaveJsonFilePath, jsonData);
     }
 
+    public void SaveWindow(ScreenMode screenMode, int[] screenSize) {
+        if (!File.Exists(SaveJsonFilePath)) {
+            GameData = new GameData();
+            InitializeData();
+        }
 
+        GameData.ScreenMode = screenMode;
+        GameData.ScreenSize = screenSize;
+
+        SaveGame();  // 새로 만든 데이터를 저장
+    }
 
     public StageLevelData GetStageLevelData(StageLevel level) {
         return GameData.GameSaveData.Find(data => data.StageLevel == level);

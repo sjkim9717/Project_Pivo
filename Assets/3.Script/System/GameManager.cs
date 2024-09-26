@@ -55,8 +55,6 @@ public class GameManager : MonoBehaviour {
         string sceneName = SceneManager.GetActiveScene().name;
         Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
 
-        currentStage  =  SelectSceneLevelWithSceneName( sceneName);
-
         if (currentStage!=StageLevel.StageSelect) PreviousGameStage = currentStage;
         else PreviousGameStage = StageLevel.GrassStageLevel_1;
     }
@@ -100,15 +98,21 @@ public class GameManager : MonoBehaviour {
     private void OnStageClear() {
         PlayerManage.instance.CurrentMode = PlayerMode.AutoMode;
         PlayerManage.instance.ChangeAutoMode();
-        //TODO: outro
-        Save.instance.SetStageData(currentStage, true, GetComponentInChildren<StaticManager>().GetBiscuitCount());
+
+        // 만약 세이브가 있다면 현재 점수랑 비교해서 높은 쪽 저장
+        if (Save.instance.TryGetStageScore(currentStage, out int savescore)) {
+            int currentscore = GetComponentInChildren<StaticManager>().GetBiscuitCount();
+
+            int maxScore = Math.Max(savescore, currentscore);
+            Save.instance.SetStageData(currentStage, true, maxScore);
+        }
+
         Debug.LogWarning("save Data | " + Save.instance.GameData);
         Save.instance.SaveGame();
 
 
         FindObjectOfType<CameraManager>().SettingCamerasPriority_StageClear();
         StageClear_Director.Play();
-
     }
 
     // scene이 로드될경우 해당씬 확인
@@ -179,6 +183,7 @@ public class GameManager : MonoBehaviour {
                 break;
         }
 
+        currentStage = selectStageLevel;
         //SceneManager.LoadScene(sceneName);
         StartCoroutine(LoadGameSceneAsync(sceneName));
     }
@@ -190,7 +195,6 @@ public class GameManager : MonoBehaviour {
         staticGroup.SetActive(true);
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = true;  // 씬 활성화 허용
-
 
         fade.gameObject.SetActive(true);
         Color fadeAlpha = fade.color;

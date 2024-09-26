@@ -16,14 +16,12 @@ public class UI_Title : MonoBehaviour {
 
 
     // Load Game Button에 달려있는 이벤트 트리거
-    [SerializeField]private EventTrigger LoadeventTrigger;
+    [SerializeField] private EventTrigger LoadeventTrigger;
     private List<EventTrigger.Entry> LoadstoredEntries;
 
     private void Awake() {
 
-        if(!GameManager.isLoadTitle) {
-            gameObject.SetActive(false);
-        }
+        gameObject.SetActive(GameManager.isLoadTitle);
 
         mainGroup = transform.GetChild(0).gameObject;
         optionGroup = transform.GetChild(1).gameObject;
@@ -45,7 +43,13 @@ public class UI_Title : MonoBehaviour {
 
     //TODO: escape 시 각종 UI 원위치
     private void Update() {
+
         if (Input.GetKeyDown(KeyCode.Escape)) Escape();
+
+        if (Input.GetKeyDown(KeyCode.Return)) {
+            ButtonOnClick_Exit();
+        }
+
     }
 
     // on click event

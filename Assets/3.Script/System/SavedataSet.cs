@@ -24,6 +24,8 @@ public class StageLevelData {
 
 [Serializable]
 public class GameData {
+    public ScreenMode ScreenMode;
+    public int[] ScreenSize;
     public List<StageLevelData> GameSaveData = new List<StageLevelData>();
 }
 

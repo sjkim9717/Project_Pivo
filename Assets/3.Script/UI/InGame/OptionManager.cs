@@ -11,8 +11,8 @@ public class OptionManager : MonoBehaviour {
     private Text windowSizeText;
 
     // 화면 모드
-    private ScreenMode currentScreenMode = ScreenMode.FullScreen;
-    private ScreenMode selectScreenMode = ScreenMode.FullScreen;
+    private ScreenMode currentScreenMode;
+    private ScreenMode selectScreenMode;
 
     // 해상도 변경
     private List<int[]> screenSizeList = new List<int[]>
@@ -26,24 +26,27 @@ public class OptionManager : MonoBehaviour {
         new int[] { 1920, 1080 }
     };
 
+    //Default 해상도 비율
+    private float fixedAspectRatio = 1920f / 1080f;
+
     private int selectScreenSizeIndex = 0;
     private int[] selectScreenSize = new int[2]; // 사용자 설정 너비
     private int[] currentScreenSize = new int[2]; // 현재 화면 설정 너비
 
-    private int[] deviceScreenSize = new int[] { 1920, 1080 }; // 화면 사이즈 저장
-
     private void Awake() {
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        //Screen.SetResolution(1920, 1080, true);
-
         mainGroup = transform.parent.GetChild(0).gameObject;
         windowModeText = transform.GetChild(2).Find("WindowModeValueText").GetComponent<Text>();
         windowSizeText = transform.GetChild(3).Find("ResoultionValueText").GetComponent<Text>();
         selectActive = transform.GetChild(6).Find("ApplyActive").gameObject;
         Debug.LogWarning("Awake First| " + selectActive.name);
 
-        currentScreenSize = deviceScreenSize;
+        currentScreenMode = Save.instance.GameData.ScreenMode;
+        currentScreenSize = Save.instance.GameData.ScreenSize;
         selectScreenSize = currentScreenSize;
+        selectScreenMode = currentScreenMode;
+
+        windowModeText.text = (string)Enum.GetName(typeof(ScreenMode), currentScreenMode);
+        windowSizeText.text = string.Format($"{currentScreenSize[0]} * {currentScreenSize[1]}");
     }
 
     private void Update() {
@@ -110,7 +113,7 @@ public class OptionManager : MonoBehaviour {
                 selectScreenSizeIndex--;
             }
             else {
-                selectScreenSizeIndex = maxCount;
+                selectScreenSizeIndex = maxCount -1;
             }
 
         }
@@ -136,7 +139,6 @@ public class OptionManager : MonoBehaviour {
         int width = screenSizeList[selectScreenSizeIndex][0];
         int height = screenSizeList[selectScreenSizeIndex][1];
 
-        //UpdateCanvasScaler();
 
         // 화면 모드에 따른 설정 적용
         switch (selectScreenMode) {
@@ -145,22 +147,26 @@ public class OptionManager : MonoBehaviour {
                 break;
             case ScreenMode.FullScreen:
                 Screen.SetResolution(width, height, FullScreenMode.ExclusiveFullScreen);
+                UpdateCameraScaler(width, height);
                 break;
             case ScreenMode.FullScreenWindow:
                 Screen.SetResolution(width, height, FullScreenMode.FullScreenWindow);
+                UpdateCameraScaler(width, height);
                 break;
         }
+
+        UpdateCanvasScaler();
 
         currentScreenMode = selectScreenMode;
         currentScreenSize = selectScreenSize;
 
-        Debug.Log(" Window Mode | " + selectScreenMode + "currentScreenSize | " + currentScreenSize[0] + currentScreenSize[1]);
+        Save.instance.SaveWindow(selectScreenMode, selectScreenSize);
+
+        Debug.Log(" Window Mode | " + selectScreenMode + "currentScreenSize | " + currentScreenSize[0] + " | " + currentScreenSize[1]);
 
     }
 
     private void UpdateCanvasScaler() {
-        //Default 해상도 비율
-        float fixedAspectRatio = 1920f / 1080f;
 
         //현재 해상도의 비율
         float currentAspectRatio = (float)Screen.width / (float)Screen.height;
@@ -179,6 +185,30 @@ public class OptionManager : MonoBehaviour {
             else {
                 canvasScaler.matchWidthOrHeight = 0.5f;
             }
+        }
+    }
+
+    private void UpdateCameraScaler(float width, float height) {
+        Camera mainCam = Camera.main;
+        if(mainCam != null) {
+            Rect rect = mainCam.rect;
+
+            float currentAspectRatio = width / height;
+            float scaleHeight = currentAspectRatio / fixedAspectRatio;
+
+            if( scaleHeight < 1.0f) {
+                rect.height = scaleHeight;                 // 비율에 맞춰 높이 조정
+                rect.y = (1.0f - scaleHeight) / 2.0f;      // 중앙 정렬
+            }
+            else {
+                rect.width = 1.0f / scaleHeight;            // 비율에 맞춰 너비 조정
+                rect.x = (1.0f - rect.width) / 2.0f;        // 중앙정렬
+            }
+
+            mainCam.rect = rect;
+        }
+        else {
+            Debug.LogWarning("main camera is null");
         }
     }
 

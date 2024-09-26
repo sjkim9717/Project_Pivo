@@ -11,9 +11,12 @@ public class StaticManager : MonoBehaviour {
     private int HpCount = 3;
     private int biscuitCount = 0;
 
+    private bool isPauseCanShow;
+
     private Text biscuitCountText;
     private Image[] HpImgaes = new Image[3];
 
+    private GameObject UI_Title;
     private GameObject HPGroup;
     private GameObject biscuitGroup;
     public GameObject HoldingGroup;
@@ -25,6 +28,7 @@ public class StaticManager : MonoBehaviour {
     public int GetBiscuitCount() { return biscuitCount; }
 
     private void Awake() {
+
         HPGroup = transform.GetChild(0).gameObject;
         biscuitGroup = transform.GetChild(1).gameObject;
         HoldingGroup = transform.GetChild(2).gameObject;
@@ -53,11 +57,12 @@ public class StaticManager : MonoBehaviour {
             }
         }
 
-        if (GameManager.instance.IsTutorialCompleted) {
+        if (isPauseCanShow) {
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 PauseGroup.SetActive(true);
             }
         }
+
     }
 
     // Restart시에도 카운트 초기화 되어야함
@@ -72,6 +77,22 @@ public class StaticManager : MonoBehaviour {
 
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
         Debug.LogWarning($"Static Manager Scene loaded: {scene.name}");
+
+        //TODO: [수정]
+        if (scene.name == "GrassStage_Stage1") {
+            UI_Title = FindObjectOfType<UI_Title>(true).gameObject;
+            if (UI_Title != null) {
+                isPauseCanShow = !UI_Title.activeSelf;
+            }
+        }
+        else {
+            if (scene.name == "StageSelect_Grass") {
+                isPauseCanShow = false;
+            }
+            else {
+                isPauseCanShow = true;
+            }
+        }
 
         playerManager = FindObjectOfType<PlayerManage>();
 

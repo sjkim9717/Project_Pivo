@@ -44,7 +44,7 @@ public class UI_StageSelect : UserData {
 
     public void OnButtonClick_ReturnTitle() {
         GameManager.isLoadTitle = true;
-        GameManager.instance.LoadSelectStage(StageLevel.StageSelect);
+        GameManager.instance.LoadSelectStage(StageLevel.GrassStageLevel_1);
     }
 
     public void SelectStageLevel_Stage(StageLevel stageLevel) {

@@ -49,6 +49,15 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
+    // Tile이 들어간 tag는 자기 자신외 자식객체에서 tile이 포함되어있는지 확인하고 해당 오브젝트를 담음
+    protected  void InitParentObjectWithTag_Tile(ConvertItem tagName) {
+        parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
+
+    }
+
+
+
+
     protected void InitParentObjectWithTag_Object2(ConvertItem tagName) {
         parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
         for (int i = 0; i < parentObject.Length; i++) {
