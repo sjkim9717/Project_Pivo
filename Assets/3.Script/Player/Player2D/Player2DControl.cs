@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player2DControl : MonoBehaviour {
 
+    [SerializeField] private float gravityAddSpeed = 2f;
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
     private LayerMask layerMaskIndex;
@@ -93,7 +94,7 @@ public class Player2DControl : MonoBehaviour {
             positionToMove = dir * moveSpeed * Time.fixedDeltaTime;
 
             if (CheckGroundPointsEmpty(1f)) {
-                positionToMove.y += gravity * Time.deltaTime * moveSpeed;
+                positionToMove.y += gravity * Time.deltaTime * gravityAddSpeed;
             }
 
             PlayerRigid.MovePosition(PlayerRigid.position + (Vector2)positionToMove);
@@ -110,7 +111,7 @@ public class Player2DControl : MonoBehaviour {
 
         foreach (Transform each in groundPoint.transform) {
             RaycastHit2D hit = Physics2D.Raycast(each.position, Vector2.down, rayLength, layerMaskIndex);
-            if (hit.collider != null ) {
+            if (hit.collider != null) {
                 return false;
             }
         }

@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
 
     public static bool isLoadTitle=true;
     public bool IsTutorialCompleted;                        // stage clear 후 UI 꺼져야할 경우
-    //public bool IsIntroCompleted;                           // 애니메이션만 꺼지면 되는 경우
+    public bool IsIntroCompleted;                           // 애니메이션만 꺼지면 되는 경우
     public StageLevel currentStage;                         // 현재 씬
     public StageLevel PreviousGameStage;                    // select scene에서 확인할 이전 게임 씬 이름
     private GameObject staticGroup;
@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour {
                 stageLevel = StageLevel.SnowStageLevel_7;
                 break;
             default:
-                stageLevel = StageLevel.GrassStageLevel_1;
+                stageLevel = StageLevel.SnowStageLevel_3;
                 break;
         }
         return stageLevel;

@@ -42,7 +42,7 @@ public class TutorialController : MonoBehaviour {
         tutorialImg = canvas.GetComponentsInChildren<Image>()[1];
         tutorialText = canvas.GetComponentInChildren<Text>();
 
-        if (!GameManager.isLoadTitle) {
+        if (!GameManager.isLoadTitle || GameManager.instance.IsIntroCompleted) {
             StopTutorial();
         }
         else {  // title을 불러오는 경우 스테이지가 끝나야만 tutorial 종료됨
@@ -153,7 +153,7 @@ public class TutorialController : MonoBehaviour {
     // Timeline이 종료될 때 실행되는 메서드
     private void OnTimeline_1_Stopped(PlayableDirector director) {
         Debug.Log("Timeline_1 has finished playing.");
-        //GameManager.instance.IsIntroCompleted=true;
+        GameManager.instance.IsIntroCompleted = true;
         FindObjectOfType<Tutorial_PlayerMove>().SetPlayerMove(false);
         StopTutorial();
 

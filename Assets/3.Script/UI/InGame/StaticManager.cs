@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StaticManager : MonoBehaviour {
-    public static Action Restart;
+    //public static Action Restart;
 
     private int HpCount = 3;
     private int biscuitCount = 0;
@@ -35,7 +36,7 @@ public class StaticManager : MonoBehaviour {
         }
         biscuitCountText = biscuitGroup.GetComponentInChildren<Text>();
 
-        Restart += LevelInitWhenRestart;
+        //Restart += LevelInitWhenRestart;
     }
 
     private void OnEnable() {
@@ -104,8 +105,13 @@ public class StaticManager : MonoBehaviour {
 
     //TODO: Restart Yes 버튼 할당 필요함
     public void OnButtonClick_Restart() {
-        Restart?.Invoke();
+        //씬 재로드 해보기
+        GameManager.isLoadTitle = false;
+        GameManager.instance.LoadSelectStage(GameManager.instance.currentStage);
+        
+        //Restart?.Invoke();
     }
+
     public void ButtonOnClick_StageSelect() {
         SceneManager.LoadScene("StageSelect_Grass");
         //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함

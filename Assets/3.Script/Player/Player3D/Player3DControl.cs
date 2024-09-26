@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player3DControl : MonoBehaviour {
 
+    [SerializeField] private float gravityAddSpeed = 2f;
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
 
@@ -16,12 +17,13 @@ public class Player3DControl : MonoBehaviour {
 
     private Vector3 positionToMove = Vector3.zero;
 
-    private PlayerState3D currentStateComponent;
     private Dictionary<PlayerState, PlayerState3D> stateDic;
+    private PlayerState3D currentStateComponent;
 
     private GameObject groundPoint;
-    public GameObject GroundPoint { get { return groundPoint; } }
     public GameObject InteractionObject;
+
+    public GameObject GroundPoint { get { return groundPoint; } }
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
@@ -32,8 +34,10 @@ public class Player3DControl : MonoBehaviour {
     }
 
     private void Start() {
+        Debug.Log(playerManager);
+
         PlayerManage.PlayerDead += PlayerDead;
-        StaticManager.Restart += Restart;
+        //StaticManager.Restart += Restart;
     }
 
     private void Restart() {
@@ -44,9 +48,22 @@ public class Player3DControl : MonoBehaviour {
     private void OnEnable() {
         ChangeState(PlayerState.Idle);
     }
+    private void OnDestroy() {
+        PlayerManage.PlayerDead -= PlayerDead; // Unsubscribe from event
+    }
 
     private void PlayerDead() {
-        ChangeState(PlayerState.Dead);
+        Debug.Log("플레이어 사망 전 컨포넌트 |" + currentStateComponent);
+
+        if (stateDic.TryGetValue(PlayerState.Dead, out PlayerState3D dd)) {
+
+            Debug.Log("플레이어 사망 컨포넌트 |"+ dd);
+            ChangeState(PlayerState.Dead);
+        }
+        else {
+
+            Debug.Log("플레이어 사망 컨포넌트 왜 없지");
+        }
     }
 
     private void OnCollisionStay(Collision collision) {
@@ -91,7 +108,7 @@ public class Player3DControl : MonoBehaviour {
                     stateDic.Add(state, stateComponent);
                 }
                 else {
-                    //Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
+                    Debug.LogWarning($"Component for {stateClassName} not found on {gameObject.name}");
                 }
             }
         }
@@ -138,7 +155,7 @@ public class Player3DControl : MonoBehaviour {
             // player movement
             positionToMove = dir * moveSpeed * Time.fixedDeltaTime;
             if (CheckGroundPointsEmpty(1f)) {
-                positionToMove.y += gravity * Time.deltaTime * moveSpeed;
+                positionToMove.y += gravity * Time.deltaTime * gravityAddSpeed;
             }
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }

@@ -8,8 +8,8 @@ public class PlayerManage : PlayerBase {
     private static PlayerManage _instance;
     public static PlayerManage instance { get { return _instance; } }
 
-    public Action IsSwitchMode;
-    public static Action PlayerDead;
+    public Action IsSwitchMode = delegate { };
+    public static Action PlayerDead = delegate { };
     public UnityEvent<Vector3> onPlayerEnterTile;
 
     private Transform respawnposition;                                                  // 큐브위로 올라갈때 위치가 변경될 경우만 잡아서 갱신할 것 \=
@@ -37,6 +37,7 @@ public class PlayerManage : PlayerBase {
             _instance = this;
         }
         else {
+            Debug.LogWarning(" 씬 재로드 에러");
             Destroy(gameObject); // 기존 인스턴스가 있으면 현재 객체를 제거
         }
 
@@ -52,7 +53,7 @@ public class PlayerManage : PlayerBase {
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
 
         // restart 초기화 값 - diecount, 플레이어 위치, 플레이어 모드
-        StaticManager.Restart += Restart;
+        //StaticManager.Restart += Restart;
     }
     private void Update() {
         if (dieCount >= 3 && !isDieActionDone) {
@@ -64,19 +65,19 @@ public class PlayerManage : PlayerBase {
 
     private void Init() {
         dieCount = 0;
-        if (GameManager.instance.IsTutorialCompleted) {
+        if (GameManager.instance.IsTutorialCompleted || GameManager.instance.IsIntroCompleted) {
             Change3D();
         }
         else {
             ChangeAutoMode();
         }
+        isDieActionDone = false;
     }
     private void Restart() {
         dieCount = 0;
-        Debug.LogWarning(" 뒤졌으면 불러져야함");
+        Debug.LogWarning(" 재시작 불러져야함");
+
         Change3D();
-        base.PlayerRigid3D.position = transform.position;
-        base.PlayerRigid2D.position = transform.position;
         isDieActionDone = false;
     }
 

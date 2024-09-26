@@ -30,7 +30,7 @@ public class CameraManager : MonoBehaviour {
         cameras = new CinemachineVirtualCamera[4];
         InitSetting();
 
-        StaticManager.Restart += SettingCamerasPriority_Game;
+        //StaticManager.Restart += SettingCamerasPriority_Game;
     }
 
     private void Start() {
@@ -63,12 +63,13 @@ public class CameraManager : MonoBehaviour {
         }
     }
     private void InitSetting() {
+        cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
+        cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
+
         if (GameManager.instance.currentStage == StageLevel.GrassStageLevel_1) {
             if (GameManager.isLoadTitle) {
                 cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
                 cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
-                cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
-                cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
                 DefaultCameraSetting();
             }
             else {
@@ -76,8 +77,6 @@ public class CameraManager : MonoBehaviour {
             }
         }
         else {
-            cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
-            cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
             SettingCamerasPriority_Game();
         }
     }

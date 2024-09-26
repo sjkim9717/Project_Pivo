@@ -6,8 +6,8 @@ public class PlayerBase : MonoBehaviour {
     private PlayerMode currentMode;
     private PlayerState currentState;
 
-    private GameObject player2D;
-    private GameObject player3D;
+    protected GameObject player2D;
+    protected GameObject player3D;
 
     private Rigidbody rigid3D;
     private Rigidbody2D rigid2D;
@@ -77,8 +77,11 @@ public class PlayerBase : MonoBehaviour {
 
     public virtual void Change3D() {
         //TODO: player 사망시 player2d가 파괴되어있는 상태
-        if (player2D.activeSelf) {
+        if (player2D != null) {
             moveposition = player2D.transform.position;
+        }
+        else {
+            moveposition = Vector3.zero;
         }
 
         effect.transform.position = moveposition;
@@ -94,7 +97,7 @@ public class PlayerBase : MonoBehaviour {
     public virtual void ChangeAutoMode() {
         currentMode = PlayerMode.AutoMode;
 
-        player2D.SetActive(false);
+        player2D.SetActive(false);  
         player3D.SetActive(false);
 
         moveposition = transform.position;
