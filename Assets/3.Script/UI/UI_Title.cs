@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Playables;
-using UnityEngine.SceneManagement;
 
 public class UI_Title : MonoBehaviour {
     private GameObject mainGroup;
@@ -76,7 +74,8 @@ public class UI_Title : MonoBehaviour {
     }
 
     public void ButtonOnClick_LoadGame() {
-        SceneManager.LoadScene("StageSelect_Grass");
+        GameManager.instance.LoadSelectStage(StageLevel.StageSelect);
+
         //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
     }
 

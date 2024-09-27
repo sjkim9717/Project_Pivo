@@ -25,7 +25,6 @@ public class Player2DControl : MonoBehaviour {
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
-        Debug.LogWarning("PlayerManage | " + PlayerManage.instance.name);
         groundPoint = Player.transform.GetChild(1).gameObject;
         layerMaskIndex = 1 << LayerMask.NameToLayer("Ground");
         InitializeStates();

@@ -30,9 +30,6 @@ public class PlayerState3D_OpenPanel : PlayerState3D {
                 sceneNum = int.Parse(sceneName[lastDigitIndex].ToString());
             }
         }
-        else {
-            Debug.Log("Test Scene");
-        }
     }
 
     public override void EnterState() {

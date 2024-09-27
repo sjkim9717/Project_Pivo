@@ -69,8 +69,8 @@ public class TutorialController : MonoBehaviour {
     // ============== playable director 연결 등록 해재, 재등록
     private void SaveBindings() {
         TimelineAsset timeline = (TimelineAsset)tutorial_1_Director.playableAsset;
+
         // 타임라인의 트랙을 순회
-        Debug.LogWarning(timeline.name);
         foreach (var track in timeline.GetOutputTracks()) {
             if (track is AnimationTrack animationTrack) {
                 // 현재 바인딩 상태 가져오기

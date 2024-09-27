@@ -34,8 +34,6 @@ public class Player3DControl : MonoBehaviour {
     }
 
     private void Start() {
-        Debug.Log(playerManager);
-
         PlayerManage.PlayerDead += PlayerDead;
         //StaticManager.Restart += Restart;
     }

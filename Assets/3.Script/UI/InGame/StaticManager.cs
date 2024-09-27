@@ -124,7 +124,7 @@ public class StaticManager : MonoBehaviour {
         }
     }
 
-    //TODO: Restart Yes 버튼 할당 필요함
+    // Restart Yes 버튼 할당 필요함
     public void OnButtonClick_Restart() {
         //씬 재로드 해보기
         GameManager.isLoadTitle = false;
@@ -134,7 +134,8 @@ public class StaticManager : MonoBehaviour {
     }
 
     public void ButtonOnClick_StageSelect() {
-        SceneManager.LoadScene("StageSelect_Grass");
+        GameManager.instance.LoadSelectStage(StageLevel.StageSelect);
+
         //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
 
     }
@@ -147,7 +148,7 @@ public class StaticManager : MonoBehaviour {
  3. 클리어 이벤트 발동 시 비스킷 카운트 초기화
 
 
-//TODO: 재시작 리스트
+// 재시작 리스트
 1. 플레이어 위치 초기화
 2. 비스킷 생명 초기화
 3. 플레이어 애니메이션 idle

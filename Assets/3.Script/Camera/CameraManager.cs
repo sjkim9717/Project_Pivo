@@ -65,9 +65,8 @@ public class CameraManager : MonoBehaviour {
     private void InitSetting() {
         cameras[(int)CameraType.CanvasCamera] = GameObject.Find("CanvasCamera").GetComponent<CinemachineVirtualCamera>();
         cameras[(int)CameraType.StageClearCam] = GameObject.Find("StageClearCamera").GetComponent<CinemachineVirtualCamera>();
-        Debug.Log(" camera manager | current stage | " + GameManager.instance.currentStage + " | gamemanager.isloadtitle | " + GameManager.isLoadTitle);
+
         if (GameManager.instance.currentStage == StageLevel.GrassStageLevel_1) {
-            Debug.LogWarning(" 들어오는지 모르겠다 | " + " | gamemanager.isloadtitle | " + GameManager.isLoadTitle);
             if (GameManager.isLoadTitle) {
                 cameras[(int)CameraType.IntroCam1] = GameObject.Find("Intro1").GetComponent<CinemachineVirtualCamera>();
                 cameras[(int)CameraType.IntroCam2] = GameObject.Find("Intro2").GetComponent<CinemachineVirtualCamera>();
@@ -78,7 +77,6 @@ public class CameraManager : MonoBehaviour {
             }
         }
         else {
-            Debug.LogWarning(" 여긴 왜들어오는지 모르겠다 | " + " | gamemanager.isloadtitle | " + GameManager.isLoadTitle);
             SettingCamerasPriority_Game();
         }
     }

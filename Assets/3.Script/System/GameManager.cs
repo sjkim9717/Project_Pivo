@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
 
-    public static bool isLoadTitle=true;
+    public static bool isLoadTitle = true;
     public bool IsTutorialCompleted;                        // stage clear 후 UI 꺼져야할 경우
     public bool IsIntroCompleted;                           // 애니메이션만 꺼지면 되는 경우
     public StageLevel currentStage;                         // 현재 씬
@@ -23,6 +23,18 @@ public class GameManager : MonoBehaviour {
     private PlayableDirector StageClear_Director;
 
     private StageClearController[] stageClearController;
+
+    public readonly Dictionary<string, StageLevel> stageMap = new Dictionary<string, StageLevel>() {
+        { "GrassStage_Stage1", StageLevel.GrassStageLevel_1 },
+        { "GrassStage_Stage5", StageLevel.GrassStageLevel_5 },
+        { "GrassStage_Stage7", StageLevel.GrassStageLevel_7 },
+        { "SnowStage_Stage3", StageLevel.SnowStageLevel_3 },
+        { "SnowStage_Stage4", StageLevel.SnowStageLevel_4 },
+        { "SnowStage_Stage6", StageLevel.SnowStageLevel_6 },
+        { "SnowStage_Stage7", StageLevel.SnowStageLevel_7 },
+        { "StageSelect_Grass", StageLevel.StageSelect }
+    };
+
 
     private void Awake() {
         if (instance == null) {
@@ -51,22 +63,20 @@ public class GameManager : MonoBehaviour {
 
     // 씬이 변경될때마다 씬 레벨 확인
     private void FindScenLevelWhenLevelChange(Scene scene, LoadSceneMode mode) {
-        Debug.LogWarning($"Scene loaded: {scene.name}");
         string sceneName = SceneManager.GetActiveScene().name;
-        Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
 
-        if (currentStage!=StageLevel.StageSelect) PreviousGameStage = currentStage;
+        currentStage = SelectSceneLevelWithSceneName(sceneName);
+        //Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
+
+        if (currentStage != StageLevel.StageSelect) PreviousGameStage = currentStage;
         else PreviousGameStage = StageLevel.GrassStageLevel_1;
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
+        //Debug.LogWarning(" current scene | FindObjectsWhenLevelChange | " + currentStage);
 
-        if (currentStage == StageLevel.StageSelect) {
-            staticGroup.SetActive(false);
-        }
-
-        else {
+        if (currentStage != StageLevel.StageSelect) {
             stageClearController = FindObjectsOfType<StageClearController>();
             // StageClear 이벤트 구독
             foreach (var controller in stageClearController) {
@@ -88,6 +98,7 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+
     }
 
     private void StageClear_Director_Finished(PlayableDirector obj) {
@@ -116,74 +127,24 @@ public class GameManager : MonoBehaviour {
     }
 
     // scene이 로드될경우 해당씬 확인
-    public StageLevel SelectSceneLevelWithSceneName( string sceneName) {
-        StageLevel stageLevel = StageLevel.StageSelect;
-
-        switch (sceneName) {
-            case "GrassStage_Stage1":
-                stageLevel = StageLevel.GrassStageLevel_1;
-                break;
-            case "GrassStage_Stage5":
-                stageLevel = StageLevel.GrassStageLevel_5;
-                break;
-            case "GrassStage_Stage7":
-                stageLevel = StageLevel.GrassStageLevel_7;
-                break;
-            case "StageSelect_Grass":
-                stageLevel = StageLevel.StageSelect;
-                break;
-            case "SnowStage_Stage3":
-                stageLevel = StageLevel.SnowStageLevel_3;
-                break;
-            case "SnowStage_Stage4":
-                stageLevel = StageLevel.SnowStageLevel_4;
-                break;
-            case "SnowStage_Stage6":
-                stageLevel = StageLevel.SnowStageLevel_6;
-                break;
-            case "SnowStage_Stage7":
-                stageLevel = StageLevel.SnowStageLevel_7;
-                break;
-            default:
-                stageLevel = StageLevel.SnowStageLevel_3;
-                break;
-        }
-        return stageLevel;
+    public StageLevel SelectSceneLevelWithSceneName(string sceneName) {
+        if (stageMap.TryGetValue(sceneName, out StageLevel stage)) return stage;
+        else return StageLevel.GrassStageLevel_1;
     }
 
+    public string GetSceneNameFromStageLevel(StageLevel stageLevel) {
+        foreach (var item in stageMap)
+            if (item.Value == stageLevel) return item.Key;
+
+        return null;
+    }
 
     public void LoadSelectStage(StageLevel selectStageLevel) {
-        string sceneName = "";
-        switch (selectStageLevel) {
-            case StageLevel.GrassStageLevel_1:
-                sceneName = "GrassStage_Stage1";
-                break;
-            case StageLevel.GrassStageLevel_5:
-                sceneName = "GrassStage_Stage5";
-                break;
-            case StageLevel.GrassStageLevel_7:
-                sceneName = "GrassStage_Stage7";
-                break;
-            case StageLevel.SnowStageLevel_3:
-                sceneName = "SnowStage_Stage3";
-                break;
-            case StageLevel.SnowStageLevel_4:
-                sceneName = "SnowStage_Stage4";
-                break;
-            case StageLevel.SnowStageLevel_6:
-                sceneName = "SnowStage_Stage6";
-                break;
-            case StageLevel.SnowStageLevel_7:
-                sceneName = "SnowStage_Stage7";
-                break;
-            case StageLevel.StageSelect:
-                sceneName = "StageSelect_Grass";
-                break;
-            default:
-                break;
-        }
+        string sceneName = GetSceneNameFromStageLevel(selectStageLevel);
 
         currentStage = selectStageLevel;
+        Debug.LogWarning("GameManager current scene | LoadSelect Stage | " + currentStage);
+
         //SceneManager.LoadScene(sceneName);
         StartCoroutine(LoadGameSceneAsync(sceneName));
     }
@@ -203,11 +164,11 @@ public class GameManager : MonoBehaviour {
 
         // 로드가 완료될 때까지 대기
         while (!asyncLoad.isDone) {
-            fadeAlpha.a += Time.deltaTime * 0.7f; // Adjust speed if needed
-            fadeAlpha.a = Mathf.Clamp01(fadeAlpha.a); // Clamp between 0 and 1
+            fadeAlpha.a += Time.deltaTime * 0.6f; // Adjust speed if needed
+            fadeAlpha.a = Mathf.Clamp01(0.2f + fadeAlpha.a); // Clamp between 0 and 1
             fade.color = fadeAlpha;
 
-            loadingAlpha.a = Mathf.PingPong(Time.time * 5, 0.2f) + 0.8f; // Pulses between 0.8 and 1.0
+            loadingAlpha.a = Mathf.PingPong(Time.time * 5, 0.2f) + 0.7f; // Pulses between 0.8 and 1.0
             loading.color = loadingAlpha;
 
             yield return null;
@@ -220,6 +181,8 @@ public class GameManager : MonoBehaviour {
 
         // 로드된 씬을 활성화
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+
+        staticGroup.SetActive(!currentStage.Equals(StageLevel.StageSelect));
     }
 }
 
