@@ -165,40 +165,6 @@ public class Player3DControl : MonoBehaviour {
         }
     }
 
-    //TODO: test 필요함
-    /*
-     
-     public void Move(float horizontalInput, float verticalInput){
-    
-    float horizontalInput = Input.GetAxis("Horizontal");
-    float verticalInput = Input.GetAxis("Vertical");
-
-    Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
-
-    if (dir != Vector3.zero)
-    {
-        PlayerRigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
-        // Rotate the character
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.fixedDeltaTime * moveSpeed);
-
-        // Apply force to the Rigidbody
-        Vector3 force = dir * moveSpeed;
-        PlayerRigid.AddForce(force, ForceMode.VelocityChange);
-    }
-    else
-    {
-        // Reset horizontal velocity while keeping vertical
-        Vector3 currentVelocity = PlayerRigid.velocity;
-        PlayerRigid.velocity = new Vector3(0, currentVelocity.y, 0);
-        
-        // Reset constraints when idle
-        PlayerRigid.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY; // Freeze rotation and prevent moving down or up
-    }
-    }
-     
-     
-     */
 
     // 바닥 오브젝트 확인
     public bool CheckGroundPointsEmpty(float rayLength) {

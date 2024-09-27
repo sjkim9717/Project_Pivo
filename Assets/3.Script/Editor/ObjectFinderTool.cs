@@ -32,7 +32,7 @@ public class ObjectFinderTool : EditorWindow {
 
         // 첫 번째 단계 자식 검색
         foreach (Transform child in parent) {
-            if (child.name == name) {
+            if (child.name.Contains(name)) {
                 foundObjects.Add(child.gameObject);
             }
 
@@ -46,9 +46,7 @@ public class ObjectFinderTool : EditorWindow {
 
         // 발견된 오브젝트가 있는 경우
         if (foundObjects.Count > 0) {
-            foreach (var obj in foundObjects) {
-                Debug.Log("Found child: " + obj.name);
-            }
+            Debug.Log("Found child: " + foundObjects.Count);
             // Hierarchy에서 발견된 오브젝트 선택
             Selection.objects = foundObjects.ToArray();
         }

@@ -37,8 +37,10 @@ public class Bomb : MonoBehaviour, IBomb {
         bombRigid.constraints = RigidbodyConstraints.FreezeAll;
 
         BombToMove = bombRigid.position;
-        originPos = bombRigid.position;
+        Vector3 initPos = new Vector3(transform.parent.position.x + transform.parent.position.y + 2, transform.parent.position.z);
+        originPos = initPos;
     }
+
     private void FixedUpdate() {
         // 바닥 밑으로 떨어짐
         if (bombRigid.position.y <= -20f) {
@@ -101,7 +103,7 @@ public class Bomb : MonoBehaviour, IBomb {
 
             foreach (RaycastHit item in hits) {
                 if (!item.collider.name.Contains("Root3D")) {
-                    if (item.collider.CompareTag("Destroy") ) {
+                    if (item.collider.CompareTag("Destroy")) {
                         Debug.LogWarning("IBombExplosion | " + item.collider.name);
 
                         item.collider.gameObject.SetActive(false);

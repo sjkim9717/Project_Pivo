@@ -18,7 +18,9 @@ TagManager:
   - Tree
   - Triggers
   - Puzzle
+  - Stage_Clear
   - Objects_2
+  - Object_2
   layers:
   - Default
   - TransparentFX

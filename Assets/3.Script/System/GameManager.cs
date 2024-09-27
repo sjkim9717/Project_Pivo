@@ -66,10 +66,9 @@ public class GameManager : MonoBehaviour {
         string sceneName = SceneManager.GetActiveScene().name;
 
         currentStage = SelectSceneLevelWithSceneName(sceneName);
-        //Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
+        Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
 
         if (currentStage != StageLevel.StageSelect) PreviousGameStage = currentStage;
-        else PreviousGameStage = StageLevel.GrassStageLevel_1;
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
@@ -129,7 +128,7 @@ public class GameManager : MonoBehaviour {
     // scene이 로드될경우 해당씬 확인
     public StageLevel SelectSceneLevelWithSceneName(string sceneName) {
         if (stageMap.TryGetValue(sceneName, out StageLevel stage)) return stage;
-        else return StageLevel.GrassStageLevel_1;
+        else return StageLevel.SnowStageLevel_4;
     }
 
     public string GetSceneNameFromStageLevel(StageLevel stageLevel) {
@@ -143,7 +142,7 @@ public class GameManager : MonoBehaviour {
         string sceneName = GetSceneNameFromStageLevel(selectStageLevel);
 
         currentStage = selectStageLevel;
-        Debug.LogWarning("GameManager current scene | LoadSelect Stage | " + currentStage);
+        //Debug.LogWarning("GameManager current scene | LoadSelect Stage | " + currentStage);
 
         //SceneManager.LoadScene(sceneName);
         StartCoroutine(LoadGameSceneAsync(sceneName));

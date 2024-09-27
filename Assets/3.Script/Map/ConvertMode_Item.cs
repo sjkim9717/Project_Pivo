@@ -8,7 +8,6 @@ public class ConvertMode_Item : ConvertMode {
 
     protected override void Start() {
         InitParentObjectWithTag(ConvertItem.Objects);
-        InitParentObjectWithTag_Object2(ConvertItem.Objects_2);
 
         ChangeLayerAllActiveTrue();
     }
@@ -18,4 +17,21 @@ public class ConvertMode_Item : ConvertMode {
             AllObjects.Remove(deleteObject);
         }
     }
+
+    public override void ChangeLayerAllActiveTrue() {
+        foreach (GameObject each in AllObjects) {
+            each.layer = activeTrueLayerIndex;
+
+            // 하위 객체의 레이어 변경 
+            foreach (Transform child in each.transform) {
+                child.gameObject.layer = activeTrueLayerIndex;
+            }
+        }
+    }
 }
+
+/* 삭제 되지않는 타일이 아닌 오브젝트 
+ - 해당하는 오브젝트들 
+1. object
+
+*/

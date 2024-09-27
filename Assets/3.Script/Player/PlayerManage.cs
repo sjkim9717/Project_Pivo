@@ -58,7 +58,6 @@ public class PlayerManage : PlayerBase {
     private void Update() {
         if (dieCount >= 3 && !isDieActionDone) {
             isDieActionDone = true;
-            PlayerDead?.Invoke();
             SwitchMode_Dead();
         }
     }
@@ -86,24 +85,31 @@ public class PlayerManage : PlayerBase {
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
         foreach (ConvertMode mode in convertModes) {
             mode.ChangeLayerAllActiveTrue();
-            mode.ChangeActiveWithLayer();
+            //mode.ChangeActiveWithLayer();
         }
 
         Change3D();
+        PlayerDead?.Invoke();
     }
 
     public void SwitchMode() {
         IsSwitchMode?.Invoke();
 
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
-        foreach (ConvertMode mode in convertModes) {
-            mode.ChangeActiveWithLayer();
-        }
 
         if (CurrentMode == PlayerMode.Player3D) {
+            foreach (ConvertMode mode in convertModes) {
+                mode.ChangeLayerAllActiveTrue();
+            }
+
             Change3D();
         }
         else if (CurrentMode == PlayerMode.Player2D) {
+
+            foreach (ConvertMode mode in convertModes) {
+                mode.ChangeLayerActiveFalseInSelectObjects();
+            }
+
             Change2D();
         }
 

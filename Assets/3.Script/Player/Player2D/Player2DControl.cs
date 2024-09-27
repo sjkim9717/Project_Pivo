@@ -8,6 +8,7 @@ public class Player2DControl : MonoBehaviour {
     [SerializeField] private float gravityAddSpeed = 2f;
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
+    protected int activeFalseLayerIndex;
     private LayerMask layerMaskIndex;
     public Animator Ani2D { get { return PlayerManage.instance.Ani2D; } }
     public GameObject Player { get { return PlayerManage.instance.Player2D; } }
@@ -26,6 +27,7 @@ public class Player2DControl : MonoBehaviour {
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
         groundPoint = Player.transform.GetChild(1).gameObject;
+        activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
         layerMaskIndex = 1 << LayerMask.NameToLayer("Ground");
         InitializeStates();
     }
@@ -129,6 +131,9 @@ public class Player2DControl : MonoBehaviour {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 2.7f);     // tile : 2 + player : 0.7
 
         foreach (Collider2D each in colliders) {
+            if (each.gameObject.layer == activeFalseLayerIndex) {
+                continue;
+            }
 
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
@@ -156,13 +161,13 @@ public class Player2DControl : MonoBehaviour {
                 //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
                 return interactionObj;
             }
-            else {
-                //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
-            }
+            //else {
+            //    Debug.Log("topObstacles 가 없고 bottomObstacles도 없음");
+            //}
         }
-        else {
-            //Debug.Log("topObstacles 가 있음");
-        }
+        //else {
+        //    Debug.Log("topObstacles 가 있음");
+        //}
 
         return null;
     }
@@ -192,6 +197,16 @@ public class Player2DControl : MonoBehaviour {
 
         return false;
     }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if(collision.transform.position.y>= transform.position.y) {
+            Debug.Log(" 플레이어 위에 있는 물체 | " + collision.collider.name);
+            if (collision.transform.parent!=null) {
+                Debug.Log(" 플레이어 위에 있는 물체 | " + collision.transform.parent.name);
+            }
+        }
+    }
+
 
 
     private void OnDrawGizmos() {

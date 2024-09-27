@@ -34,6 +34,8 @@ public class PlayerState3D_PushBox : PlayerState3D {
             return;
         }
 
+        Control3D.Move(0, 0);
+
 
         if ((horizontalInput != 0 || verticalInput != 0) && !isButtonPressed) {
             isButtonPressed = true;

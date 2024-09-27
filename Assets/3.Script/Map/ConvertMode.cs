@@ -8,6 +8,7 @@ public abstract class ConvertMode : MonoBehaviour {
 
     protected int activeTrueLayerIndex;
     protected int activeFalseLayerIndex;
+    protected int groundLayerIndex;
 
     public Material BlockMaterial;
     public Material SelectMaterial;
@@ -17,15 +18,185 @@ public abstract class ConvertMode : MonoBehaviour {
     protected List<GameObject> AllObjects = new List<GameObject>();
 
     public List<GameObject> SelectObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
+    public List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
 
+    public List<Material> defaltMaterial = new List<Material>();
 
     protected virtual void Awake() {
+
         activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
         activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
+        groundLayerIndex = LayerMask.NameToLayer("Ground");
     }
 
     protected abstract void Start();
 
+
+    // Tile이 들어간 tag는 자기 자신외 자식객체에서 tile이 포함되어있는지 확인하고 해당 오브젝트를 담음
+    protected void InitParentObjectWithTag(ConvertItem tagName) {
+        parentObject = GameObject.FindGameObjectsWithTag($"{tagName}");
+
+        foreach (GameObject each in parentObject) {
+            Renderer[] allChildRenderers = each.GetComponentsInChildren<Renderer>();
+
+            foreach (Renderer item in allChildRenderers) {
+                GameObject parentObject = item.transform.parent?.gameObject; // null 조건부 연산자 사용
+
+                if (parentObject != null ){
+                    if (tagName.Equals(ConvertItem.ParentTile)) {
+                        if (ShouldAddToAllObjects(parentObject)) {
+                            if (!AllObjects.Contains(parentObject)) {
+                                AllObjects.Add(parentObject);
+                            }
+                        }
+                    }
+                    else {
+                        if (!AllObjects.Contains(parentObject)) {
+                            AllObjects.Add(parentObject);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    // 부모 오브젝트의 이름에 따라 추가 여부를 결정하는 메서드
+    private bool ShouldAddToAllObjects(GameObject parentObject) {
+        string[] keywords = { "Tile", "Bomb", "BombSpawn", "Object", "MoveSwitch" };
+
+        foreach (string keyword in keywords) {
+            if (parentObject.name.Contains(keyword)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected void InitParentObjectWithTag_Object(ConvertItem tagName) {
+        parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
+        for (int i = 0; i < parentObject.Length; i++) {
+            parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
+        }
+
+        foreach (GameObject parent in parentObject) {
+            Collider[] findRoot3D = parent.transform.GetComponentsInChildren<Collider>();
+
+            foreach (Collider eachRoot3D in findRoot3D) {
+                if (eachRoot3D.name.Contains("Root3D")) {
+                    GameObject parentObj = eachRoot3D.transform.parent.gameObject;
+                    if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("ClimbObj")) {
+                        GameObject pushbox = parentObj.transform.parent.gameObject;
+                        if (!AllObjects.Contains(pushbox)) {
+                            AllObjects.Add(pushbox);
+                        }
+                    }
+                    else {
+                        if (!AllObjects.Contains(parentObj)) {
+                            AllObjects.Add(parentObj);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public virtual void ChangeLayerActiveFalseInSelectObjects() {
+        foreach (GameObject item in AllObjects) {
+            if (!SelectObjects.Contains(item)) {
+
+                item.layer = activeFalseLayerIndex;
+
+                // 하위 객체의 레이어 변경 => Root3D가 안보여야함
+                foreach (Transform child in item.transform) {
+                    child.gameObject.layer = activeFalseLayerIndex;
+                }
+            }
+        }
+    }
+
+    public virtual void ChangeLayerAllActiveTrue() {
+    }
+
+    public virtual void ChangeLayerActiveTrueWhen3DModeCancle() {
+        foreach (GameObject each in AllObjects) {
+            if (SelectObjects.Contains(each)) {
+                each.layer = activeTrueLayerIndex;
+
+                // 하위 객체의 레이어 변경 => Ground로 바꿔서 지나갈 수 있어야함
+                foreach (Transform child in each.transform) {
+                    child.gameObject.layer = groundLayerIndex;
+                }
+            }
+            else {
+                each.layer = activeFalseLayerIndex;
+
+                // 하위 객체의 레이어 변경 => Root3D가 안보여야함
+                foreach (Transform child in each.transform) {
+                    child.gameObject.layer = activeFalseLayerIndex;
+                }
+            }
+        }
+    }
+
+    // 자식을 전부 돌아서 레이어를 변경해야함
+    protected virtual void ChangeLayerActiveWithAllChild(Transform parent, int layerIndex) {
+        foreach (Transform child in parent) {
+            child.gameObject.layer = layerIndex;
+
+            ChangeLayerActiveWithAllChild(child, layerIndex);
+        }
+    }
+
+    //  ======================================================================
+
+
+    public virtual void InitMaterial(GameObject block) {
+        MeshRenderer tileRenderer = block.GetComponentInChildren<MeshRenderer>();
+        defaltMaterial.Add(tileRenderer.materials[0]);
+    }
+
+    public virtual void ChangeMaterial_Origin() {
+        if (defaltMaterial.Count != blockObjects.Count) {
+            Debug.LogWarning("defaultMaterial and blockObjects lists must have the same number of items.");
+            return;
+        }
+
+        for (int i = 0; i < defaltMaterial.Count; i++) {
+            MeshRenderer tileRenderer = blockObjects[i].GetComponentInChildren<MeshRenderer>();
+            Material[] newMaterials = new Material[tileRenderer.materials.Length];
+
+            MeshRenderer defaultRenderer = blockObjects[i].GetComponentInChildren<MeshRenderer>();
+            
+            for (int j = 0; j < newMaterials.Length; j++) {
+                newMaterials[j] = defaltMaterial[i]; // 각 블록에 대해 기본 머티리얼 설정
+            }
+
+            tileRenderer.materials = newMaterials; // 새 머티리얼 배열 할당
+        }
+    }
+
+    public virtual void ChangeMaterial_Block() {
+        for (int i = 0; i < defaltMaterial.Count; i++) {
+            MeshRenderer tileRenderer = blockObjects[i].GetComponentInChildren<MeshRenderer>();
+            Material[] newMaterials = new Material[tileRenderer.materials.Length];
+            newMaterials[0] = BlockMaterial;
+            tileRenderer.materials = newMaterials;
+        }
+    }
+
+    public virtual void ChangeMaterial_select() {
+        for (int i = 0; i < defaltMaterial.Count; i++) {
+            MeshRenderer tileRenderer = blockObjects[i].GetComponentInChildren<MeshRenderer>();
+            Material[] newMaterials = new Material[tileRenderer.materials.Length];
+            newMaterials[0] = SelectMaterial;
+            tileRenderer.materials = newMaterials;
+        }
+    }
+
+    #region 수정 전 object로 잡음
+    /*
     protected void InitParentObjectWithTag(ConvertItem tagName) {
         parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
         for (int i = 0; i < parentObject.Length; i++) {
@@ -49,15 +220,6 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
-    // Tile이 들어간 tag는 자기 자신외 자식객체에서 tile이 포함되어있는지 확인하고 해당 오브젝트를 담음
-    protected  void InitParentObjectWithTag_Tile(ConvertItem tagName) {
-        parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
-
-    }
-
-
-
-
     protected void InitParentObjectWithTag_Object2(ConvertItem tagName) {
         parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
         for (int i = 0; i < parentObject.Length; i++) {
@@ -74,7 +236,12 @@ public abstract class ConvertMode : MonoBehaviour {
         }
 
     }
+    */
 
+    #endregion
+
+    #region 수정 전 오브젝트를 활성화 비활성화
+    /*
     public virtual void ChangeActiveWithLayer() {
         foreach (GameObject each in AllObjects) {
             if (each.layer == activeTrueLayerIndex) {
@@ -94,7 +261,6 @@ public abstract class ConvertMode : MonoBehaviour {
 
     public void ChangeLayerAllActiveTrue() {
         foreach (GameObject each in AllObjects) {
-            //TODO: object2에서 자식객체 레이어 돌려야함
 
             each.layer = activeTrueLayerIndex;
             if (each.CompareTag("PushBox")) {
@@ -115,5 +281,8 @@ public abstract class ConvertMode : MonoBehaviour {
             }
         }
     }
+    */
+
+    #endregion
 
 }

@@ -17,10 +17,14 @@ public class CameraManager : MonoBehaviour {
     private CinemachineStateDrivenCamera gameCam;
     private CinemachineVirtualCamera[] playerMode;
     private bool isCentered = false; // 플레이어를 한 번만 중앙에 고정하기 위한 플래그
+    private int activeFalseLayerIndex;
 
     private enum CameraType { CanvasCamera, IntroCam1, IntroCam2, StageClearCam, GameCam }
 
     private void Awake() {
+        activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
+        Camera.main.cullingMask = ~(1 << activeFalseLayerIndex);
+
         camAni = GetComponent<Animator>();
         playerManager = FindObjectOfType<PlayerManage>();
         main = GetComponentInChildren<CinemachineBrain>();

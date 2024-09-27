@@ -14,4 +14,22 @@ public class ConvertMode_Destroy : ConvertMode {
             AllObjects.Remove(deleteObject);
         }
     }
+
+    public override void ChangeLayerAllActiveTrue() {
+        foreach (GameObject each in AllObjects) {
+            each.layer = activeTrueLayerIndex;
+
+            // 하위 객체의 레이어 변경 
+            foreach (Transform child in each.transform) {
+                child.gameObject.layer = activeTrueLayerIndex;
+            }
+        }
+    }
 }
+
+/* 삭제 되지않는 타일이 아닌 오브젝트 
+ - 해당하는 오브젝트들 
+1. biscuit
+2. destroy tile
+
+*/

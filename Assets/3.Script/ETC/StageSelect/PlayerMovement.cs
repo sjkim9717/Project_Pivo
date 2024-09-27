@@ -29,6 +29,7 @@ public class PlayerMovement : MonoBehaviour {
     }
     private void Start() {
         currentLevel = GameManager.instance.PreviousGameStage;
+        Debug.LogWarning($"PlayerMovement loaded currentLevel : {currentLevel}");
         transform.position = waypoint.FindCurrentPosition(currentLevel).position;
     }
 

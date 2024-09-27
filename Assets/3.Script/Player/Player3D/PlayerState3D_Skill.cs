@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerState3D_Skill : PlayerState3D {
     [SerializeField] private float skillDistance = 14f;
     private int skillCount = 0;
-    private int blockZposCheck = 0;
 
     private bool isSkillButtonPressed = false;
 
@@ -16,7 +15,7 @@ public class PlayerState3D_Skill : PlayerState3D {
     private GameObject sectionLine;
     private GameObject sectionLine_First;
 
-    private List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
+    //private List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
 
     private ConvertMode[] convertMode;
     protected override void OnEnable() {
@@ -24,7 +23,6 @@ public class PlayerState3D_Skill : PlayerState3D {
         startSection = Vector3.zero;
         finishSection = Vector3.zero;
         isSkillButtonPressed = false;
-        blockZposCheck = 0;
         skillCount = 0;
 
         PlayerManage.instance.StartSection = Vector3.zero;
@@ -43,6 +41,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         convertMode[0] = FindObjectOfType<ConvertMode_Tile>();
         convertMode[1] = FindObjectOfType<ConvertMode_Item>();
         convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
+        convertMode[3] = FindObjectOfType<ConvertMode_Object>();
 
     }
 
@@ -62,8 +61,6 @@ public class PlayerState3D_Skill : PlayerState3D {
             return;
         }
 
-
-
         if (skillSectionInput != 0 && !isSkillButtonPressed) { // 스킬 버튼이 눌렸는지 감지
             isSkillButtonPressed = true;                                            // 버튼이 눌린 상태로 표시
             skillCount++;
@@ -72,15 +69,14 @@ public class PlayerState3D_Skill : PlayerState3D {
 
 
         if (skillCount == 1) {
-            CheckBlockObjectZPosition();                                            // 막힌 오브젝트의 위치를 비교함
 
             // 각 화살표 키가 눌렸는지 확인
-            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {
-                if (blockZposCheck != 1)
+            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {  // 막힌 오브젝트의 위치를 비교함
+                if (!CheckBlockObjectZPosition(convertMode[0]) && !CheckBlockObjectZPosition(convertMode[2]))
                     MoveSectionLine(true);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
-                if (blockZposCheck != -1)
+                if (!CheckBlockObjectZPosition(convertMode[0]) && !CheckBlockObjectZPosition(convertMode[2]))
                     MoveSectionLine(false);
             }
         }
@@ -89,11 +85,11 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
 
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
-
+                /*
                 for (int i = 0; i < convertMode.Length; i++) {
                     convertMode[i].ChangeLayerActiveFalse(convertMode[i].SelectObjects);
                 }
-
+                */
                 PlayerManage.instance.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
                 PlayerManage.instance.FinishSection = finishSection;
 
@@ -122,7 +118,6 @@ public class PlayerState3D_Skill : PlayerState3D {
         }
 
 
-
         if (interactionInput != 0) {       // cancle
             skillCount = 0;
             ResetSelectObject();
@@ -139,14 +134,13 @@ public class PlayerState3D_Skill : PlayerState3D {
 
     }
 
-    private void CheckBlockObjectZPosition() {
-        if (blockObjects.Count >= 1) {
-            if (blockObjects[0].transform.position.z >= Control3D.PlayerRigid.position.z) blockZposCheck = 1;
-            else blockZposCheck = -1;
+    private bool CheckBlockObjectZPosition(ConvertMode convertMode) {
+        foreach (var block in convertMode.blockObjects) {
+            if (block.transform.position.z >= Control3D.PlayerRigid.position.z) {
+                return true; // 차단됨
+            }
         }
-        else {
-            blockZposCheck = 0;
-        }
+        return false; // 차단되지 않음
     }
 
     private void MoveSectionLine(bool up) {
@@ -179,19 +173,23 @@ public class PlayerState3D_Skill : PlayerState3D {
 
         ResetSelectObject();                                                    // raycast가 움직이기전 초기화
         ChangeSelectObjectLayer(startSection, finishSection);                   // Raycast를 넣어서  
-        ChangeBlockObjectMaterial();
+
+        ChangeBlockObjectMaterial(convertMode[0]);
+        ChangeBlockObjectMaterial(convertMode[2]);
     }
 
     // convertMode가 여러개 있을 경우 전체 담아서 초기화
     public void ResetSelectObject() {
         if (convertMode[0].SelectObjects == null) return;
+        if (convertMode[2].SelectObjects == null) return;
 
-        foreach (var item in convertMode[0].SelectObjects) {
-            TileController tile = item.GetComponentInChildren<TileController>();
-            tile?.InitMaterial();
-        }
+        //foreach (var item in convertMode[0].SelectObjects) {
+        //    TileController tile = item.GetComponentInChildren<TileController>();
+        //    tile?.InitMaterial();
+        //}
 
-        blockObjects.Clear();
+        ResetBlock(convertMode[0]);
+        ResetBlock(convertMode[2]);
 
         for (int i = 0; i < convertMode.Length; i++) {
             convertMode[i].SelectObjects.Clear();
@@ -254,7 +252,7 @@ public class PlayerState3D_Skill : PlayerState3D {
                 }
                 break;
             case ConvertItem.Objects:
-            case ConvertItem.Objects_2:
+            //case ConvertItem.Objects_2:
                 if (!convertMode[1].SelectObjects.Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
                     convertMode[1].SelectObjects.Add(parent);
@@ -266,6 +264,12 @@ public class PlayerState3D_Skill : PlayerState3D {
                     convertMode[2].SelectObjects.Add(parent);
                 }
                 break;
+            case ConvertItem.Objects_2:
+                if (!convertMode[3].SelectObjects.Contains(parent)) {
+                    //Debug.Log("selectObjects Hit: " + parent.name);
+                    convertMode[3].SelectObjects.Add(parent);
+                }
+                break;
             default:
                 break;
         }
@@ -275,14 +279,16 @@ public class PlayerState3D_Skill : PlayerState3D {
     // 플레이어가 스킬로 섹션을 자르면 해당하는 역역 중 같은 선상에 있는 물체 확인
     private bool CheckSkillUsable() {
         if (startSection == finishSection) return false;
-        return blockObjects.Count >= 1 ? false : true;
+        return convertMode[0].blockObjects.Count >= 1 ? false : true;
     }
 
-    private void ChangeBlockObjectMaterial() {
-        if (convertMode[0].SelectObjects == null) return;
-        blockObjects.Clear();
 
-        foreach (GameObject each in convertMode[0].SelectObjects) {
+    private void ChangeBlockObjectMaterial(ConvertMode convertMode) {
+        if (convertMode.SelectObjects == null) return;
+
+        ResetBlock(convertMode);
+
+        foreach (GameObject each in convertMode.SelectObjects) {
             Vector2 playerXYpos = new Vector2(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y);
             Vector2 eachXYpos = new Vector2(each.transform.position.x, each.transform.position.y);
 
@@ -290,16 +296,22 @@ public class PlayerState3D_Skill : PlayerState3D {
                 if (eachXYpos.y >= playerXYpos.y - 0.5) {
                     if (eachXYpos.y <= playerXYpos.y + 4) {
                         Debug.Log(" 같은 선상의 오브젝트 이름 | " + each.name);
-                        blockObjects.Add(each);
-                        each.GetComponentInChildren<TileController>().ChangeMaterial();
+                        convertMode.blockObjects.Add(each);
+                        convertMode.InitMaterial(each);
+                        //each.GetComponentInChildren<TileController>().ChangeMaterial();
                     }
                 }
             }
         }
 
+        convertMode.ChangeMaterial_Block();
     }
 
-
+    private void ResetBlock(ConvertMode convertMode) {
+        convertMode.ChangeMaterial_Origin();
+        convertMode.blockObjects.Clear();
+        convertMode.defaltMaterial.Clear();
+    }
 
     public override void ExitState() {
         Control3D.Ani3D.SetBool("IsTryUseSkill", false);
