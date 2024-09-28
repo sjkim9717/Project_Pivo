@@ -10,7 +10,7 @@ public class MonsterManager : MonsterBase {
 
     private void Start() {
         Change3D();
-        //TODO: 모드 변경
+        // 모드 변경
         PlayerManage.instance.IsSwitchMode += SwitchMode;
         //TODO: IMonsterStateBase 초기값 지정
     }
@@ -19,10 +19,10 @@ public class MonsterManager : MonsterBase {
 
         SettingEffectActiveTrue();               // effect
 
-        if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        if (playerManage.CurrentMode == PlayerMode.Player3D) {
             Change3D();
         }
-        else if (PlayerManage.instance.CurrentMode == PlayerMode.Player2D) {
+        else if (playerManage.CurrentMode == PlayerMode.Player2D) {
             if (IsInSelectArea()) {
                 if (IsEmptyOnTheZAxis()) {
                     Change2D();
@@ -40,12 +40,12 @@ public class MonsterManager : MonsterBase {
     // 플레이어가 선택한 범위 안에 있는지 
     //TODO: 활성화는 따로임
     private bool IsInSelectArea() {
-        if (PlayerManage.instance.StartSection.z >= PlayerManage.instance.FinishSection.z) {
-            if (Monster3D.transform.position.z <= PlayerManage.instance.StartSection.z && Monster3D.transform.position.z >= PlayerManage.instance.FinishSection.z) return true;
+        if (playerManage.StartSection.z >= playerManage.FinishSection.z) {
+            if (Monster3D.transform.position.z <= playerManage.StartSection.z && Monster3D.transform.position.z >= playerManage.FinishSection.z) return true;
             else return false;
         }
         else {
-            if (Monster3D.transform.position.z >= PlayerManage.instance.StartSection.z && Monster3D.transform.position.z <= PlayerManage.instance.FinishSection.z) return true;
+            if (Monster3D.transform.position.z >= playerManage.StartSection.z && Monster3D.transform.position.z <= playerManage.FinishSection.z) return true;
             else return false;
         }
     }
@@ -53,9 +53,9 @@ public class MonsterManager : MonsterBase {
     // 선택된 범위 안일경우 z축범위 앞으로 아무것도없는지
     private bool IsEmptyOnTheZAxis() {
         // monster 3D 오브젝트에서 z축 -방향으로 raycast를 쏴서 본인이 아니고 무언가 있다면 false
-        float layDistance = (PlayerManage.instance.StartSection.z >= PlayerManage.instance.FinishSection.z) ?
-             (Monster3D.transform.position.z - PlayerManage.instance.FinishSection.z) :
-             (Monster3D.transform.position.z - PlayerManage.instance.StartSection.z);
+        float layDistance = (playerManage.StartSection.z >= playerManage.FinishSection.z) ?
+             (Monster3D.transform.position.z - playerManage.FinishSection.z) :
+             (Monster3D.transform.position.z - playerManage.StartSection.z);
 
         Vector3 origin = new Vector3(Monster3D.transform.position.x, Monster3D.transform.position.y + 1f, Monster3D.transform.position.z);
 
@@ -82,9 +82,9 @@ public class MonsterManager : MonsterBase {
 
         Vector3 origin = new Vector3(Monster3D.transform.position.x, Monster3D.transform.position.y + 1f, Monster3D.transform.position.z);
 
-        float layDistance = (PlayerManage.instance.StartSection.z >= PlayerManage.instance.FinishSection.z) ?
-            (Monster3D.transform.position.z - PlayerManage.instance.FinishSection.z) :
-            (Monster3D.transform.position.z - PlayerManage.instance.StartSection.z);
+        float layDistance = (playerManage.StartSection.z >= playerManage.FinishSection.z) ?
+            (Monster3D.transform.position.z - playerManage.FinishSection.z) :
+            (Monster3D.transform.position.z - playerManage.StartSection.z);
 
         // Z축 -방향으로 layDistance만큼의 Ray를 그려줍니다
         Debug.DrawRay(origin, -transform.forward * layDistance, Color.black);

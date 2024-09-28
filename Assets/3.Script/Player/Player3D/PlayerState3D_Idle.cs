@@ -59,7 +59,7 @@ public class PlayerState3D_Idle : PlayerState3D {
             if (interactionObj != null) {
                 string tagName = interactionObj.transform.Find("Root3D").tag;
 
-                if (tagName == "ClimbObj") {
+                if (tagName == "Climb") {
                     if (Control3D.CheckInteractObject()) {
                         Control3D.ChangeState(PlayerState.Climb);
                     }

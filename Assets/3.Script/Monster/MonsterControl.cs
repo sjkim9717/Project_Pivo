@@ -11,10 +11,11 @@ public abstract class MonsterControl : MonoBehaviour {
     public Camera MainCamera { get; protected set; }
     public GameObject Monster { get; protected set; }
     public NavMeshAgent NavMesh { get; protected set; }
-    public Transform Player2D { get { return PlayerManage.instance.Player2D.transform; } }
-    public Transform Player3D { get { return PlayerManage.instance.Player3D.transform; } }
+    public Transform Player2D;
+    public Transform Player3D;
 
     protected MonsterManager mManager;
+    protected PlayerManage playerManage;
 
     protected IMonsterStateBase currentState;
     public IMonsterStateBase CurrentState { get { return currentState; } }
@@ -34,6 +35,9 @@ public abstract class MonsterControl : MonoBehaviour {
     #endregion
 
     protected virtual void Awake() {
+        playerManage = FindObjectOfType<PlayerManage>();
+        if (playerManage == null) Debug.LogWarning(" player manage null error in MonsterControl");
+
         CinemachineBrain brain = GameObject.Find("CameraGroup/MainCamera").GetComponent<CinemachineBrain>();
         if (brain == null) {
             Debug.LogError("CinemachineVirtualCamera not found!");
@@ -45,7 +49,9 @@ public abstract class MonsterControl : MonoBehaviour {
         }
 
         originPos = base.transform.position;
-        Debug.LogWarning("origin position | " + originPos);
+
+        Player2D = playerManage.Player2D.transform;
+        Player3D = playerManage.Player3D.transform;
 
         mManager = GetComponentInParent<MonsterManager>();
 

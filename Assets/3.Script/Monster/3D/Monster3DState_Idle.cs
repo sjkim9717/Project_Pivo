@@ -52,7 +52,7 @@ public class Monster3DState_Idle : IMonsterStateBase {
             Collider[] colliders = Physics.OverlapSphere(originPos, radius, layerMask);
             if (colliders.Length > 0) {
                 foreach (Collider item in colliders) {
-                    if (item.transform.position.y >= MControl.transform.position.y - 0.5f) {
+                    if (item.transform.position.y >= MControl.transform.position.y - 0.5f && item.transform.position.y <= MControl.transform.position.y + 1.7f) {
                         MControl.ChangeState(MControl.Chase3DState);
                     }
                 }
@@ -78,31 +78,7 @@ public class Monster3DState_Idle : IMonsterStateBase {
         Vector3 wantToMovePos = camera.WorldToScreenPoint(emotionPos);                             // 3D 공간의 원하는 위치를 스크린 좌표로 변환
 
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
-        //Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos},  emotionOriginPos: { emotionOriginPos.position}");
 
-        /*
-         
-        // 캔버스가 Screen Space - Overlay 모드일 경우, 카메라는 null로 설정
-        bool validConversion = RectTransformUtility.ScreenPointToWorldPointInRectangle(emotionOriginPos, wantToMovePos, null, out Vector3 convertPos);
-
-        if (validConversion) {
-            RectTransform parentRect = emotionOriginPos.parent.GetComponent<RectTransform>();
-            Vector3 localPoint = parentRect.InverseTransformPoint(convertPos);
-
-            Vector3 parentScale = emotionOriginPos.parent.localScale;           // 부모의 스케일을 가져옴
-
-            localPoint.x *= parentScale.x;                                      // 부모의 스케일을 고려하여 convertPos 보정
-            localPoint.y *= parentScale.y;
-           
-            emotionOriginPos.anchoredPosition = localPoint;                     // 보정된 값을 anchoredPosition에 적용
-        }
-        else {
-            Debug.LogError("스크린 좌표에서 로컬 좌표로의 변환이 실패했습니다.");
-        }
-        Debug.DrawLine(emotionPos, camera.ScreenToWorldPoint(new Vector3(wantToMovePos.x, wantToMovePos.y, camera.nearClipPlane)), Color.red, 5f);
-
-        Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos}, convertPos: {convertPos},  anchoredPosition: { emotionOriginPos.anchoredPosition}");
-         */
     }
 
 

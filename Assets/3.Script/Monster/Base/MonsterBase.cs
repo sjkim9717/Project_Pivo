@@ -28,7 +28,11 @@ public class MonsterBase : MonoBehaviour {
 
     private Vector3 moveposition;
 
+    protected PlayerManage playerManage;
+
     protected virtual void Awake() {
+        playerManage = FindObjectOfType<PlayerManage>();
+        if (playerManage == null) Debug.LogWarning(" player manage null error in monster base");
         monster2D = base.transform.Find("Root2D").gameObject;
         monster3D = base.transform.Find("Root3D").gameObject;
         emotion = GetComponentInChildren<Canvas>().transform.GetChild(0).gameObject;
@@ -48,6 +52,8 @@ public class MonsterBase : MonoBehaviour {
 
         moveposition = monster3D.transform.position;
         monster2D.transform.position = moveposition;
+
+        emotion.SetActive(true);
     }
 
     public virtual void Change3D() {
@@ -56,8 +62,12 @@ public class MonsterBase : MonoBehaviour {
 
         moveposition = monster2D.transform.position;
         monster3D.transform.position = moveposition;
+
+        emotion.SetActive(true);
     }
     public virtual void ChangeAutoMode() {
+        emotion.SetActive(false);
+
         monster2D.SetActive(false);
         monster3D.SetActive(false);
 

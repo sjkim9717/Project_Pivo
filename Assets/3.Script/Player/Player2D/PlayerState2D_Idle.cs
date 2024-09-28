@@ -42,14 +42,16 @@ public class PlayerState2D_Idle : PlayerState2D {
 
         if (Control2D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인
 
-            float distance = Control2D.PlayerRigid.position.y - PlayerManage.instance.Respawnposition.position.y;
-            if (distance <= 0.1f) {
-                return;
-            }
-            else {
-                Debug.Log(distance);
-                Control2D.ChangeState(PlayerState.Falling);
-            }
+            Control2D.ChangeState(PlayerState.Falling);
+
+            //float distance = Control2D.PlayerRigid.position.y - PlayerManage.instance.Respawnposition.position.y;
+            //if (distance <= 0.1f) {
+            //    return;
+            //}
+            //else {
+            //    Debug.Log(distance);
+            //    Control2D.ChangeState(PlayerState.Falling);
+            //}
         }
 
         ChangeState();
@@ -69,7 +71,7 @@ public class PlayerState2D_Idle : PlayerState2D {
             interactionObj = Control2D.CheckInteractObject();
             if (interactionObj != null) {
                 string tagName = interactionObj.transform.Find("Root3D").tag;
-                if (tagName == "ClimbObj") {
+                if (tagName == "Climb") {
                     Control2D.ChangeState(PlayerState.Climb);
                 }
                 else {

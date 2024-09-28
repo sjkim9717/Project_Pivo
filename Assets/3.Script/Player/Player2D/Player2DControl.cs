@@ -109,7 +109,6 @@ public class Player2DControl : MonoBehaviour {
 
     // 바닥 오브젝트 확인
     public bool CheckGroundPointsEmpty(float rayLength) {
-
         foreach (Transform each in groundPoint.transform) {
             RaycastHit2D hit = Physics2D.Raycast(each.position, Vector2.down, rayLength, layerMaskIndex);
             if (hit.collider != null) {
@@ -138,7 +137,7 @@ public class Player2DControl : MonoBehaviour {
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             Transform rootTransform = eachParent.transform.Find("Root3D");
-            if (rootTransform == null || !rootTransform.CompareTag("ClimbObj")) {
+            if (rootTransform == null || !rootTransform.CompareTag("Climb") && !rootTransform.CompareTag("PushBox")) {
                 continue; // Skip if not a climable object
             }
 

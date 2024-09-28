@@ -52,7 +52,7 @@ public class Monster3DState_Chase : IMonsterStateBase {
         Collider[] colliders = Physics.OverlapSphere(originPos, radius, layerMask);
         if (colliders.Length > 0) {
             foreach (Collider item in colliders) {
-                if (item.transform.position.y <= MControl.transform.position.y - 0.5f) {
+                if (item.transform.position.y <= MControl.transform.position.y - 0.5f || item.transform.position.y >= MControl.transform.position.y + 1.7f) {
                     Debug.Log("player is lower than monster | " + item.transform.position.y + " | " + MControl.transform.position.y);
 
                     MControl.ChangeState(MControl.Idle3DState);

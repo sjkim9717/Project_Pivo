@@ -51,15 +51,10 @@ public class Player3DControl : MonoBehaviour {
     }
 
     private void PlayerDead() {
-        Debug.Log("플레이어 사망 전 컨포넌트 |" + currentStateComponent);
-
         if (stateDic.TryGetValue(PlayerState.Dead, out PlayerState3D dd)) {
-
-            Debug.Log("플레이어 사망 컨포넌트 |"+ dd);
             ChangeState(PlayerState.Dead);
         }
         else {
-
             Debug.Log("플레이어 사망 컨포넌트 왜 없지");
         }
     }
@@ -67,7 +62,7 @@ public class Player3DControl : MonoBehaviour {
     private void OnCollisionStay(Collision collision) {
         if (collision.transform.position.y >= PlayerRigid.position.y) {
             if (collision.collider.CompareTag("Bomb")
-                || collision.collider.CompareTag("OpenPanel") || collision.collider.CompareTag("ClimbObj")) {
+                || collision.collider.CompareTag("OpenPanel") || collision.collider.CompareTag("Climb")) {
                 InteractionObject = collision.transform.parent.gameObject;
             }
         }
@@ -170,7 +165,7 @@ public class Player3DControl : MonoBehaviour {
     public bool CheckGroundPointsEmpty(float rayLength) {
 
         foreach (Transform each in groundPoint.transform) {
-            if(Physics.Raycast(each.position, Vector3.down, out RaycastHit hit, rayLength)) {
+            if (Physics.Raycast(each.position, Vector3.down, out RaycastHit hit, rayLength)) {
                 if (hit.collider.gameObject != Player) {
                     return false;
                 }
@@ -198,7 +193,7 @@ public class Player3DControl : MonoBehaviour {
 
         foreach (Collider each in colliders) {
 
-            if (!each.CompareTag("ClimbObj")) continue;
+            if (!each.CompareTag("Climb") && !each.CompareTag("PushBox")) continue;
 
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 

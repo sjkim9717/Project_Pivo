@@ -81,9 +81,9 @@ public class PlayerMovement : MonoBehaviour {
 
         while (elapsedTime < moveDuration) {
 
-
+            // 오르막 모션
             if (Physics.Raycast(climbTransfrom.position, transform.forward, out RaycastHit hit, 1f)) {
-                if (hit.collider.CompareTag("ClimbObj")) {
+                if (hit.collider.CompareTag("Climb")) {
                     playerRigid.velocity = Vector3.zero;
 
                     Debug.Log("Run TestRoutine");
@@ -103,10 +103,20 @@ public class PlayerMovement : MonoBehaviour {
                 }
             }
 
-            if (CheckGroundPointsEmpty(1f)) {
-                endPosition.y += gravity * Time.deltaTime * moveSpeed;
+            // 떨어지는 모션
+            if (CheckGroundPointsEmpty(1.5f)) {
+                //endPosition.y += gravity * Time.deltaTime * moveSpeed;
+
+                Debug.Log("Falling Start");
+                yield return StartCoroutine(Fall_Co());
+                Debug.Log("Falling End");
+
+                startPosition = playerRigid.position;
+                endPosition = new Vector3(nextWaypoint.position.x, playerRigid.position.y, nextWaypoint.position.z);
+                elapsedTime = 0f; // Reset elapsed time    
             }
 
+            // 일반 걷기 모션
             elapsedTime += Time.deltaTime * moveSpeed;
             float t = Mathf.Clamp01(elapsedTime / moveDuration);
             playerRigid.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
@@ -132,7 +142,24 @@ public class PlayerMovement : MonoBehaviour {
         yield return new WaitForSeconds(.5f); // collider가 현재 위치까지 따라와야함
         climbTransfrom.localPosition = Vector3.zero;
     }
+    private IEnumerator Fall_Co() {
+        playerAni.SetBool("IsMove", false);
+        playerAni.SetBool("IsFalling", true);
 
+        // 중력의 크기 조정
+        float fallSpeed = 0f;
+
+        while (CheckGroundPointsEmpty(0.5f)) {
+            // 중력 적용: 가속도
+            fallSpeed += gravity * Time.deltaTime;
+            playerRigid.position -= Vector3.down * fallSpeed * Time.deltaTime; // 아래로 이동
+
+            yield return null;
+        }
+
+        playerAni.SetBool("IsFalling", false);
+        playerAni.SetBool("IsMove", true);
+    }
 
     // 바닥 오브젝트 확인
     public bool CheckGroundPointsEmpty(float rayLength) {

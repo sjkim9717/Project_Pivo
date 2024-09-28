@@ -86,7 +86,7 @@ public abstract class ConvertMode : MonoBehaviour {
             foreach (Collider eachRoot3D in findRoot3D) {
                 if (eachRoot3D.name.Contains("Root3D")) {
                     GameObject parentObj = eachRoot3D.transform.parent.gameObject;
-                    if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("ClimbObj")) {
+                    if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("Climb")) {
                         GameObject pushbox = parentObj.transform.parent.gameObject;
                         if (!AllObjects.Contains(pushbox)) {
                             AllObjects.Add(pushbox);
