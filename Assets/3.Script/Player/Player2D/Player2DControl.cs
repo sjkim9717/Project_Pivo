@@ -204,17 +204,6 @@ public class Player2DControl : MonoBehaviour {
         return false;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) {
-        if(collision.transform.position.y>= transform.position.y) {
-            Debug.Log(" 플레이어 위에 있는 물체 | " + collision.collider.name);
-            if (collision.transform.parent!=null) {
-                Debug.Log(" 플레이어 위에 있는 물체 | " + collision.transform.parent.name);
-            }
-        }
-    }
-
-
-
     private void OnDrawGizmos() {
         Gizmos.color = Color.green;        // Set the Gizmo color
         Gizmos.DrawWireSphere(transform.position, 2.7f);

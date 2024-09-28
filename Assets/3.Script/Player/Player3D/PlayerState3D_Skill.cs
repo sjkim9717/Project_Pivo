@@ -154,7 +154,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (startSection == Vector3.zero) {
             // 짝수 단위로 z좌표를 설정해야함
             float zPosition = Mathf.FloorToInt(Control3D.PlayerRigid.position.z / 2) * 2 + 1;
-            Debug.Log("MoveSectionLine | Start Section | zPosition | " + zPosition);
+            //Debug.Log("MoveSectionLine | Start Section | zPosition | " + zPosition);
 
             startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, zPosition);
             finishSection = new Vector3(startSection.x, startSection.y, zPosition + 2f);
@@ -169,7 +169,7 @@ public class PlayerState3D_Skill : PlayerState3D {
             if (finishSection == startSection) { // 짝수 단위로 z좌표를 설정해야함
                 float zPosition = Mathf.FloorToInt((Control3D.PlayerRigid.position.z - direction * 1f) / 2) * 2 + 1;
 
-                Debug.Log("MoveSectionLine | Finish Section == Start Section | zPosition | " + zPosition);
+                //Debug.Log("MoveSectionLine | Finish Section == Start Section | zPosition | " + zPosition);
 
                 startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, zPosition);
                 finishSection = new Vector3(startSection.x, startSection.y, zPosition + direction * 2f);

@@ -118,7 +118,7 @@ public class Player3DControl : MonoBehaviour {
 
     // 플레이어 상태 변경 메서드
     public void ChangeState(PlayerState newState) {
-        Debug.Log(newState);
+        //Debug.Log(newState);
         // 현재 상태가 null이 아니면 비활성화
         if (currentStateComponent != null) {
             currentStateComponent.ExitState();

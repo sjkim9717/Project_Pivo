@@ -32,7 +32,7 @@ public class MovingObject : MonoBehaviour
         // Now, you can extract the sorted GameObjects back into a separate list if needed
         List<MovingWaypoints> sortedObjects = moveObjectWithOrder.Select(x => x.obj).ToList();
 
-        Debug.Log("OderToMoveObjects | sortedObjects length | " + sortedObjects.Count);
+        //Debug.Log("OderToMoveObjects | sortedObjects length | " + sortedObjects.Count);
 
         // 각 객체 이동
         StartCoroutine(MoveSortedObjects(sortedObjects, password));
@@ -49,10 +49,8 @@ public class MovingObject : MonoBehaviour
                 if (currentObject.waypointGroups[j].Password == password) {
                     for (int k = 0; k < currentObject.waypointGroups[j].MovingWaypoints.Count; k++) {
                         // 이동 시작
-                        Debug.Log("MoveSortedObjects | currentObject.waypointGroups 코르틴 시작 | "+ currentObject.gameObject.name);
-                        Debug.LogWarning("MoveSortedObjects | MovingWaypoints | " + currentObject.waypointGroups[j].MovingWaypoints[k]);
+                        //Debug.LogWarning("MoveSortedObjects | MovingWaypoints | " + currentObject.waypointGroups[j].MovingWaypoints[k]);
                         yield return StartCoroutine(currentObject.StartMove(currentObject.waypointGroups[j].MovingWaypoints[k]));
-                        Debug.Log("MoveSortedObjects | currentObject.waypointGroups 코르틴 끝 | " + currentObject.gameObject.name);
                     }
                     break;
                 }
