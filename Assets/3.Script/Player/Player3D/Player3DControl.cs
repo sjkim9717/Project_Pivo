@@ -157,6 +157,7 @@ public class Player3DControl : MonoBehaviour {
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }
         else {
+            PlayerRigid.constraints = RigidbodyConstraints.FreezeRotation;
             // when player doesn't move
             Vector3 currentVelocity = PlayerRigid.velocity;
             PlayerRigid.velocity = new Vector3(0, currentVelocity.y, 0);
@@ -202,14 +203,14 @@ public class Player3DControl : MonoBehaviour {
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    Debug.Log("bottomObstacle | " + eachParent.name);
+                    //Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    Debug.Log("topObstacles | " + eachParent.name);
+                    //Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
@@ -218,35 +219,37 @@ public class Player3DControl : MonoBehaviour {
         // bottom and top nomal vector check
         if (!CheckObstacleAngle(topObstacles)) {
             if (CheckObstacleAngle(bottomObstacles)) {
-                Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
+                //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
                 return true;
             }
             else {
-                Debug.Log("topObstacles 가 없고 bottomObstacles도 없음");
+                //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음");
             }
         }
         else {
-            Debug.Log("topObstacles 가 있음");
+            //Debug.Log("topObstacles 가 있음");
         }
 
         return false;
     }
-
     private bool CheckObstacleAngle(List<GameObject> objs) {
-
         foreach (GameObject item in objs) {
+            Vector3 tilePos = item.transform.position; // 감지된 타일의 현재 월드 위치
+            Vector3 playerPos = transform.position;
 
-            Vector3 tilePos = item.transform.position;               // 감지된 타일의 현재 월드 위치
-            Vector3 playerToTile = tilePos - transform.position;
-            float angle = Vector3.SignedAngle(transform.forward, playerToTile, Vector3.up);
-            //Debug.Log("Calculated angle: " + angle);
+            // Y축을 무시하고 XZ 평면에서 벡터 생성
+            Vector3 playerToTileXZ = new Vector3(tilePos.x - playerPos.x, 0, tilePos.z - playerPos.z);
+            Vector3 forwardXZ = new Vector3(transform.forward.x, 0, transform.forward.z);
+
+            // XZ 평면에서 각도 계산
+            float angle = Vector3.SignedAngle(forwardXZ, playerToTileXZ, Vector3.up);
+            //Debug.LogWarning("Object name | " + item.name + " tilePos: " + tilePos + " playerToTileXZ: " + playerToTileXZ + " Calculated angle: " + angle);
 
             if (angle >= -40f && angle <= 40f) {
                 //Debug.Log("타일이 시야 범위 내에 있습니다.");
                 return true;
             }
         }
-
         return false;
     }
 

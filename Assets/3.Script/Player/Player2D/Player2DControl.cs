@@ -111,7 +111,6 @@ public class Player2DControl : MonoBehaviour {
         else {
             Vector3 currentVelocity = PlayerRigid.velocity;
             PlayerRigid.velocity = new Vector3(0, currentVelocity.y, 0);
-
         }
     }
 

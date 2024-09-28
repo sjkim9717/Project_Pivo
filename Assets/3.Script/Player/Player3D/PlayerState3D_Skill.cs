@@ -92,10 +92,10 @@ public class PlayerState3D_Skill : PlayerState3D {
                     convertMode[i].ChangeLayerActiveFalse(convertMode[i].SelectObjects);
                 }
                 */
-               playerManage.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
-               playerManage.FinishSection = finishSection;
-               
-               playerManage.CurrentMode = PlayerMode.Player2D;
+                playerManage.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
+                playerManage.FinishSection = finishSection;
+
+                playerManage.CurrentMode = PlayerMode.Player2D;
                 playerManage.SwitchMode();
                 Debug.Log("2D 모드로 전환됨");
             }
@@ -152,8 +152,12 @@ public class PlayerState3D_Skill : PlayerState3D {
         sectionLine_First.SetActive(true);
 
         if (startSection == Vector3.zero) {
-            startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, (int)Control3D.PlayerRigid.position.z - 1f);
-            finishSection = new Vector3(startSection.x, startSection.y, startSection.z - direction * 2f);
+            // 짝수 단위로 z좌표를 설정해야함
+            float zPosition = Mathf.FloorToInt(Control3D.PlayerRigid.position.z / 2) * 2 + 1;
+            Debug.Log("MoveSectionLine | Start Section | zPosition | " + zPosition);
+
+            startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, zPosition);
+            finishSection = new Vector3(startSection.x, startSection.y, zPosition + 2f);
         }
         else {
             float movingAmount = direction * 2f;
@@ -162,16 +166,18 @@ public class PlayerState3D_Skill : PlayerState3D {
             finishSection.z += movingAmount;
             finishSection.z = Mathf.Clamp(finishSection.z, startSection.z - skillDistance, startSection.z + skillDistance);
 
-            if (finishSection == startSection) {
-                startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, (int)Control3D.PlayerRigid.position.z - direction * 1f);
-                finishSection = new Vector3(startSection.x, startSection.y, startSection.z + direction * 2f);
+            if (finishSection == startSection) { // 짝수 단위로 z좌표를 설정해야함
+                float zPosition = Mathf.FloorToInt((Control3D.PlayerRigid.position.z - direction * 1f) / 2) * 2 + 1;
+
+                Debug.Log("MoveSectionLine | Finish Section == Start Section | zPosition | " + zPosition);
+
+                startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, zPosition);
+                finishSection = new Vector3(startSection.x, startSection.y, zPosition + direction * 2f);
             }
         }
 
-
         sectionLine.transform.position = finishSection;
         sectionLine_First.transform.position = startSection;
-
 
         ResetSelectObject();                                                    // raycast가 움직이기전 초기화
         ChangeSelectObjectLayer(startSection, finishSection);                   // Raycast를 넣어서  
@@ -254,7 +260,7 @@ public class PlayerState3D_Skill : PlayerState3D {
                 }
                 break;
             case ConvertItem.Objects:
-            //case ConvertItem.Objects_2:
+                //case ConvertItem.Objects_2:
                 if (!convertMode[1].SelectObjects.Contains(parent)) {
                     //Debug.Log("selectObjects Hit: " + parent.name);
                     convertMode[1].SelectObjects.Add(parent);
