@@ -11,7 +11,7 @@ public class MonsterManager : MonsterBase {
     private void Start() {
         Change3D();
         // 모드 변경
-        PlayerManage.instance.IsSwitchMode += SwitchMode;
+        playerManage.IsSwitchMode += SwitchMode;
         //TODO: IMonsterStateBase 초기값 지정
     }
 
@@ -78,7 +78,7 @@ public class MonsterManager : MonsterBase {
     }
 
     private void OnDrawGizmos() {
-        if (Monster3D == null || PlayerManage.instance == null) return;
+        if (Monster3D == null || playerManage == null) return;
 
         Vector3 origin = new Vector3(Monster3D.transform.position.x, Monster3D.transform.position.y + 1f, Monster3D.transform.position.z);
 

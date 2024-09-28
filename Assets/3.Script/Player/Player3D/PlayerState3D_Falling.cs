@@ -16,12 +16,12 @@ public class PlayerState3D_Falling : PlayerState3D {
 
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 
 
-        if (PlayerManage.instance.IsChangingModeTo3D) {          // 2d 에서 3 d 돌아왔을 때 
+        if (playerManage.IsChangingModeTo3D) {          // 2d 에서 3 d 돌아왔을 때 
             Control3D.ChangeState(PlayerState.Holding);
         }
         else {
@@ -34,14 +34,14 @@ public class PlayerState3D_Falling : PlayerState3D {
 
         if (Control3D.PlayerRigid.position.y <= -15f) {
             // respawn
-            PlayerManage.instance.SetPlayerDieCount();
+            playerManage.SetPlayerDieCount();
 
-            Control3D.PlayerRigid.position = PlayerManage.instance.Respawnposition.position;
+            Control3D.PlayerRigid.position = playerManage.Respawnposition.position;
             Control3D.PlayerRigid.velocity = Vector3.zero;
 
             Control3D.GroundPoint.transform.localPosition = Vector3.zero;
 
-            if (Vector3.Distance(Control3D.PlayerRigid.position, PlayerManage.instance.Respawnposition.position) <= 0.1f) {
+            if (Vector3.Distance(Control3D.PlayerRigid.position, playerManage.Respawnposition.position) <= 0.1f) {
                 Control3D.ChangeState(PlayerState.Idle);
             }
         }

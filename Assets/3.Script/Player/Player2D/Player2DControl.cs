@@ -10,11 +10,12 @@ public class Player2DControl : MonoBehaviour {
     private float gravity = -9.8f;
     protected int activeFalseLayerIndex;
     private LayerMask layerMaskIndex;
-    public Animator Ani2D { get { return PlayerManage.instance.Ani2D; } }
-    public GameObject Player { get { return PlayerManage.instance.Player2D; } }
-    public Rigidbody2D PlayerRigid { get { return PlayerManage.instance.PlayerRigid2D; } }
 
-    private PlayerManage playerManager;
+    public Animator Ani2D { get; private set; }
+    public GameObject Player { get; private set; }
+    public Rigidbody2D PlayerRigid { get; private set; }
+
+    private PlayerManage playerManage;
 
     private Vector3 positionToMove = Vector3.zero;
 
@@ -25,11 +26,18 @@ public class Player2DControl : MonoBehaviour {
     public GameObject GroundPoint { get { return groundPoint; } }
 
     private void Awake() {
-        playerManager = transform.parent.GetComponent<PlayerManage>();
+        playerManage = transform.parent.GetComponent<PlayerManage>();
+
+        Ani2D = playerManage.Ani2D;
+        Player = playerManage.Player2D;
+        PlayerRigid = playerManage.PlayerRigid2D;
+
         groundPoint = Player.transform.GetChild(1).gameObject;
         activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
         layerMaskIndex = 1 << LayerMask.NameToLayer("Ground");
         InitializeStates();
+
+
     }
     private void OnEnable() {
         ChangeState(PlayerState.Idle);
@@ -71,7 +79,7 @@ public class Player2DControl : MonoBehaviour {
         }
         // 새로운 상태를 가져와서 활성화
         if (stateDic.TryGetValue(newState, out PlayerState2D newStateComponent)) {
-            PlayerManage.instance.CurrentState = newState;
+            playerManage.CurrentState = newState;
 
             currentStateComponent = newStateComponent;
             currentStateComponent.enabled = true;

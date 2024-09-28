@@ -17,9 +17,9 @@ public class PlayerState2D_Skill : PlayerState2D {
             mode.ChangeLayerAllActiveTrue();
         }
 
-        PlayerManage.instance.CurrentMode = PlayerMode.Player3D;
-        PlayerManage.instance.IsChangingModeTo3D = true;
-        PlayerManage.instance.SwitchMode();
+        playerManage.CurrentMode = PlayerMode.Player3D;
+        playerManage.IsChangingModeTo3D = true;
+        playerManage.SwitchMode();
 
         //ChangeState();
     }
@@ -33,9 +33,9 @@ public class PlayerState2D_Skill : PlayerState2D {
                 mode.ChangeLayerAllActiveTrue();
             }
 
-            PlayerManage.instance.CurrentMode = PlayerMode.Player3D;
-            PlayerManage.instance.IsChangingModeTo3D = true; 
-            PlayerManage.instance.SwitchMode();
+            playerManage.CurrentMode = PlayerMode.Player3D;
+            playerManage.IsChangingModeTo3D = true;
+            playerManage.SwitchMode();
         }
 
         if (skillSectionInput == 0 && isSkillButtonPressed) {                           // 스킬 버튼이 해제되었는지 감지

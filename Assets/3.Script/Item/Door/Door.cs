@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Door : MonoBehaviour {
     private float moveSpeed = 3.5f;
+    private float journeyLength;
+    private float startTime;
+
     [SerializeField] private float moveYpos = 7f;
 
     [SerializeField] private int password;
@@ -23,10 +26,12 @@ public class Door : MonoBehaviour {
     [SerializeField] private GameObject activeDoor;
     [SerializeField] private List<GameObject> activeDoorKeys = new List<GameObject>();
 
-    private float journeyLength;
-    private float startTime;
+    private PlayerManage playerManage;
+
 
     private void Awake() {
+        playerManage = FindObjectOfType<PlayerManage>();
+
         activeDoor = transform.Find("Root3D/Activate_Door/Activate_Door_Door").gameObject;
 
         Traverse(transform);
@@ -53,7 +58,7 @@ public class Door : MonoBehaviour {
     }
 
     private void Update() {
-        if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        if (playerManage.CurrentMode == PlayerMode.Player3D) {
             if (isDoorNeddMove) {
                 // 현재 시간과 여정을 계산
                 float distanceCovered = (Time.time - startTime) * moveSpeed;

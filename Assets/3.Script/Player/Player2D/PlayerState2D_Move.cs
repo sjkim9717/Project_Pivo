@@ -21,13 +21,13 @@ public class PlayerState2D_Move : PlayerState2D {
     }
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 
          if (horizontalInput != 0) {
 
-            PlayerManage.instance.IsChangingModeTo3D = false;
+            playerManage.IsChangingModeTo3D = false;
             Control2D.Move(horizontalInput);
         }
         else if (horizontalInput == 0) {

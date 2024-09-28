@@ -15,6 +15,8 @@ public class Bomb : MonoBehaviour, IBomb {
     private GameObject effect;
 
     private GameObject UIBomb;
+
+    private PlayerManage playerManage;
     private DynamicManager UI_Dynamic;
 
     private ConvertMode_Destroy destroyComponent;
@@ -24,7 +26,9 @@ public class Bomb : MonoBehaviour, IBomb {
 
         UI_Dynamic = FindObjectOfType<DynamicManager>();
         destroyComponent = FindObjectOfType<ConvertMode_Destroy>();
-        playerRigid = FindObjectOfType<PlayerManage>().PlayerRigid3D;
+
+        playerManage = FindObjectOfType<PlayerManage>();
+        playerRigid = playerManage.PlayerRigid3D;
 
         effect = Instantiate(EffectPrefab, transform);
         effect.SetActive(false);
@@ -97,7 +101,7 @@ public class Bomb : MonoBehaviour, IBomb {
 
     public void IBombExplosion() {
         UIBomb.SetActive(false);
-        if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        if (playerManage.CurrentMode == PlayerMode.Player3D) {
             Vector3 boxSize = new Vector3(2f, 2f, 2f);
             RaycastHit[] hits = Physics.BoxCastAll(transform.position, boxSize, transform.up, Quaternion.identity, 0);
 
@@ -113,7 +117,7 @@ public class Bomb : MonoBehaviour, IBomb {
 
             }
         }
-        else if (PlayerManage.instance.CurrentMode == PlayerMode.Player2D) {
+        else if (playerManage.CurrentMode == PlayerMode.Player2D) {
             Vector2 boxSize = new Vector3(4f, 4f, 2f);
             RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, boxSize, 0, transform.up, 0);
 
@@ -167,7 +171,7 @@ public class Bomb : MonoBehaviour, IBomb {
         Gizmos.color = Color.grey;
         Vector3 boxSize = new Vector3(2f, 2f, 2f);
 
-        if (PlayerManage.instance != null && PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        if (playerManage != null && playerManage.CurrentMode == PlayerMode.Player3D) {
             Gizmos.DrawWireCube(transform.position, boxSize * 2);
         }
         else {

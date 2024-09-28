@@ -9,9 +9,9 @@ public class Player3DControl : MonoBehaviour {
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
 
-    public Animator Ani3D { get { return PlayerManage.instance.Ani3D; } }
-    public GameObject Player { get { return PlayerManage.instance.Player3D; } }
-    public Rigidbody PlayerRigid { get { return PlayerManage.instance.PlayerRigid3D; } }
+    public Animator Ani3D { get; private set; }
+    public GameObject Player { get; private set; }
+    public Rigidbody PlayerRigid { get; private set; }
 
     private PlayerManage playerManager;
 
@@ -27,6 +27,10 @@ public class Player3DControl : MonoBehaviour {
 
     private void Awake() {
         playerManager = transform.parent.GetComponent<PlayerManage>();
+
+        Ani3D = playerManager.Ani3D;
+        Player = playerManager.Player3D;
+        PlayerRigid = playerManager.PlayerRigid3D;
 
         groundPoint = Player.transform.GetChild(1).gameObject;
 
@@ -122,7 +126,7 @@ public class Player3DControl : MonoBehaviour {
         }
         // 새로운 상태를 가져와서 활성화
         if (stateDic.TryGetValue(newState, out PlayerState3D newStateComponent)) {
-            PlayerManage.instance.CurrentState = newState;
+            playerManager.CurrentState = newState;
 
             currentStateComponent = newStateComponent;
             currentStateComponent.enabled = true;
@@ -198,14 +202,14 @@ public class Player3DControl : MonoBehaviour {
             GameObject eachParent = each.transform.parent != null ? each.transform.parent.gameObject : each.gameObject;
 
             if ((eachParent.transform.position.y) >= transform.position.y) {
-                //Debug.Log("전체 다 들어오는지 | " + eachParent.name);
+                Debug.Log("전체 다 들어오는지 | " + eachParent.name);
                 if ((eachParent.transform.position.y + 1) <= transform.position.y + 2.5f) {        // 플레이어 y축 0 ~ 2 까지 : 첫 번째 층
                     bottomObstacles.Add(eachParent);
-                    //Debug.Log("bottomObstacle | " + eachParent.name);
+                    Debug.Log("bottomObstacle | " + eachParent.name);
                 }
                 else if ((eachParent.transform.position.y + 1) <= transform.position.y + 4.5f) {   // 플레이어 y축 +2이상 :  두 번째 층
                     topObstacles.Add(eachParent);
-                    //Debug.Log("topObstacles | " + eachParent.name);
+                    Debug.Log("topObstacles | " + eachParent.name);
                 }
             }
         }
@@ -214,15 +218,15 @@ public class Player3DControl : MonoBehaviour {
         // bottom and top nomal vector check
         if (!CheckObstacleAngle(topObstacles)) {
             if (CheckObstacleAngle(bottomObstacles)) {
-                //Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
+                Debug.Log("topObstacles 가 없고 bottomObstacles 있음");
                 return true;
             }
             else {
-                //Debug.Log("topObstacles 가 없고 bottomObstacles도 없음 ");
+                Debug.Log("topObstacles 가 없고 bottomObstacles도 없음");
             }
         }
         else {
-            //Debug.Log("topObstacles 가 있음");
+            Debug.Log("topObstacles 가 있음");
         }
 
         return false;

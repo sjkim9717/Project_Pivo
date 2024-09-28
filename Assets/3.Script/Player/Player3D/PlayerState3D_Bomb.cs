@@ -32,7 +32,7 @@ public class PlayerState3D_Bomb : PlayerState3D {
     }
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class PlayerState3D_Bomb : PlayerState3D {
         if (isBombMoved) {
             if (interactionInput != 0) {
                 bomb.IBombMoveEnd();
-                PlayerManage.instance.SetPlantBomb(bomb);
+                playerManage.SetPlantBomb(bomb);
                 Control3D.ChangeState(PlayerState.Idle);
             }
         }

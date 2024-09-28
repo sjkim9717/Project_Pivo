@@ -13,7 +13,7 @@ public class PlayerState3D_Dead : PlayerState3D {
 
     public override void EnterState() {
 
-        PlayerManage.instance.Respawn();
+        playerManage.Respawn();
 
         if (Control3D != null && Control3D.Ani3D != null) {
             Control3D.Ani3D.SetTrigger("IsDie");

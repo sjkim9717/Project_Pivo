@@ -10,11 +10,13 @@ public class PlayerState3D : StateBase {
     protected float interactionInput;
 
     private Player3DControl control3D;
+    protected PlayerManage playerManage;
 
     public Player3DControl Control3D { get { return control3D; } }
 
     protected virtual void Awake() {
         control3D = base.transform.GetComponent<Player3DControl>();
+        playerManage = FindObjectOfType<PlayerManage>();
     }
 
     protected virtual void OnEnable() {        

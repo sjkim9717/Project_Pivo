@@ -28,7 +28,7 @@ public class PlayerState3D_Holding : PlayerState3D {
     }
 
     public override void EnterState() {
-        PlayerManage.instance.IsChangingModeTo3D = false;
+        playerManage.IsChangingModeTo3D = false;
         Control3D.Ani3D.SetBool("IsFalling", true);
         holdingGroup.SetActive(true);
 
@@ -56,14 +56,14 @@ public class PlayerState3D_Holding : PlayerState3D {
                     Control3D.ChangeState(PlayerState.Falling);
                 }
                 else if (skillSectionInput != 0) {
-                    PlayerManage.instance.IsChangingModeTo3D = true;
+                    playerManage.IsChangingModeTo3D = true;
                     //TODO: 2D로 변경되면 잘려있는 친구들은 남아있어야함
-                    PlayerManage.instance.CurrentMode = PlayerMode.Player2D;
+                    playerManage.CurrentMode = PlayerMode.Player2D;
                     foreach (ConvertMode item in convertMode) {
                         item.ChangeLayerActiveTrueWhen3DModeCancle();
                         //item.ChangeActiveWithLayer();
                     }
-                    PlayerManage.instance.Change2D();
+                    playerManage.Change2D();
                     Debug.Log("2D 모드로 전환됨");
                 }
             }

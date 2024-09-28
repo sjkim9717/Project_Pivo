@@ -25,8 +25,8 @@ public class PlayerState3D_Skill : PlayerState3D {
         isSkillButtonPressed = false;
         skillCount = 0;
 
-        PlayerManage.instance.StartSection = Vector3.zero;
-        PlayerManage.instance.FinishSection = Vector3.zero;
+        playerManage.StartSection = Vector3.zero;
+        playerManage.FinishSection = Vector3.zero;
     }
 
     private void Start() {
@@ -57,9 +57,11 @@ public class PlayerState3D_Skill : PlayerState3D {
 
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
+
+        Control3D.Move(0, 0);
 
         if (skillSectionInput != 0 && !isSkillButtonPressed) { // 스킬 버튼이 눌렸는지 감지
             isSkillButtonPressed = true;                                            // 버튼이 눌린 상태로 표시
@@ -90,11 +92,11 @@ public class PlayerState3D_Skill : PlayerState3D {
                     convertMode[i].ChangeLayerActiveFalse(convertMode[i].SelectObjects);
                 }
                 */
-                PlayerManage.instance.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
-                PlayerManage.instance.FinishSection = finishSection;
-
-                PlayerManage.instance.CurrentMode = PlayerMode.Player2D;
-                PlayerManage.instance.SwitchMode();
+               playerManage.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
+               playerManage.FinishSection = finishSection;
+               
+               playerManage.CurrentMode = PlayerMode.Player2D;
+                playerManage.SwitchMode();
                 Debug.Log("2D 모드로 전환됨");
             }
             else {
@@ -124,7 +126,7 @@ public class PlayerState3D_Skill : PlayerState3D {
             sectionLine.SetActive(false);
             sectionLine_First.SetActive(false);
 
-            PlayerManage.instance.IsChangingModeTo3D = false;
+            playerManage.IsChangingModeTo3D = false;
             Control3D.ChangeState(PlayerState.Idle);
         }
         else if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -199,8 +201,8 @@ public class PlayerState3D_Skill : PlayerState3D {
             item.ChangeLayerAllActiveTrue();
         }
 
-        PlayerManage.instance.StartSection = Vector3.zero;
-        PlayerManage.instance.FinishSection = Vector3.zero;
+        playerManage.StartSection = Vector3.zero;
+        playerManage.FinishSection = Vector3.zero;
     }
 
     // 플레이어가 스킬 자르면 해당하는 영역을 확인해야함
@@ -279,7 +281,10 @@ public class PlayerState3D_Skill : PlayerState3D {
     // 플레이어가 스킬로 섹션을 자르면 해당하는 역역 중 같은 선상에 있는 물체 확인
     private bool CheckSkillUsable() {
         if (startSection == finishSection) return false;
-        return convertMode[0].blockObjects.Count >= 1 ? false : true;
+        foreach (ConvertMode each in convertMode) {
+            if (each.blockObjects.Count >= 1) return false;
+        }
+        return true;
     }
 
 
@@ -296,8 +301,7 @@ public class PlayerState3D_Skill : PlayerState3D {
                 if (eachXYpos.y >= playerXYpos.y - 0.5) {
                     if (eachXYpos.y <= playerXYpos.y + 4) {
                         Debug.Log(" 같은 선상의 오브젝트 이름 | " + each.name);
-                        convertMode.blockObjects.Add(each);
-                        convertMode.InitMaterial(each);
+                        convertMode.AddBlockObject(each);
                         //each.GetComponentInChildren<TileController>().ChangeMaterial();
                     }
                 }
@@ -309,8 +313,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
     private void ResetBlock(ConvertMode convertMode) {
         convertMode.ChangeMaterial_Origin();
-        convertMode.blockObjects.Clear();
-        convertMode.defaltMaterial.Clear();
+        convertMode.ClearBlockObject();
     }
 
     public override void ExitState() {

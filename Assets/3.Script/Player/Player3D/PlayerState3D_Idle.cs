@@ -23,20 +23,20 @@ public class PlayerState3D_Idle : PlayerState3D {
         interactionInput = Input.GetAxis("Interaction");
         explosionInput = Input.GetAxis("Explosion");
 
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 
 
         if (Control3D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인
-            if (Vector3.Distance(Control3D.PlayerRigid.position, PlayerManage.instance.Respawnposition.position) <= 0.1f) {
+            if (Vector3.Distance(Control3D.PlayerRigid.position, playerManage.Respawnposition.position) <= 0.1f) {
                 return;
             }
             else {
-                if (PlayerManage.instance.IsBombOnGround) {
+                if (playerManage.IsBombOnGround) {
                     bomb.IBombMoveEnd();
                 }
-                Debug.Log(Vector3.Distance(Control3D.PlayerRigid.position, PlayerManage.instance.Respawnposition.position));
+                Debug.Log(Vector3.Distance(Control3D.PlayerRigid.position, playerManage.Respawnposition.position));
                 Control3D.ChangeState(PlayerState.Falling);
             }
         }
@@ -72,7 +72,7 @@ public class PlayerState3D_Idle : PlayerState3D {
                     bomb = bombObj.GetComponent<IBomb>();
                     if (bomb != null) {
                         bomb.IBombMoveStart();
-                        PlayerManage.instance.IsBombOnGround = true;
+                        playerManage.IsBombOnGround = true;
                         Control3D.ChangeState(PlayerState.Bomb);
                     }
                 }
@@ -88,9 +88,9 @@ public class PlayerState3D_Idle : PlayerState3D {
             Control3D.ChangeState(PlayerState.Disable);
         }
 
-        if (PlayerManage.instance.IsBombOnGround) {
+        if (playerManage.IsBombOnGround) {
             if (explosionInput != 0) {
-                PlayerManage.instance.IsBombOnGround = false;
+                playerManage.IsBombOnGround = false;
                 bomb.IBombExplosion();
                 bomb = null;
             }

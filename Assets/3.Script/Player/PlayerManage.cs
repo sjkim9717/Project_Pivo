@@ -5,9 +5,6 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerManage : PlayerBase {
-    private static PlayerManage _instance;
-    public static PlayerManage instance { get { return _instance; } }
-
     public Action IsSwitchMode = delegate { };
     public static Action PlayerDead = delegate { };
     public UnityEvent<Vector3> onPlayerEnterTile;
@@ -32,19 +29,9 @@ public class PlayerManage : PlayerBase {
 
 
     protected override void Awake() {
-
-        if (_instance == null) {
-            _instance = this;
-        }
-        else {
-            Debug.LogWarning(" 씬 재로드 에러");
-            Destroy(gameObject); // 기존 인스턴스가 있으면 현재 객체를 제거
-        }
-
         base.Awake();
 
         respawnposition = new GameObject("RespawnPosition").transform;
-
     }
 
     private void Start() {

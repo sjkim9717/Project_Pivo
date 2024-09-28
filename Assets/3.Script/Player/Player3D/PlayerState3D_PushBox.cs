@@ -30,7 +30,7 @@ public class PlayerState3D_PushBox : PlayerState3D {
     }
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 

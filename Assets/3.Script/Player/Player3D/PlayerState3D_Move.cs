@@ -20,7 +20,7 @@ public class PlayerState3D_Move : PlayerState3D {
     }
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 
@@ -30,8 +30,8 @@ public class PlayerState3D_Move : PlayerState3D {
             Control3D.ChangeState(PlayerState.Falling);
         }
         else if (horizontalInput != 0 || verticalInput != 0) {
-            
-            PlayerManage.instance.IsChangingModeTo3D = false;
+
+            playerManage.IsChangingModeTo3D = false;
             Control3D.Move(horizontalInput, verticalInput);
         }
         else if (horizontalInput == 0 && verticalInput == 0) {

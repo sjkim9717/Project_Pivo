@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour {
     private GameObject fadeGroup;
     //private GameObject UI_Title;
 
+    private PlayerManage playerManage;
     private PlayableDirector StageClear_Director;
 
     private StageClearController[] stageClearController;
@@ -76,6 +77,9 @@ public class GameManager : MonoBehaviour {
         //Debug.LogWarning(" current scene | FindObjectsWhenLevelChange | " + currentStage);
 
         if (currentStage != StageLevel.StageSelect) {
+
+            playerManage = FindObjectOfType<PlayerManage>();
+
             stageClearController = FindObjectsOfType<StageClearController>();
             // StageClear 이벤트 구독
             foreach (var controller in stageClearController) {
@@ -106,8 +110,8 @@ public class GameManager : MonoBehaviour {
 
     // StageClear 이벤트가 호출될 때 실행될 메서드
     private void OnStageClear() {
-        PlayerManage.instance.CurrentMode = PlayerMode.AutoMode;
-        PlayerManage.instance.ChangeAutoMode();
+        playerManage.CurrentMode = PlayerMode.AutoMode;
+        playerManage.ChangeAutoMode();
 
         // 만약 세이브가 있다면 현재 점수랑 비교해서 높은 쪽 저장
         if (Save.instance.TryGetStageScore(currentStage, out int savescore)) {

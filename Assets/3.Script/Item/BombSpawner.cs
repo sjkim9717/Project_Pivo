@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BombSpawner : MonoBehaviour {
+    private Vector3 originPos;
+    
     [SerializeField] private float colliderRadius = 10f;
     [SerializeField] private GameObject BombPrefab;
-    public GameObject Bomb { get { return bomb; } }
+    
     private GameObject bomb;
-    private Vector3 originPos;
+    public GameObject Bomb { get { return bomb; } }
+
+    private PlayerManage playerManage;
 
     private void Awake() {
+        playerManage = FindObjectOfType<PlayerManage>();
+
         bomb = Instantiate(BombPrefab, transform);
         bomb.SetActive(false);
         bomb.name = BombPrefab.name;
@@ -27,7 +33,7 @@ public class BombSpawner : MonoBehaviour {
     }
 
     private bool CheckPlayerCloseToBombSpawner() {
-        if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        if (playerManage.CurrentMode == PlayerMode.Player3D) {
             Collider[] collAll = Physics.OverlapSphere(transform.position, colliderRadius);
 
             foreach (Collider each in collAll) {

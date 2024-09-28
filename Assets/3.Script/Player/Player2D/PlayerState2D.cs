@@ -9,10 +9,12 @@ public class PlayerState2D : StateBase {
     protected float interactionInput;
 
     private Player2DControl control2D;
+    protected PlayerManage playerManage;
     public Player2DControl Control2D { get { return control2D; } }
 
     protected virtual void Awake() {
         control2D = base.transform.GetComponent<Player2DControl>();
+        playerManage = FindObjectOfType<PlayerManage>();
     }
     protected virtual void OnEnable() {
         horizontalInput = 0;

@@ -88,8 +88,15 @@ public abstract class ConvertMode : MonoBehaviour {
                     GameObject parentObj = eachRoot3D.transform.parent.gameObject;
                     if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("Climb")) {
                         GameObject pushbox = parentObj.transform.parent.gameObject;
-                        if (!AllObjects.Contains(pushbox)) {
-                            AllObjects.Add(pushbox);
+                        if(pushbox.CompareTag("Untagged")) {
+                            if (!AllObjects.Contains(parentObj)) {
+                                AllObjects.Add(parentObj);
+                            }
+                        }
+                        else {
+                            if (!AllObjects.Contains(pushbox)) {
+                                AllObjects.Add(pushbox);
+                            }
                         }
                     }
                     else {
@@ -98,9 +105,12 @@ public abstract class ConvertMode : MonoBehaviour {
                         }
                     }
                 }
-            }
+            }   
         }
     }
+
+
+
 
     public virtual void ChangeLayerActiveFalseInSelectObjects() {
         foreach (GameObject item in AllObjects) {
@@ -151,10 +161,17 @@ public abstract class ConvertMode : MonoBehaviour {
 
     //  ======================================================================
 
+    public virtual void AddBlockObject(GameObject blockCheck) {
+        if (blockCheck.name.Contains("Tile")) {
+            blockObjects.Add(blockCheck);
 
-    public virtual void InitMaterial(GameObject block) {
-        MeshRenderer tileRenderer = block.GetComponentInChildren<MeshRenderer>();
-        defaltMaterial.Add(tileRenderer.materials[0]);
+            MeshRenderer tileRenderer = blockCheck.GetComponentInChildren<MeshRenderer>();
+            defaltMaterial.Add(tileRenderer.materials[0]);
+        }
+    }
+    public virtual void ClearBlockObject() {
+        blockObjects.Clear();
+        defaltMaterial.Clear();
     }
 
     public virtual void ChangeMaterial_Origin() {

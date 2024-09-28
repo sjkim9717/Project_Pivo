@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class CameraManager : MonoBehaviour {
     private Animator camAni;
-    private PlayerManage playerManager;
+    private PlayerManage playerManage;
 
     private const int PRIORITY_ON = 20; // 활성화된 카메라의 우선순위
     private const int PRIORITY_OFF = 0; // 비활성화된 카메라의 우선순위
@@ -26,7 +26,7 @@ public class CameraManager : MonoBehaviour {
         Camera.main.cullingMask = ~(1 << activeFalseLayerIndex);
 
         camAni = GetComponent<Animator>();
-        playerManager = FindObjectOfType<PlayerManage>();
+        playerManage = FindObjectOfType<PlayerManage>();
         main = GetComponentInChildren<CinemachineBrain>();
         gameCam = GetComponentInChildren<CinemachineStateDrivenCamera>();
 
@@ -47,9 +47,9 @@ public class CameraManager : MonoBehaviour {
         if (FindGameModeCamera()) {
 
             if (Camera.main != null) {
-                camAni.SetBool("Is3D", playerManager.CurrentMode == PlayerMode.Player3D);
-                Camera.main.orthographic = playerManager.CurrentMode == PlayerMode.Player2D;
-                if (playerManager.CurrentMode == PlayerMode.Player2D) {
+                camAni.SetBool("Is3D", playerManage.CurrentMode == PlayerMode.Player3D);
+                Camera.main.orthographic = playerManage.CurrentMode == PlayerMode.Player2D;
+                if (playerManage.CurrentMode == PlayerMode.Player2D) {
                     if (!isCentered) {
                         isCentered = true;
                         Debug.Log(" 2D camera setting");
@@ -88,11 +88,11 @@ public class CameraManager : MonoBehaviour {
     private void FindGameCameraPlayer() {
         playerMode = gameCam.GetComponentsInChildren<CinemachineVirtualCamera>();
         if (playerMode != null) {
-            playerMode[0].Follow = PlayerManage.instance.Player3D.transform;
-            playerMode[0].LookAt = PlayerManage.instance.Player3D.transform;
+            playerMode[0].Follow = playerManage.Player3D.transform;
+            playerMode[0].LookAt = playerManage.Player3D.transform;
 
-            playerMode[1].Follow = PlayerManage.instance.Player2D.transform;
-            playerMode[1].LookAt = PlayerManage.instance.Player2D.transform;
+            playerMode[1].Follow = playerManage.Player2D.transform;
+            playerMode[1].LookAt = playerManage.Player2D.transform;
         }
         else {
             Debug.LogWarning("CinemachineVirtualCamera is null");
@@ -116,8 +116,8 @@ public class CameraManager : MonoBehaviour {
     private void SettingGameCameraPlayer() {
 
         // Dead Zone 비활성화 (카메라가 플레이어를 정확히 중앙에 위치시키도록)
-        playerMode[1].Follow = PlayerManage.instance.Player2D.transform;
-        playerMode[1].LookAt = PlayerManage.instance.Player2D.transform;
+        playerMode[1].Follow = playerManage.Player2D.transform;
+        playerMode[1].LookAt = playerManage.Player2D.transform;
 
         CinemachineFramingTransposer composer = playerMode[1].GetCinemachineComponent<CinemachineFramingTransposer>();
         composer.m_DeadZoneWidth = 0f;

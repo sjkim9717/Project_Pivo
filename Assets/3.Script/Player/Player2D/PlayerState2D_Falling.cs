@@ -15,7 +15,7 @@ public class PlayerState2D_Falling : PlayerState2D {
 
 
     private void ChangeState() {
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
 
@@ -24,14 +24,14 @@ public class PlayerState2D_Falling : PlayerState2D {
 
         if (Control2D.PlayerRigid.position.y <= -20f) {
             // respawn
-            PlayerManage.instance.SetPlayerDieCount();
+            playerManage.SetPlayerDieCount();
 
-            Control2D.PlayerRigid.position = PlayerManage.instance.Respawnposition.position;
+            Control2D.PlayerRigid.position = playerManage.Respawnposition.position;
             Control2D.PlayerRigid.velocity = Vector3.zero;
 
             Control2D.GroundPoint.transform.localPosition = Vector3.zero;
 
-            float distance = Control2D.PlayerRigid.position.y - PlayerManage.instance.Respawnposition.position.y;
+            float distance = Control2D.PlayerRigid.position.y - playerManage.Respawnposition.position.y;
 
             if (distance <= 0.1f) {
                 Control2D.ChangeState(PlayerState.Idle);

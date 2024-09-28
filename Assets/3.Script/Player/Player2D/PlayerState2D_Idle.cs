@@ -28,10 +28,10 @@ public class PlayerState2D_Idle : PlayerState2D {
         interactionInput = Input.GetAxis("Interaction");
         explosionInput = Input.GetAxis("Explosion");
 
-        if (PlayerManage.instance.CurrentState == PlayerState.Dead) {
+        if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
-        else if (PlayerManage.instance.CurrentState == PlayerState.Disable) {
+        else if (playerManage.CurrentState == PlayerState.Disable) {
             if (Input.GetKeyDown(KeyCode.Escape)) {
                 Control2D.ChangeState(PlayerState.Idle);
             }
@@ -63,7 +63,7 @@ public class PlayerState2D_Idle : PlayerState2D {
             Control2D.ChangeState(PlayerState.Move);
         }
         else if (skillSectionInput != 0) {
-            if (!PlayerManage.instance.IsChangingModeTo3D) {
+            if (!playerManage.IsChangingModeTo3D) {
                 Control2D.ChangeState(PlayerState.Skill);
             }
         }
@@ -87,10 +87,10 @@ public class PlayerState2D_Idle : PlayerState2D {
         }
 
 
-        if (PlayerManage.instance.IsBombOnGround) {
+        if (playerManage.IsBombOnGround) {
             if (explosionInput != 0) {
-                PlayerManage.instance.IsBombOnGround = false;
-                IBomb bomb = PlayerManage.instance.GetPlantBomb();
+                playerManage.IsBombOnGround = false;
+                IBomb bomb = playerManage.GetPlantBomb();
                 bomb.IBombExplosion();
             }
 

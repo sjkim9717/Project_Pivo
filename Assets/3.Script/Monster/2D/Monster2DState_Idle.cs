@@ -66,7 +66,7 @@ public class Monster2DState_Idle : IMonsterStateBase {
 
     public bool CheckMonsterInCamera(GameObject gameObject) {
         if (camera == null) return false;
-        if (PlayerManage.instance.CurrentMode != PlayerMode.Player2D) return false;
+        //if (PlayerManage.instance.CurrentMode != PlayerMode.Player2D) return false;
 
         Vector3 screenPoint = camera.WorldToViewportPoint(gameObject.transform.position);
         bool isInScreen = screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;

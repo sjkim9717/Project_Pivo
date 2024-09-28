@@ -17,9 +17,12 @@ public class PipeObject : MonoBehaviour {
     private Material midMaterial;
     private Material endMaterial;
 
+    private PlayerManage playerManage;
     public PipeWaypoint Waypoint = new PipeWaypoint();
 
     private void Awake() {
+        playerManage = FindObjectOfType<PlayerManage>();
+
         Waypoint.SettingPosition(gameObject, Waypoint.Start, ref Waypoint.StartPos);
         Waypoint.SettingPosition(gameObject, Waypoint.End, ref Waypoint.EndPos);
 
@@ -30,14 +33,14 @@ public class PipeObject : MonoBehaviour {
             endMaterial = renderers[1].material;
         }
 
-        PlayerManage.instance.IsSwitchMode += SwitchMode;
+        playerManage.IsSwitchMode += SwitchMode;
 
     }
     private void Start() {
         SwitchMode();
     }
     private void Update() {
-        if (PlayerManage.instance.CurrentMode == PlayerMode.Player2D) {
+        if (playerManage.CurrentMode == PlayerMode.Player2D) {
             //TODO: 가운데는 모드가 변경될 경우 연결되어있는지 확인해서 불 밝혀야함
             if (gameObject.activeSelf) {
                 if (Waypoint.IsStartConnect) {
@@ -54,7 +57,7 @@ public class PipeObject : MonoBehaviour {
                 }
             }
         }
-        else if (PlayerManage.instance.CurrentMode == PlayerMode.Player3D) {
+        else if (playerManage.CurrentMode == PlayerMode.Player3D) {
             if (gameObject.activeSelf) {
                 if (State == Terminal.Mid) {
                     if (!(Waypoint.IsStartConnect && Waypoint.IsEndConnect)) {
@@ -80,7 +83,7 @@ public class PipeObject : MonoBehaviour {
     #region active / component add
 
     private void SwitchMode() {
-        if (PlayerManage.instance.CurrentMode is PlayerMode.Player2D) {
+        if (playerManage.CurrentMode is PlayerMode.Player2D) {
             gameObject.SetActive(IsInSelectArea());
         }
         else {
@@ -96,7 +99,7 @@ public class PipeObject : MonoBehaviour {
     // component
     private IEnumerator SwitchModeCoroutine() {
 
-        bool is3DMode = PlayerManage.instance.CurrentMode == PlayerMode.Player3D;
+        bool is3DMode = playerManage.CurrentMode == PlayerMode.Player3D;
 
         if (is3DMode) {
             DestroyIfExists<Rigidbody2D>();
@@ -148,12 +151,12 @@ public class PipeObject : MonoBehaviour {
 
     //TODO: [수정 필요] 문제가 있구만
     private bool IsInSelectArea() {
-        if (PlayerManage.instance.StartSection.z >= PlayerManage.instance.FinishSection.z) {
-            if (transform.position.z <= PlayerManage.instance.StartSection.z && transform.position.z >= PlayerManage.instance.FinishSection.z) return true;
+        if (playerManage.StartSection.z >= playerManage.FinishSection.z) {
+            if (transform.position.z <= playerManage.StartSection.z && transform.position.z >= playerManage.FinishSection.z) return true;
             else return false;
         }
         else {
-            if (transform.position.z >= PlayerManage.instance.StartSection.z && transform.position.z <= PlayerManage.instance.FinishSection.z) return true;
+            if (transform.position.z >= playerManage.StartSection.z && transform.position.z <= playerManage.FinishSection.z) return true;
             else return false;
         }
     }

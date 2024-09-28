@@ -13,6 +13,7 @@ public class PipeManager : MonoBehaviour {
     [SerializeField] private Transform magicStone;
 
     private PipeObject finishPipeObject;
+    private PlayerManage playerManage;
     private void Awake() {
         foreach (Transform child in transform) {
             if (child.name.Contains("Start")) start = child;
@@ -22,7 +23,9 @@ public class PipeManager : MonoBehaviour {
 
         finishPipeObject = finish.GetComponent<PipeObject>();
 
-        PlayerManage.instance.IsSwitchMode += ChangeMonsterMode;
+        playerManage = FindObjectOfType<PlayerManage>();
+
+        playerManage.IsSwitchMode += ChangeMonsterMode;
     }
 
     private void ChangeMonsterMode() {
@@ -34,7 +37,7 @@ public class PipeManager : MonoBehaviour {
         if (isFinished && !isChangeState) {
             isChangeState = true;
 
-            if (PlayerManage.instance.CurrentMode is PlayerMode.Player3D) {
+            if (playerManage.CurrentMode is PlayerMode.Player3D) {
                 Collider[] colliders = Physics.OverlapSphere(magicStone.position, radius);
                 foreach (Collider each in colliders) {
                     if (each.transform.TryGetComponent(out Monster3DControl monster3D)) {
@@ -42,7 +45,7 @@ public class PipeManager : MonoBehaviour {
                     }
                 }
             }
-            else if (PlayerManage.instance.CurrentMode is PlayerMode.Player2D) {
+            else if (playerManage.CurrentMode is PlayerMode.Player2D) {
                 Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(magicStone.position, radius);
                 foreach (Collider2D each in collider2Ds) {
                     if (each.transform.TryGetComponent(out Monster2DControl monster2D)) {
