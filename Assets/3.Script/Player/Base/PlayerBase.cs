@@ -104,7 +104,13 @@ public class PlayerBase : MonoBehaviour {
         player2D.transform.position = moveposition;
         player3D.transform.position = moveposition;
     }
+    public virtual void ChangeStageClear() {
+        currentMode = PlayerMode.AutoMode;
 
+        player2D.SetActive(false);
+        player3D.SetActive(false);
+
+    }
 
     public void SettingEffectActiveTrue() {
         effect.SetActive(true);

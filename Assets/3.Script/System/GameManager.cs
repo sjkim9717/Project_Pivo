@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour {
 
     private PlayerManage playerManage;
     private PlayableDirector StageClear_Director;
+    private ConvertMode[] convertMode;
 
     private StageClearController[] stageClearController;
 
@@ -80,6 +81,12 @@ public class GameManager : MonoBehaviour {
 
             playerManage = FindObjectOfType<PlayerManage>();
 
+            // Stage Clear에 필요한 convertMode 전체 할당 => 2D에서 Stage Clear되면 전체 Layer ActiveTrue돌려야함
+
+
+            convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
+            convertMode = FindObjectsOfType<ConvertMode>();
+
             stageClearController = FindObjectsOfType<StageClearController>();
             // StageClear 이벤트 구독
             foreach (var controller in stageClearController) {
@@ -100,6 +107,7 @@ public class GameManager : MonoBehaviour {
                     break;
                 }
             }
+
         }
 
     }
@@ -111,7 +119,15 @@ public class GameManager : MonoBehaviour {
     // StageClear 이벤트가 호출될 때 실행될 메서드
     private void OnStageClear() {
         playerManage.CurrentMode = PlayerMode.AutoMode;
-        playerManage.ChangeAutoMode();
+
+        foreach (ConvertMode item in convertMode) {
+            item.ChangeLayerAllActiveTrue();
+        }
+
+        FindObjectOfType<CameraManager>().SettingCamerasPriority_StageClear();          // 카메라 세팅을 먼저 하고 플레이어를 꺼야 위치를 잡을 수 있음
+
+        playerManage.ChangeStageClear();
+        StageClear_Director.Play();
 
         // 만약 세이브가 있다면 현재 점수랑 비교해서 높은 쪽 저장
         if (Save.instance.TryGetStageScore(currentStage, out int savescore)) {
@@ -124,9 +140,6 @@ public class GameManager : MonoBehaviour {
         Debug.LogWarning("save Data | " + Save.instance.GameData);
         Save.instance.SaveGame();
 
-
-        FindObjectOfType<CameraManager>().SettingCamerasPriority_StageClear();
-        StageClear_Director.Play();
     }
 
     // scene이 로드될경우 해당씬 확인

@@ -177,7 +177,7 @@ public class CameraManager : MonoBehaviour {
 
     // StageClear 카메라 설정
     public void SettingCamerasPriority_StageClear() {
-        Debug.LogWarning(" 뒤졌으면 불러져야함");
+        Debug.LogWarning(" StageClear 불러져야함");
         SetCameraPriority(CameraType.StageClearCam);  // 게임 카메라 활성화
     }
 
