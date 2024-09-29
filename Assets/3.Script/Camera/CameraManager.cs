@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CameraManager : MonoBehaviour {
+
     private Animator camAni;
     private PlayerManage playerManage;
 
@@ -47,6 +48,7 @@ public class CameraManager : MonoBehaviour {
         if (FindGameModeCamera()) {
 
             if (Camera.main != null) {
+
                 camAni.SetBool("Is3D", playerManage.CurrentMode == PlayerMode.Player3D);
                 Camera.main.orthographic = playerManage.CurrentMode == PlayerMode.Player2D;
                 if (playerManage.CurrentMode == PlayerMode.Player2D) {
@@ -83,6 +85,7 @@ public class CameraManager : MonoBehaviour {
         else {
             SettingCamerasPriority_Game();
         }
+
     }
 
     private void FindGameCameraPlayer() {

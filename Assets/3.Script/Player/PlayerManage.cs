@@ -19,6 +19,9 @@ public class PlayerManage : PlayerBase {
     
     private IBomb groundBomb;
 
+    [Header("Testing")]
+    public bool isTest;
+
     public int GetPlayerDieCount() {
         if (dieCount >= 3) dieCount = 3;
         return dieCount;
@@ -51,12 +54,17 @@ public class PlayerManage : PlayerBase {
 
     private void Init() {
         dieCount = 0;
-        if (GameManager.instance.IsTutorialCompleted || GameManager.instance.IsIntroCompleted) {
-            Change3D();
-        }
+
+        if (isTest) Change3D();
         else {
-            ChangeAutoMode();
+            if (GameManager.instance.IsTutorialCompleted || GameManager.instance.IsIntroCompleted) {
+                Change3D();
+            }
+            else {
+                ChangeAutoMode();
+            }
         }
+
         isDieActionDone = false;
     }
     private void Restart() {

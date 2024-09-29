@@ -31,7 +31,7 @@ public class PlayerBase : MonoBehaviour {
     public GameObject Effect { get { return effect; } }
 
 
-    protected Vector3 moveposition;
+    protected Vector3 moveposition = Vector3.zero;
 
     private Vector3 startSection = Vector3.zero;
     private Vector3 finishSection = Vector3.zero;

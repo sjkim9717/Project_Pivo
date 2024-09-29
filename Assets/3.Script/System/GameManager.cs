@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     public static GameManager instance { get; private set; }
-
+    [Space(5)]
+    [Header("Scene 1 Tutorial Check")]
     public static bool isLoadTitle = true;
     public bool IsTutorialCompleted;                        // stage clear 후 UI 꺼져야할 경우
     public bool IsIntroCompleted;                           // 애니메이션만 꺼지면 되는 경우
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour {
         fadeGroup = transform.GetChild(4).gameObject;
         loadingGroup = transform.GetChild(5).gameObject;
         //UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
+
     }
 
     private void OnEnable() {
@@ -82,7 +84,6 @@ public class GameManager : MonoBehaviour {
             playerManage = FindObjectOfType<PlayerManage>();
 
             // Stage Clear에 필요한 convertMode 전체 할당 => 2D에서 Stage Clear되면 전체 Layer ActiveTrue돌려야함
-
 
             convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
             convertMode = FindObjectsOfType<ConvertMode>();
