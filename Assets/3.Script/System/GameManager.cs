@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour {
     private PlayableDirector StageClear_Director;
     private ConvertMode[] convertMode;
 
-    private StageClearController[] stageClearController;
+    private StageClearControl[] stageClearController;
 
     public readonly Dictionary<string, StageLevel> stageMap = new Dictionary<string, StageLevel>() {
         { "GrassStage_Stage1", StageLevel.GrassStageLevel_1 },
@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour {
             convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
             convertMode = FindObjectsOfType<ConvertMode>();
 
-            stageClearController = FindObjectsOfType<StageClearController>();
+            stageClearController = FindObjectsOfType<StageClearControl>();
             // StageClear 이벤트 구독
             foreach (var controller in stageClearController) {
                 if (controller != null) {

@@ -9,19 +9,10 @@ public class PlayerState2D_Skill : PlayerState2D {
     private void Start() {
        convertModes = FindObjectsOfType<ConvertMode>();
     }
-
     private void Update() {
         skillSectionInput = Input.GetAxis("SkillSection");
 
-        foreach (ConvertMode mode in convertModes) {
-            mode.ChangeLayerAllActiveTrue();
-        }
-
-        playerManage.CurrentMode = PlayerMode.Player3D;
-        playerManage.IsChangingModeTo3D = true;
-        playerManage.SwitchMode();
-
-        //ChangeState();
+        ChangeState();
     }
 
     private void ChangeState() {

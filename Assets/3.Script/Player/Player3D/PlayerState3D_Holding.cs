@@ -22,9 +22,9 @@ public class PlayerState3D_Holding : PlayerState3D {
         convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
 
         convertMode[0] = FindObjectOfType<ConvertMode_Tile>();
-        convertMode[1] = FindObjectOfType<ConvertMode_Item>();
+        convertMode[1] = FindObjectOfType<ConvertMode_Object>();
         convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
-        convertMode[3] = FindObjectOfType<ConvertMode_Object>();
+        convertMode[3] = FindObjectOfType<ConvertMode_Item>();
     }
 
     public override void EnterState() {

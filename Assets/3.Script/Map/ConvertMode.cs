@@ -16,24 +16,27 @@ public abstract class ConvertMode : MonoBehaviour {
     protected GameObject[] parentObject;
     [SerializeField]
     protected List<GameObject> AllObjects = new List<GameObject>();
-
     public List<GameObject> SelectObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 오브젝트들이 전체 담김
     public List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
 
     public List<Material> defaltMaterial = new List<Material>();
+
+    protected PlayerManage playerManage;
 
     protected virtual void Awake() {
 
         activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
         activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
         groundLayerIndex = LayerMask.NameToLayer("Ground");
+
+        playerManage = FindObjectOfType<PlayerManage>();
     }
 
     protected abstract void Start();
 
 
     // Tile이 들어간 tag는 자기 자신외 자식객체에서 tile이 포함되어있는지 확인하고 해당 오브젝트를 담음
-    protected void InitParentObjectWithTag(ConvertItem tagName) {
+    protected virtual void InitParentObjectWithTag(ConvertItem tagName) {
         parentObject = GameObject.FindGameObjectsWithTag($"{tagName}");
 
         foreach (GameObject each in parentObject) {
@@ -51,9 +54,17 @@ public abstract class ConvertMode : MonoBehaviour {
                         }
                     }
                     else {
-                        if (!AllObjects.Contains(parentObject)) {
-                            AllObjects.Add(parentObject);
+                        if (!parentObject.name.Contains("3D")) {
+                            if (!AllObjects.Contains(parentObject)) {
+                                AllObjects.Add(parentObject);
+                            }
                         }
+                        else {
+                            if (!AllObjects.Contains(parentObject.transform.parent.gameObject)) {
+                                AllObjects.Add(parentObject.transform.parent.gameObject);
+                            }
+                        }
+
                     }
 
                 }
@@ -74,44 +85,10 @@ public abstract class ConvertMode : MonoBehaviour {
         return false;
     }
 
-    protected void InitParentObjectWithTag_Object(ConvertItem tagName) {
-        parentObject = new GameObject[GameObject.FindGameObjectsWithTag($"{tagName}").Length];
-        for (int i = 0; i < parentObject.Length; i++) {
-            parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
-        }
+    // 플레이어 스킬로 해당 영역 잘렸을 경우 selet objects에 담음
+    public abstract void AddSelectObjects(GameObject selectCheck);
 
-        foreach (GameObject parent in parentObject) {
-            Collider[] findRoot3D = parent.transform.GetComponentsInChildren<Collider>();
-
-            foreach (Collider eachRoot3D in findRoot3D) {
-                if (eachRoot3D.name.Contains("Root3D")) {
-                    GameObject parentObj = eachRoot3D.transform.parent.gameObject;
-                    if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("Climb")) {
-                        GameObject pushbox = parentObj.transform.parent.gameObject;
-                        if(pushbox.CompareTag("Untagged")) {
-                            if (!AllObjects.Contains(parentObj)) {
-                                AllObjects.Add(parentObj);
-                            }
-                        }
-                        else {
-                            if (!AllObjects.Contains(pushbox)) {
-                                AllObjects.Add(pushbox);
-                            }
-                        }
-                    }
-                    else {
-                        if (!AllObjects.Contains(parentObj)) {
-                            AllObjects.Add(parentObj);
-                        }
-                    }
-                }
-            }   
-        }
-    }
-
-
-
-
+    // 레이어 변경해서 화면상에 비출지 결정
     public virtual void ChangeLayerActiveFalseInSelectObjects() {
         foreach (GameObject item in AllObjects) {
             if (!SelectObjects.Contains(item)) {
@@ -126,8 +103,7 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
-    public virtual void ChangeLayerAllActiveTrue() {
-    }
+    public abstract void ChangeLayerAllActiveTrue();
 
     public virtual void ChangeLayerActiveTrueWhen3DModeCancle() {
         foreach (GameObject each in AllObjects) {

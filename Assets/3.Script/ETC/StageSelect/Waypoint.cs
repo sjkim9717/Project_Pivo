@@ -47,7 +47,7 @@ public class Waypoint : MonoBehaviour {
             StageLevel.SnowStageLevel_6,
             new Dictionary<Direction, StageLevel> {
                 { Direction.Left, StageLevel.SnowStageLevel_4 },
-                { Direction.Down, StageLevel.SnowStageLevel_7 }
+                { Direction.Right, StageLevel.SnowStageLevel_7 }
             }
         },
         {

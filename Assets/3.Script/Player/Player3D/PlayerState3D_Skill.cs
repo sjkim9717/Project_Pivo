@@ -15,8 +15,6 @@ public class PlayerState3D_Skill : PlayerState3D {
     private GameObject sectionLine;
     private GameObject sectionLine_First;
 
-    //private List<GameObject> blockObjects = new List<GameObject>();              // skill 사용하면 해당 구역의 플레이어와 겹친 오브젝트가 담김
-
     private ConvertMode[] convertMode;
     protected override void OnEnable() {
         base.OnEnable();
@@ -35,13 +33,18 @@ public class PlayerState3D_Skill : PlayerState3D {
         sectionLine_First = Instantiate(sectionLine, sectionLine.transform.parent);
         sectionLine_First.name = "SectionLine_First";
 
+        // 색상 변경
+        var renderer = sectionLine_First.GetComponent<Renderer>();
+        if (renderer != null) {
+            renderer.material.color = Color.red; // 빨간색으로 설정
+        }
 
         convertMode = new ConvertMode[FindObjectsOfType<ConvertMode>().Length];
 
         convertMode[0] = FindObjectOfType<ConvertMode_Tile>();
-        convertMode[1] = FindObjectOfType<ConvertMode_Item>();
+        convertMode[1] = FindObjectOfType<ConvertMode_Object>();
         convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
-        convertMode[3] = FindObjectOfType<ConvertMode_Object>();
+        convertMode[3] = FindObjectOfType<ConvertMode_Item>();
 
     }
 
@@ -87,11 +90,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         if (skillCount >= 2) {                                                      // 스킬 사용 시도 횟수가 2회 이상인지 확인
 
             if (CheckSkillUsable()) {                                               //TODO: [기억] 스킬 사용해서 2D로 변경됨
-                /*
-                for (int i = 0; i < convertMode.Length; i++) {
-                    convertMode[i].ChangeLayerActiveFalse(convertMode[i].SelectObjects);
-                }
-                */
+
                 playerManage.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
                 playerManage.FinishSection = finishSection;
 
@@ -152,12 +151,10 @@ public class PlayerState3D_Skill : PlayerState3D {
         sectionLine_First.SetActive(true);
 
         if (startSection == Vector3.zero) {
-            // 짝수 단위로 z좌표를 설정해야함
-            float zPosition = Mathf.FloorToInt(Control3D.PlayerRigid.position.z / 2) * 2 + 1;
-            //Debug.Log("MoveSectionLine | Start Section | zPosition | " + zPosition);
-
+            // 홀수 단위로 z좌표를 설정해야함            
+            float zPosition = SetZposition(ref direction);
             startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, zPosition);
-            finishSection = new Vector3(startSection.x, startSection.y, zPosition + 2f);
+            finishSection = new Vector3(startSection.x, startSection.y, zPosition + direction * 2f);
         }
         else {
             float movingAmount = direction * 2f;
@@ -166,35 +163,57 @@ public class PlayerState3D_Skill : PlayerState3D {
             finishSection.z += movingAmount;
             finishSection.z = Mathf.Clamp(finishSection.z, startSection.z - skillDistance, startSection.z + skillDistance);
 
-            if (finishSection == startSection) { // 짝수 단위로 z좌표를 설정해야함
-                float zPosition = Mathf.FloorToInt((Control3D.PlayerRigid.position.z - direction * 1f) / 2) * 2 + 1;
-
-                //Debug.Log("MoveSectionLine | Finish Section == Start Section | zPosition | " + zPosition);
-
+            if (finishSection == startSection) { // 홀수 단위로 z좌표를 설정해야함
+                float zPosition = Mathf.FloorToInt(finishSection.z - direction * 2);
                 startSection = new Vector3(Control3D.PlayerRigid.position.x, Control3D.PlayerRigid.position.y, zPosition);
-                finishSection = new Vector3(startSection.x, startSection.y, zPosition + direction * 2f);
             }
         }
+
 
         sectionLine.transform.position = finishSection;
         sectionLine_First.transform.position = startSection;
 
         ResetSelectObject();                                                    // raycast가 움직이기전 초기화
+
+        playerManage.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
+        playerManage.FinishSection = finishSection;
+        
         ChangeSelectObjectLayer(startSection, finishSection);                   // Raycast를 넣어서  
 
         ChangeBlockObjectMaterial(convertMode[0]);
         ChangeBlockObjectMaterial(convertMode[2]);
     }
 
+
+    private float SetZposition(ref float direction) {
+        float zFloor = Mathf.Floor(Control3D.PlayerRigid.position.z * 10) / 10;      // 소숫점 2자리 이하 버림
+        float zPosition = Mathf.RoundToInt(zFloor);
+        if (zPosition % 2 == 0) {// 짝수        // 가장 가까운 홀수 두 개와 거리비교
+            float lowerOdd = zPosition - 1; // 아래 홀수
+            float upperOdd = zPosition + 1; // 위 홀수
+
+            // 두 홀수와의 거리 비교
+            if (Mathf.Abs(lowerOdd - zFloor) < Mathf.Abs(upperOdd - zFloor)) {
+                zPosition = lowerOdd; // 아래 홀수가 더 가까움
+                direction = 1f;
+            }
+            else {
+                zPosition = upperOdd; // 위 홀수가 더 가까움
+                direction = -1f;
+            }
+        }
+        else {
+            direction = 1f;
+        }
+        return zPosition;
+    }
+
+
+
     // convertMode가 여러개 있을 경우 전체 담아서 초기화
     public void ResetSelectObject() {
         if (convertMode[0].SelectObjects == null) return;
         if (convertMode[2].SelectObjects == null) return;
-
-        //foreach (var item in convertMode[0].SelectObjects) {
-        //    TileController tile = item.GetComponentInChildren<TileController>();
-        //    tile?.InitMaterial();
-        //}
 
         ResetBlock(convertMode[0]);
         ResetBlock(convertMode[2]);
@@ -232,7 +251,7 @@ public class PlayerState3D_Skill : PlayerState3D {
                 currentTransform = currentTransform.parent;
             }
 
-            //TODO: 최상위 부모가 select object에 잡히는 이유를 모르겠음 
+            // 최상위 부모가 select object에 잡히는 이유를 모르겠음 
             if (currentTransform == hit.transform) continue;
 
             // 최상위 부모의 태그 확인
@@ -241,11 +260,17 @@ public class PlayerState3D_Skill : PlayerState3D {
             if (Enum.TryParse(tagName, out ConvertItem tagEnum)) {
 
                 Transform parent = hit.transform.parent;
+                if (parent.name.Contains("Group")) {
+                    AddSelectObjectsWithTag(tagEnum, hit.collider.gameObject);
 
-                // 부모의 두 번째 레벨까지 확인
-                Transform targetTransform = parent?.parent != null && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
+                }
+                else {
+                    // 부모의 두 번째 레벨까지 확인
+                    Transform targetTransform = parent?.parent != null
+                        && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
 
-                AddSelectObjectsWithTag(tagEnum, targetTransform.gameObject);
+                    AddSelectObjectsWithTag(tagEnum, targetTransform.gameObject);
+                }
             }
         }
     }
@@ -254,29 +279,16 @@ public class PlayerState3D_Skill : PlayerState3D {
 
         switch (tagName) {
             case ConvertItem.ParentTile:
-                if (!convertMode[0].SelectObjects.Contains(parent)) {
-                    //Debug.Log("ParentTile Hit: " + parent.name);
-                    convertMode[0].SelectObjects.Add(parent);
-                }
+                convertMode[0].AddSelectObjects(parent);
                 break;
             case ConvertItem.Objects:
-                //case ConvertItem.Objects_2:
-                if (!convertMode[1].SelectObjects.Contains(parent)) {
-                    //Debug.Log("selectObjects Hit: " + parent.name);
-                    convertMode[1].SelectObjects.Add(parent);
-                }
+                convertMode[1].AddSelectObjects(parent);
                 break;
             case ConvertItem.Destroy:
-                if (!convertMode[2].SelectObjects.Contains(parent)) {
-                    //Debug.Log("selectObjects Hit: " + parent.name);
-                    convertMode[2].SelectObjects.Add(parent);
-                }
+                convertMode[2].AddSelectObjects(parent);
                 break;
             case ConvertItem.Objects_2:
-                if (!convertMode[3].SelectObjects.Contains(parent)) {
-                    //Debug.Log("selectObjects Hit: " + parent.name);
-                    convertMode[3].SelectObjects.Add(parent);
-                }
+                convertMode[3].AddSelectObjects(parent);
                 break;
             default:
                 break;
@@ -308,7 +320,6 @@ public class PlayerState3D_Skill : PlayerState3D {
                     if (eachXYpos.y <= playerXYpos.y + 4) {
                         Debug.Log(" 같은 선상의 오브젝트 이름 | " + each.name);
                         convertMode.AddBlockObject(each);
-                        //each.GetComponentInChildren<TileController>().ChangeMaterial();
                     }
                 }
             }

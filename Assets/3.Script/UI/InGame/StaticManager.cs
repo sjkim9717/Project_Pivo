@@ -24,7 +24,7 @@ public class StaticManager : MonoBehaviour {
     public GameObject PauseGroup;
 
     private PlayerManage playerManager;
-    private List<BiscuitController> biscuitControllers = new List<BiscuitController>();
+    private List<Biscuit> biscuitControllers = new List<Biscuit>();
     public int GetBiscuitCount() { return biscuitCount; }
 
     private void Awake() {
@@ -100,7 +100,7 @@ public class StaticManager : MonoBehaviour {
 
         biscuitControllers.Clear();
         // 모든 비스킷들을 찾아서 할당해주어야함
-        BiscuitController[] controllers = FindObjectsOfType<BiscuitController>();
+        Biscuit[] controllers = FindObjectsOfType<Biscuit>();
         Debug.LogWarning($"BiscuitController | {controllers.Length}");
         foreach (var controller in controllers) {
             if (!biscuitControllers.Contains(controller)) {

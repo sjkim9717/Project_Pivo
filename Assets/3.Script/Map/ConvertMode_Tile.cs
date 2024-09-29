@@ -47,6 +47,11 @@ public class ConvertMode_Tile : ConvertMode {
         }
     }
 
+    public override void AddSelectObjects(GameObject selectCheck) {
+        if (!SelectObjects.Contains(selectCheck)) {
+            SelectObjects.Add(selectCheck);
+        }
+    }
 }
 
 /* 삭제 되지않는 타일이 아닌 오브젝트 

@@ -45,6 +45,10 @@ public class PlayerState3D_OpenPanel : PlayerState3D {
 
     private void Update() {
         if (!PanelGroup.activeSelf) Control3D.ChangeState(PlayerState.Idle);
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)) {
+            PanelGroup.SetActive(false);
+            Control3D.ChangeState(PlayerState.Idle);
+        }
     }
 
     public override void ExitState() {

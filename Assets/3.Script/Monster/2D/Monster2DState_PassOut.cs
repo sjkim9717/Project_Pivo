@@ -13,6 +13,7 @@ public class Monster2DState_PassOut : IMonsterStateBase {
     private RectTransform emotionOriginPos;
 
     public Monster2DState_PassOut(MonsterManager mManager, Camera camera, GameObject monster) {
+        this.mManager = mManager;
         this.monster = monster;
         this.camera = camera;
         emotionPos = mManager.EmotionPoint2D.position;

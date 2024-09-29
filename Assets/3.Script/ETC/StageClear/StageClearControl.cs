@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class StageClearController : MonoBehaviour {
+public class StageClearControl : MonoBehaviour {
 
     public Action StageClear = delegate { };
 

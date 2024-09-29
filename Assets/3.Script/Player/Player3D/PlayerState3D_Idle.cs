@@ -14,6 +14,7 @@ public class PlayerState3D_Idle : PlayerState3D {
 
     public override void EnterState() {
         //Control3D.Ani3D.Play("Idle");
+        playerManage.IsChangingModeTo3D = false;
     }
 
     private void Update() {
@@ -99,5 +100,3 @@ public class PlayerState3D_Idle : PlayerState3D {
 
     }
 }
-
-//TODO: idle 상태에서 bomb 터트리는 상태 해야함

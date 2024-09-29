@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-public class BiscuitController : MonoBehaviour {
+public class Biscuit : MonoBehaviour {
 
     public Action BiscuiEat;
 
     private GameObject biscuit;
     private GameObject eatingEffect;
-    private ConvertMode_Item convertMode_Item;
+    private ConvertMode_Object convertMode_Item;
 
     private void Awake() {
-        convertMode_Item = FindObjectOfType<ConvertMode_Item>();
+        convertMode_Item = FindObjectOfType<ConvertMode_Object>();
         eatingEffect = transform.parent.GetChild(0).gameObject;
         biscuit = transform.parent.gameObject;
     }
@@ -27,7 +27,7 @@ public class BiscuitController : MonoBehaviour {
             for (int i = 0; i < biscuit.transform.childCount; i++) {
                 Transform child = biscuit.transform.GetChild(i);
 
-                if(child.TryGetComponent(out BiscuitController biscuitController)) {
+                if(child.TryGetComponent(out Biscuit biscuitController)) {
                     child.gameObject.SetActive(false);
                     convertMode_Item.DeleteDestroiedObject(biscuit);
                 }
@@ -45,7 +45,7 @@ public class BiscuitController : MonoBehaviour {
             for (int i = 0; i < biscuit.transform.childCount; i++) {
                 Transform child = biscuit.transform.GetChild(i);
 
-                if (child.TryGetComponent(out BiscuitController biscuitController)) {
+                if (child.TryGetComponent(out Biscuit biscuitController)) {
                     child.gameObject.SetActive(false);
                     convertMode_Item.DeleteDestroiedObject(biscuit);
                 }

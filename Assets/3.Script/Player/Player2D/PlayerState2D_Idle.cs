@@ -31,14 +31,6 @@ public class PlayerState2D_Idle : PlayerState2D {
         if (playerManage.CurrentState == PlayerState.Dead) {
             return;
         }
-        else if (playerManage.CurrentState == PlayerState.Disable) {
-            if (Input.GetKeyDown(KeyCode.Escape)) {
-                Control2D.ChangeState(PlayerState.Idle);
-            }
-            else {
-                return;
-            }
-        }
 
         if (Control2D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인
 
@@ -77,9 +69,6 @@ public class PlayerState2D_Idle : PlayerState2D {
                 else {
                     Debug.LogWarning(tagName);
                 }
-            }
-            else {
-                Debug.Log(" 상호작용 오브젝트 null ");
             }
         }
         else if (Input.GetKeyDown(KeyCode.Escape)) {

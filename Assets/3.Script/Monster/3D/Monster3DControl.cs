@@ -36,4 +36,9 @@ public class Monster3DControl : MonsterControl {
         currentState.EnterState(this);
     }
 
+    private void OnDrawGizmos() {
+
+        Gizmos.color = Color.blue; // 파란색으로 설정
+        Gizmos.DrawWireSphere(transform.position, radius); // 구 그리기
+    }
 }

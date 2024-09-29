@@ -11,10 +11,10 @@ public class Key : MonoBehaviour
     public void SetColor(bool _isBlueColor) { isBlueColor = _isBlueColor; }
 
     private GateManage gateManage;
-    private ConvertMode_Item convertMode_Item;
+    private ConvertMode_Object convertMode_Item;
     private void Awake() {
         gateManage = FindObjectOfType<GateManage>();
-        convertMode_Item = FindObjectOfType<ConvertMode_Item>();
+        convertMode_Item = FindObjectOfType<ConvertMode_Object>();
         Debug.Log(" color check | key | " + isBlueColor);
     }
     private void Start() {

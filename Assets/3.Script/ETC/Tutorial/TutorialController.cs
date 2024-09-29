@@ -22,7 +22,7 @@ public class TutorialController : MonoBehaviour {
     private Text tutorialText;
     public Sprite[] TutorialSprites;
 
-    private StageClearController[] stageClearController;
+    private StageClearControl[] stageClearController;
     private void Awake() {
         tutorial_Bg = GameObject.Find("IntroBG");
         tutorial = GameObject.Find("IntroTimeLine");
@@ -46,8 +46,8 @@ public class TutorialController : MonoBehaviour {
             StopTutorial();
         }
         else {  // title을 불러오는 경우 스테이지가 끝나야만 tutorial 종료됨
-            stageClearController = FindObjectsOfType<StageClearController>();
-            foreach (StageClearController each in stageClearController) {
+            stageClearController = FindObjectsOfType<StageClearControl>();
+            foreach (StageClearControl each in stageClearController) {
                 each.StageClear += StopTutorialWhenStageEnd;
             }
         }
