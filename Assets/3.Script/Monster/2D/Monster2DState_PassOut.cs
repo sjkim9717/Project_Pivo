@@ -49,4 +49,7 @@ public class Monster2DState_PassOut : IMonsterStateBase {
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
         //Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos},  emotionOriginPos: { emotionOriginPos.position}");
     }
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
+    }
 }

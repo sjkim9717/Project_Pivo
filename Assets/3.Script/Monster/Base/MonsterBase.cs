@@ -1,8 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterBase : MonoBehaviour {
+    public Action IsPassOut;
+    public bool IsPassOutCalled { get { return isPassOutInvoked; } }
+    private bool isPassOutInvoked;
+
 
     private GameObject monster2D;
     private GameObject monster3D;
@@ -57,7 +62,11 @@ public class MonsterBase : MonoBehaviour {
     }
 
     public virtual void Change3D() {
-        monster2D.SetActive(false);
+        if (monster2D != null) {
+            if (monster2D.activeSelf) {
+                monster2D.SetActive(false);
+            }
+        }
         monster3D.SetActive(true);
 
         moveposition = monster2D.transform.position;
@@ -116,4 +125,11 @@ public class MonsterBase : MonoBehaviour {
         }
     }
 
+    public void IsPassOutInvoke() {
+        if (!isPassOutInvoked) {
+            Debug.Log(" invoke 되야하는 시점 ");
+            IsPassOut?.Invoke();
+            isPassOutInvoked = true;
+        }
+    }
 }

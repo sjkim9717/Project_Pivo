@@ -16,7 +16,6 @@ public class MonsterManager : MonsterBase {
     }
 
     public void SwitchMode() {
-
         SettingEffectActiveTrue();               // effect
 
         if (playerManage.CurrentMode == PlayerMode.Player3D) {
@@ -40,19 +39,18 @@ public class MonsterManager : MonsterBase {
     // 플레이어가 선택한 범위 안에 있는지 
     //TODO: 활성화는 따로임
     private bool IsInSelectArea() {
-        if (playerManage.StartSection.z >= playerManage.FinishSection.z) {
-            if (Monster3D.transform.position.z <= playerManage.StartSection.z && Monster3D.transform.position.z >= playerManage.FinishSection.z) return true;
-            else return false;
-        }
-        else {
-            if (Monster3D.transform.position.z >= playerManage.StartSection.z && Monster3D.transform.position.z <= playerManage.FinishSection.z) return true;
-            else return false;
-        }
+        float min = Mathf.Min(playerManage.StartSection.z, playerManage.FinishSection.z);
+        float max = Mathf.Max(playerManage.StartSection.z, playerManage.FinishSection.z);
+
+        float monsterPos = Monster3D.transform.position.z;
+
+        if (monsterPos >=min && monsterPos <= max) return true;
+        else return false;
     }
 
     // 선택된 범위 안일경우 z축범위 앞으로 아무것도없는지
+    // monster 3D 오브젝트에서 z축 -방향으로 raycast를 쏴서 본인이 아니고 무언가 있다면 false
     private bool IsEmptyOnTheZAxis() {
-        // monster 3D 오브젝트에서 z축 -방향으로 raycast를 쏴서 본인이 아니고 무언가 있다면 false
         float layDistance = (playerManage.StartSection.z >= playerManage.FinishSection.z) ?
              (Monster3D.transform.position.z - playerManage.FinishSection.z) :
              (Monster3D.transform.position.z - playerManage.StartSection.z);
@@ -70,8 +68,10 @@ public class MonsterManager : MonsterBase {
 
         foreach (GameObject each in ZAxisObject) {
             if (each.transform.position.z < Monster3D.transform.position.z) {
-                //Debug.LogWarning("Z축에 오브젝트가 있음 | each.name | " + each.transform.parent.name);
-                return false;
+                if (each.name.Contains("Tile")) {
+                    //Debug.LogWarning("Z축에 오브젝트가 있음 | each.name | " + each.transform.parent.name);
+                    return false;
+                }
             }
         }
         return true;

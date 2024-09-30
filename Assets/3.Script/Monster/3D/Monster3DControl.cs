@@ -21,7 +21,13 @@ public class Monster3DControl : MonsterControl {
     protected override void Start() {
         ChangeState(Idle3DState);
     }
-
+    private void OnEnable() {
+        currentState?.CurrentEmotionUI(true);
+        if (mManager.IsPassOutCalled) ChangeState(PassOut3DState);
+    }
+    private void OnDisable() {
+        currentState?.CurrentEmotionUI(false);
+    }
     protected override void Update() {
         currentState?.UpdateState(this);
     }
@@ -39,6 +45,6 @@ public class Monster3DControl : MonsterControl {
     private void OnDrawGizmos() {
 
         Gizmos.color = Color.blue; // 파란색으로 설정
-        Gizmos.DrawWireSphere(transform.position, radius); // 구 그리기
+        Gizmos.DrawWireSphere(originPos, radius); // 구 그리기
     }
 }

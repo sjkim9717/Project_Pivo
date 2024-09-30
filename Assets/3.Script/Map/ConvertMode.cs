@@ -46,43 +46,20 @@ public abstract class ConvertMode : MonoBehaviour {
                 GameObject parentObject = item.transform.parent?.gameObject; // null 조건부 연산자 사용
 
                 if (parentObject != null ){
-                    if (tagName.Equals(ConvertItem.ParentTile)) {
-                        if (ShouldAddToAllObjects(parentObject)) {
-                            if (!AllObjects.Contains(parentObject)) {
-                                AllObjects.Add(parentObject);
-                            }
+                    if (!parentObject.name.Contains("3D")) {
+                        if (!AllObjects.Contains(parentObject)) {
+                            AllObjects.Add(parentObject);
                         }
                     }
                     else {
-                        if (!parentObject.name.Contains("3D")) {
-                            if (!AllObjects.Contains(parentObject)) {
-                                AllObjects.Add(parentObject);
-                            }
+                        if (!AllObjects.Contains(parentObject.transform.parent.gameObject)) {
+                            AllObjects.Add(parentObject.transform.parent.gameObject);
                         }
-                        else {
-                            if (!AllObjects.Contains(parentObject.transform.parent.gameObject)) {
-                                AllObjects.Add(parentObject.transform.parent.gameObject);
-                            }
-                        }
-
                     }
 
                 }
             }
         }
-    }
-
-    // 부모 오브젝트의 이름에 따라 추가 여부를 결정하는 메서드
-    private bool ShouldAddToAllObjects(GameObject parentObject) {
-        string[] keywords = { "Tile", "Bomb", "BombSpawn", "Object", "MoveSwitch" };
-
-        foreach (string keyword in keywords) {
-            if (parentObject.name.Contains(keyword)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     // 플레이어 스킬로 해당 영역 잘렸을 경우 selet objects에 담음

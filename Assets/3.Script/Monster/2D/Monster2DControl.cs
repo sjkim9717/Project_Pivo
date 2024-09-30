@@ -15,12 +15,19 @@ public class Monster2DControl : MonsterControl {
         Attack2DState = new Monster2DState_Attack(mManager, MainCamera, NavMesh, Monster, Player2D, mManager.PutPoint.position);
         PassOut2DState = new Monster2DState_PassOut(mManager, MainCamera, Monster);
     }
-    private void OnEnable() {
-        ChangeState(Idle2DState);
-    }
 
     protected override void Start() {
         ChangeState(Idle2DState);
+    }
+    private void OnEnable() {
+        currentState?.CurrentEmotionUI(true);
+        if (mManager.IsPassOutCalled) {
+            Debug.LogWarning($" {Monster.name} | ispassout called");
+            ChangeState(PassOut2DState);
+        }
+    }
+    private void OnDisable() {
+        currentState?.CurrentEmotionUI(false);
     }
 
     protected override void Update() {
@@ -36,5 +43,9 @@ public class Monster2DControl : MonsterControl {
         currentState = newState;
         currentState.EnterState(this);
     }
+    private void OnDrawGizmos() {
 
+        Gizmos.color = Color.blue; // 파란색으로 설정
+        Gizmos.DrawWireSphere(originPos, radius); // 구 그리기
+    }
 }

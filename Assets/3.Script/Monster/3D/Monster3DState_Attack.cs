@@ -92,4 +92,7 @@ public class Monster3DState_Attack : IMonsterStateBase {
         //Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos},  emotionOriginPos: { emotionOriginPos.position}");
 
     }
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
+    }
 }

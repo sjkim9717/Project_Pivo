@@ -7,11 +7,11 @@ public class Monster3DState_Idle : IMonsterStateBase {
     private GameObject monster;
 
     private float radius;
-    private float moveSpeed = 0.01f;
-    private float iconDistance = 5f;
+    private float iconDistance;
 
     private Vector3 originPos;
     private Vector3 emotionPos;
+    private Vector3 emoDirection;
     private LayerMask layerMask;
 
     private Camera camera;
@@ -29,19 +29,27 @@ public class Monster3DState_Idle : IMonsterStateBase {
         layerMask = LayerMask.GetMask("3DPlayer");
         emotionPos = mManager.EmotionPoint3D.position;
         emotionOriginPos = mManager.Emotion.transform.GetChild(1).GetComponent<RectTransform>();
+
+        iconDistance = Vector3.Distance(monster.transform.position, emotionPos);
+        emoDirection = (monster.transform.position - emotionPos).normalized;
     }
 
     public void EnterState(MonsterControl MControl) {
+        CurrentEmotionUI(true);
         mManager.Ani3D.Rebind();
-
         navMesh.isStopped = true;                               // 이동 중지
         navMesh.ResetPath();                                    // 경로 초기화
     }
 
     public void UpdateState(MonsterControl MControl) {
         if (MControl.transform.position != originPos) {
-            MControl.transform.position = Vector3.Slerp(MControl.transform.position, originPos, moveSpeed * Time.deltaTime);
-            MControl.transform.localPosition = Vector3.zero;
+            navMesh.SetDestination(originPos); // 목표를 다시 설정
+        }
+
+        if (navMesh.remainingDistance <= navMesh.stoppingDistance) { // 몬스터가 목표에 도달했는지 확인 후 상태 변경
+            MControl.transform.position = originPos;
+            Quaternion originRotation = Quaternion.LookRotation(Vector3.left);
+            MControl.transform.rotation = originRotation;
         }
 
         if (CheckMonsterInCamera(monster)) {
@@ -62,7 +70,7 @@ public class Monster3DState_Idle : IMonsterStateBase {
     }
 
     public void ExitState(MonsterControl MControl) {
-        emotionOriginPos.gameObject.SetActive(false);
+        CurrentEmotionUI(false);
     }
 
     public bool CheckMonsterInCamera(GameObject gameObject) {
@@ -75,12 +83,18 @@ public class Monster3DState_Idle : IMonsterStateBase {
     }
 
     public void SettingEmotion() {
+        // emotion position 
+        Vector3 targetPos = monster.transform.position - emoDirection * iconDistance;
+        emotionPos = targetPos;
+
         Vector3 wantToMovePos = camera.WorldToScreenPoint(emotionPos);                             // 3D 공간의 원하는 위치를 스크린 좌표로 변환
 
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
 
     }
 
-
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
+    }
 }
 

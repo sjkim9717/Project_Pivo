@@ -34,6 +34,7 @@ public class Monster2DState_Attack : IMonsterStateBase {
     }
 
     public void EnterState(MonsterControl MControl) {
+        currentT = 0;
         emotionOriginPos.gameObject.SetActive(true);
         mManager.Ani2D.SetBool("IsAttack", true);
 
@@ -62,6 +63,7 @@ public class Monster2DState_Attack : IMonsterStateBase {
 
         // 목표에 도달했을 때 상태 변경
         if (currentT >= 1f) {
+            Debug.Log(" Monster Attack and Go to Idle");
             MControl.ChangeState(MControl.Idle2DState);
         }
     }
@@ -89,5 +91,8 @@ public class Monster2DState_Attack : IMonsterStateBase {
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
         //Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos},  emotionOriginPos: { emotionOriginPos.position}");
 
+    }
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
     }
 }

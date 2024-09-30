@@ -17,7 +17,7 @@ public class PipeManager : MonoBehaviour {
     private void Awake() {
         foreach (Transform child in transform) {
             if (child.name.Contains("Start")) start = child;
-            else if (child.name.Contains("Finish")) finish = child;        
+            else if (child.name.Contains("Finish")) finish = child;
             else if (child.name.Contains("MagicStone")) magicStone = child;
         }
 
@@ -34,6 +34,7 @@ public class PipeManager : MonoBehaviour {
 
     private void Update() {
 
+
         if (isFinished && !isChangeState) {
             isChangeState = true;
 
@@ -42,14 +43,7 @@ public class PipeManager : MonoBehaviour {
                 foreach (Collider each in colliders) {
                     if (each.transform.TryGetComponent(out Monster3DControl monster3D)) {
                         monster3D.ChangeState(monster3D.PassOut3DState);
-                    }
-                }
-            }
-            else if (playerManage.CurrentMode is PlayerMode.Player2D) {
-                Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(magicStone.position, radius);
-                foreach (Collider2D each in collider2Ds) {
-                    if (each.transform.TryGetComponent(out Monster2DControl monster2D)) {
-                        monster2D.ChangeState(monster2D.PassOut2DState);
+                        monster3D.mManager.IsPassOutInvoke();
                     }
                 }
             }
@@ -59,7 +53,7 @@ public class PipeManager : MonoBehaviour {
         }
     }
 
-    //TODO: 마지막 오브젝트가 연결됬을 경우 -> 처음부터 끝까지 연결됬는지 확인
+    // 마지막 오브젝트가 연결됬을 경우 -> 처음부터 끝까지 연결됬는지 확인
     private void CheckEndObject(PipeObject pipeObject) {
         switch (pipeObject.State) {
             case PipeObject.Terminal.Start:

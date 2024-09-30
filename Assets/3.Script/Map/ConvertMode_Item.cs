@@ -67,13 +67,8 @@ public class ConvertMode_Item : ConvertMode {
     }
 
     public override void AddSelectObjects(GameObject selectCheck) {
-        if (selectCheck.name.Contains("Group")) {
-
-        }
-        else {
-            if (!SelectObjects.Contains(selectCheck)) {
-                SelectObjects.Add(selectCheck);
-            }
+        if (!SelectObjects.Contains(selectCheck)) {
+            SelectObjects.Add(selectCheck);
         }
 
     }

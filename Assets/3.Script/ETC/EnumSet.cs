@@ -11,6 +11,7 @@ public enum Direction {
 
 public enum ConvertItem {
     ParentTile,
+    MoveTile,
     Objects,
     Objects_2,
     Destroy

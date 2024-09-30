@@ -7,10 +7,12 @@ public class Monster3DState_Chase : IMonsterStateBase {
     private GameObject monster;
 
     private float radius;
-    private float iconDistance = 5f;
+    private float iconDistance; 
+
 
     private Vector3 originPos;
     private Vector3 emotionPos;
+    private Vector3 emoDirection;
 
     private LayerMask layerMask;
 
@@ -29,8 +31,12 @@ public class Monster3DState_Chase : IMonsterStateBase {
         this.camera = camera;
         this.mManager = mManager;
         layerMask = LayerMask.GetMask("3DPlayer");
+
         emotionPos = mManager.EmotionPoint3D.position;
         emotionOriginPos = mManager.Emotion.transform.GetChild(0).GetComponent<RectTransform>();
+
+        iconDistance = Vector3.Distance(monster.transform.position, emotionPos);
+        emoDirection = ( monster.transform.position - emotionPos).normalized;
     }
 
     public void EnterState(MonsterControl MControl) {
@@ -39,31 +45,35 @@ public class Monster3DState_Chase : IMonsterStateBase {
         mManager.Ani3D.SetBool("IsMove", true);
     }
     public void UpdateState(MonsterControl MControl) {
-        navMesh.SetDestination(player3d.position); // 목표를 다시 설정
-
-        if (navMesh.remainingDistance <= navMesh.stoppingDistance) { // 몬스터가 목표에 도달했는지 확인 후 상태 변경
-            MControl.ChangeState(MControl.Attack3DState);
-        }
 
         if (CheckMonsterInCamera(monster)) SettingEmotion();
         else emotionOriginPos.gameObject.SetActive(false);
 
-        // 플레이어가 멀어졌을 경우 idle 상태로 돌아가야 함
-        Collider[] colliders = Physics.OverlapSphere(originPos, radius, layerMask);
-        if (colliders.Length > 0) {
-            foreach (Collider item in colliders) {
-                if (item.transform.position.y <= MControl.transform.position.y - 0.5f || item.transform.position.y >= MControl.transform.position.y + 1.7f) {
-                    Debug.Log("player is lower than monster | " + item.transform.position.y + " | " + MControl.transform.position.y);
+        navMesh.SetDestination(player3d.position); // 목표를 다시 설정
 
-                    MControl.ChangeState(MControl.Idle3DState);
-                    return;
+        if (!navMesh.pathPending) {
+            if (navMesh.remainingDistance <= navMesh.stoppingDistance) { // 몬스터가 목표에 도달했는지 확인 후 상태 변경
+                MControl.ChangeState(MControl.Attack3DState);
+            }
+
+            // 플레이어가 멀어졌을 경우 idle 상태로 돌아가야 함
+            Collider[] colliders = Physics.OverlapSphere(originPos, radius, layerMask);
+            if (colliders.Length > 0) {
+                foreach (Collider item in colliders) {
+                    if (item.transform.position.y <= MControl.transform.position.y - 0.5f || item.transform.position.y >= MControl.transform.position.y + 1.7f) {
+                        //Debug.Log("player is lower than monster | " + item.transform.position.y + " | " + MControl.transform.position.y);
+
+                        MControl.ChangeState(MControl.Idle3DState);
+                        return;
+                    }
                 }
             }
+            else {
+                MControl.ChangeState(MControl.Idle3DState);
+                return;
+            }
         }
-        else {
-            MControl.ChangeState(MControl.Idle3DState);
-            return;
-        }
+
     }
 
     public void ExitState(MonsterControl MControl) {
@@ -83,10 +93,17 @@ public class Monster3DState_Chase : IMonsterStateBase {
     }
 
     public void SettingEmotion() {
+        // emotion position 
+        Vector3 targetPos = monster.transform.position - emoDirection * iconDistance;
+        emotionPos = targetPos;
+
         Vector3 wantToMovePos = camera.WorldToScreenPoint(emotionPos);                             // 3D 공간의 원하는 위치를 스크린 좌표로 변환
 
-        emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
+        emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + 5f);
         //Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos},  emotionOriginPos: { emotionOriginPos.position}");
 
+    }
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
     }
 }

@@ -9,9 +9,9 @@ public class Monster2DState_Idle : IMonsterStateBase {
     private float radius;
     private float moveSpeed = 0.01f;
     private float iconDistance = 5f;
-
     private Vector3 originPos;
     private Vector3 emotionPos;
+    private Vector3 emoDirection;
     private LayerMask layerMask;
 
     private Camera camera;
@@ -29,6 +29,9 @@ public class Monster2DState_Idle : IMonsterStateBase {
         layerMask = LayerMask.GetMask("2DPlayer");
         emotionPos = mManager.EmotionPoint2D.position;
         emotionOriginPos = mManager.Emotion.transform.GetChild(1).GetComponent<RectTransform>();
+
+        iconDistance = Vector3.Distance(monster.transform.position, emotionPos);
+        emoDirection = (monster.transform.position - emotionPos).normalized;
     }
 
     public void EnterState(MonsterControl MControl) {
@@ -39,9 +42,15 @@ public class Monster2DState_Idle : IMonsterStateBase {
     }
     public void UpdateState(MonsterControl MControl) {
         if (MControl.transform.position != originPos) {
-            MControl.transform.position = Vector3.Slerp(MControl.transform.position, originPos, moveSpeed * Time.deltaTime);
-            MControl.transform.localPosition = Vector3.zero;
+            navMesh.SetDestination(originPos); // 목표를 다시 설정
         }
+
+        if (navMesh.remainingDistance <= navMesh.stoppingDistance) { // 몬스터가 목표에 도달했는지 확인 후 상태 변경
+            MControl.transform.position = originPos;
+            Quaternion originRotation = Quaternion.LookRotation(-Vector3.forward);
+            MControl.transform.rotation = originRotation;
+        }
+    
 
         if (CheckMonsterInCamera(monster)) {
             SettingEmotion();
@@ -51,7 +60,7 @@ public class Monster2DState_Idle : IMonsterStateBase {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(originPos, radius, layerMask);
             if (colliders.Length > 0) {
                 foreach (Collider2D item in colliders) {
-                    if (item.transform.position.y >= MControl.transform.position.y - 0.5f) {
+                    if (item.transform.position.y >= MControl.transform.position.y - 0.5f && item.transform.position.y <= MControl.transform.position.y + 1.7f) {
                         MControl.ChangeState(MControl.Chase2DState);
                     }
                 }
@@ -74,9 +83,15 @@ public class Monster2DState_Idle : IMonsterStateBase {
     }
 
     public void SettingEmotion() {
+        // emotion position 
+        Vector3 targetPos = monster.transform.position - emoDirection * iconDistance;
+        emotionPos = targetPos;
+
         Vector3 wantToMovePos = camera.WorldToScreenPoint(emotionPos);                             // 3D 공간의 원하는 위치를 스크린 좌표로 변환
 
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
     }
-
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
+    }
 }

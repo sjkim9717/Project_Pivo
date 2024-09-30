@@ -14,7 +14,7 @@ public abstract class MonsterControl : MonoBehaviour {
     public Transform Player2D;
     public Transform Player3D;
 
-    protected MonsterManager mManager;
+    public MonsterManager mManager;
     protected PlayerManage playerManage;
 
     protected IMonsterStateBase currentState;
@@ -61,5 +61,9 @@ public abstract class MonsterControl : MonoBehaviour {
     protected abstract void Start();
     protected abstract void Update();
     public abstract void ChangeState(IMonsterStateBase newState);
+
+    public void IsPassOut() {
+        Debug.Log(" Is pass out invoked and monster control");
+    }
 
 }

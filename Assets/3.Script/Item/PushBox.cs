@@ -33,18 +33,19 @@ public class PushBox : MonoBehaviour, IPushBox {
             }
         }
 
-        var pipe = GetComponentInChildren<PipeObject>();
-        if (pipe != null) {
-            PipeObject = pipe.gameObject;
-            pipestartPos = PipeObject.GetComponent<PipeObject>().Waypoint.StartPos;
-            pipefinishPos = PipeObject.GetComponent<PipeObject>().Waypoint.EndPos;
-        }
-
         isPushBoxXMoving(ref isMoveXpos);
         SavePosition(isMoveXpos);
     }
     private void Start() {
         FindMinMaxCount();
+
+        var pipe = GetComponentInChildren<PipeObject>();
+
+        if (pipe != null) {
+            PipeObject = pipe.gameObject;
+            pipestartPos = PipeObject.GetComponent<PipeObject>().Waypoint.StartPos;
+            pipefinishPos = PipeObject.GetComponent<PipeObject>().Waypoint.EndPos;
+        }
     }
 
     private void FindMinMaxCount() {

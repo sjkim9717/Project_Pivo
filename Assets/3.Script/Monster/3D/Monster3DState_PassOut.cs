@@ -9,7 +9,7 @@ public class Monster3DState_PassOut : IMonsterStateBase {
     private Vector3 emotionPos;
 
     private Camera camera;
-    private RectTransform emotionOriginPos;
+    public RectTransform emotionOriginPos;
     private MonsterManager mManager;
 
     public Monster3DState_PassOut(MonsterManager mManager, Camera camera, GameObject monster) {
@@ -47,5 +47,8 @@ public class Monster3DState_PassOut : IMonsterStateBase {
 
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
         //Debug.Log($"emotionPos: {emotionPos}, wantToMovePos: {wantToMovePos},  emotionOriginPos: { emotionOriginPos.position}");
+    }
+    public void CurrentEmotionUI(bool active) {
+        emotionOriginPos.gameObject.SetActive(active);
     }
 }
