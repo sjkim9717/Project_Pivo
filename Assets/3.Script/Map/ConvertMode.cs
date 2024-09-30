@@ -180,6 +180,16 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
+    //해당하는 이름들은 하위 오브젝트까지 돌아서 Layer 수정
+    protected bool HasMatchName(GameObject item, string[] findName) {
+        foreach (string name in findName) {
+            if (item.name.Contains(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     #region 수정 전 object로 잡음
     /*
     protected void InitParentObjectWithTag(ConvertItem tagName) {

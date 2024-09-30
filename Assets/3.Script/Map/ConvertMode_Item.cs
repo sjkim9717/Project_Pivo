@@ -25,20 +25,14 @@ public class ConvertMode_Item : ConvertMode {
                     if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("Climb")|| parentObj.name.Contains("Pipe")) {
                         GameObject pushbox = parentObj.transform.parent.gameObject;
                         if (pushbox.CompareTag("Untagged")) {
-                            if (!AllObjects.Contains(parentObj)) {
-                                AllObjects.Add(parentObj);
-                            }
+                            AddIfNotSelected(AllObjects, parentObj);
                         }
                         else {
-                            if (!AllObjects.Contains(pushbox)) {
-                                AllObjects.Add(pushbox);
-                            }
+                            AddIfNotSelected(AllObjects, pushbox);
                         }
                     }
                     else {
-                        if (!AllObjects.Contains(parentObj)) {
-                            AllObjects.Add(parentObj);
-                        }
+                        AddIfNotSelected(AllObjects, parentObj);
                     }
                 }
             }
@@ -52,7 +46,6 @@ public class ConvertMode_Item : ConvertMode {
 
                 // 하위 객체의 레이어 변경 => Root3D가 안보여야함
                 ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
-
             }
         }
     }
@@ -69,17 +62,22 @@ public class ConvertMode_Item : ConvertMode {
     public override void AddSelectObjects(GameObject selectCheck) {
         Transform parent = selectCheck.transform.parent;
         if (parent.name.Contains("Group")) {
-            if (!SelectObjects.Contains(parent.gameObject)) {
-                SelectObjects.Add(parent.gameObject);
-            }
+            AddIfNotSelected(SelectObjects, selectCheck);
         }
         else {
             // 부모의 두 번째 레벨까지 확인
             Transform targetTransform = parent?.parent != null
                 && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
-            if (!SelectObjects.Contains(targetTransform.gameObject)) {
-                SelectObjects.Add(targetTransform.gameObject);
-            }
+            AddIfNotSelected(SelectObjects, targetTransform.gameObject);
+        }
+    }
+
+    public override void AddBlockObject(GameObject blockCheck) {
+        if (blockCheck.name.Contains("Box")) {
+            blockObjects.Add(blockCheck);
+
+            MeshRenderer tileRenderer = blockCheck.GetComponentInChildren<MeshRenderer>();
+            defaltMaterial.Add(tileRenderer.materials[0]);
         }
     }
 }

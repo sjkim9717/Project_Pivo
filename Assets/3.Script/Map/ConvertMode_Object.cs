@@ -58,15 +58,39 @@ public class ConvertMode_Object : ConvertMode {
             AllObjects.Remove(deleteObject);
         }
     }
+    public override void ChangeLayerActiveFalseInSelectObjects() {
+        foreach (GameObject item in AllObjects) {
+            if (!SelectObjects.Contains(item)) {
+
+                item.layer = activeFalseLayerIndex;
+
+                if (HasMatchName(item, parentName)) {
+                    ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
+                }
+                else {
+                    // 부모 이름이 일치하지 않을 경우 하위 객체의 레이어 변경
+                    foreach (Transform child in item.transform) {
+                        child.gameObject.layer = activeFalseLayerIndex;
+                    }
+                }
+            }
+        }
+    }
 
     public override void ChangeLayerAllActiveTrue() {
         foreach (GameObject each in AllObjects) {
             each.layer = activeTrueLayerIndex;
 
-            // 하위 객체의 레이어 변경 
-            foreach (Transform child in each.transform) {
-                child.gameObject.layer = activeTrueLayerIndex;
+            if (HasMatchName(each, parentName)) {
+                ChangeLayerActiveWithAllChild(each.transform, activeTrueLayerIndex);
             }
+            else {
+                // 하위 객체의 레이어 변경 
+                foreach (Transform child in each.transform) {
+                    child.gameObject.layer = activeTrueLayerIndex;
+                }
+            }
+
         }
     }
 
@@ -75,9 +99,7 @@ public class ConvertMode_Object : ConvertMode {
     public override void AddSelectObjects(GameObject selectCheck) {
         // cube 
         if (selectCheck.name.Contains("Cube")) {
-            if (!SelectObjects.Contains(selectCheck)) {
-                SelectObjects.Add(selectCheck);
-            }
+            AddIfNotSelected(SelectObjects, selectCheck);
         }
         else {
             Transform parent = selectCheck.transform.parent;
@@ -94,17 +116,12 @@ public class ConvertMode_Object : ConvertMode {
                     bool isBoundInside = (bounds.center.z >= minSectionZ && bounds.center.z <= maxSectionZ);
 
                     if (isBoundInside) {
-                        if (!SelectObjects.Contains(parent.gameObject)) {
-                            SelectObjects.Add(parent.gameObject);
-                        }
+                        AddIfNotSelected(SelectObjects, parent.gameObject);
                     }
                 }
             }
             else {
-                if (!SelectObjects.Contains(parent.gameObject)) {
-                    SelectObjects.Add(parent.gameObject);
-                }
-
+                AddIfNotSelected(SelectObjects, parent.gameObject);
             }
         }
 

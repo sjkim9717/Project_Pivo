@@ -24,21 +24,15 @@ public class ConvertMode_MoveTile : ConvertMode {
                     if (parentObject.name.Contains("Models")) {
                         // magic ston
                         GameObject findMagic = parentObject.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
-                        if (!AllObjects.Contains(findMagic)) {
-                            AllObjects.Add(findMagic);
-                        }
+                        AddIfNotSelected(AllObjects, findMagic);
                     }
                     else if (!parentObject.name.Contains("3D")) {
                         // 일반 오브젝트 - tile, object 등
-                        if (!AllObjects.Contains(parentObject)) {
-                            AllObjects.Add(parentObject);
-                        }
+                        AddIfNotSelected(AllObjects, parentObject);
                     }
                     else {
                         // move switch
-                        if (!AllObjects.Contains(parentObject.transform.parent.gameObject)) {
-                            AllObjects.Add(parentObject.transform.parent.gameObject);
-                        }
+                        AddIfNotSelected(AllObjects, parentObject.transform.parent.gameObject);
                     }
 
                 }
@@ -51,7 +45,7 @@ public class ConvertMode_MoveTile : ConvertMode {
             if (!SelectObjects.Contains(item)) {
                 item.layer = activeFalseLayerIndex;
 
-                if (HasMatchName(item)) {
+                if (HasMatchName(item, parentName)) {
                     ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
                 }
                 else {
@@ -65,23 +59,12 @@ public class ConvertMode_MoveTile : ConvertMode {
         }
     }
 
-    //해당하는 이름들은 하위 오브젝트까지 돌아서 Layer 수정
-    private bool HasMatchName(GameObject item) {
-        // 하위 객체의 레이어 변경 => Root3D가 안보여야함
-        foreach (string name in parentName) {
-            if (item.name.Contains(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public override void ChangeLayerAllActiveTrue() {
         foreach (GameObject each in AllObjects) {
 
             each.layer = activeTrueLayerIndex;
 
-            if (HasMatchName(each)) {
+            if (HasMatchName(each, parentName)) {
                 ChangeLayerActiveWithAllChild(each.transform, activeTrueLayerIndex);
             }
             else {
@@ -105,21 +88,15 @@ public class ConvertMode_MoveTile : ConvertMode {
         if (parent.name.Contains("Models")) {
             // magic ston
             GameObject findMagic = parent.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
-            if (!SelectObjects.Contains(findMagic)) {
-                SelectObjects.Add(findMagic);
-            }
+            AddIfNotSelected(SelectObjects, findMagic);
         }
         else if (!parent.name.Contains("3D")) {
             // 일반 오브젝트 - tile, object 등
-            if (!SelectObjects.Contains(parent.gameObject)) {
-                SelectObjects.Add(parent.gameObject);
-            }
+            AddIfNotSelected(SelectObjects, parent.gameObject);
         }
         else {
             // move switch
-            if (!SelectObjects.Contains(parent.transform.parent.gameObject)) {
-                SelectObjects.Add(parent.transform.parent.gameObject);
-            }
+            AddIfNotSelected(SelectObjects, parent.transform.parent.gameObject);
         }
     }
 }

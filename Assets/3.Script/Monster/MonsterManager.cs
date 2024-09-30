@@ -68,7 +68,7 @@ public class MonsterManager : MonsterBase {
 
         foreach (GameObject each in ZAxisObject) {
             if (each.transform.position.z < Monster3D.transform.position.z) {
-                if (each.name.Contains("Tile")) {
+                if (each.transform.parent.name.Contains("Tile") || each.transform.parent.name.Contains("Box")) {
                     //Debug.LogWarning("Z축에 오브젝트가 있음 | each.name | " + each.transform.parent.name);
                     return false;
                 }

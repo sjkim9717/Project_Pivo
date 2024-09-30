@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerState3D_Skill : PlayerState3D {
@@ -78,11 +79,11 @@ public class PlayerState3D_Skill : PlayerState3D {
 
             // 각 화살표 키가 눌렸는지 확인
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {  // 막힌 오브젝트의 위치를 비교함
-                if (!CheckBlockObjectZPosition(convertMode[0]) && !CheckBlockObjectZPosition(convertMode[2]))
+                if (!IsMoveNotAllowed())
                     MoveSectionLine(true);
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
-                if (!CheckBlockObjectZPosition(convertMode[0]) && !CheckBlockObjectZPosition(convertMode[2]))
+                if (!IsMoveNotAllowed())
                     MoveSectionLine(false);
             }
         }
@@ -135,14 +136,19 @@ public class PlayerState3D_Skill : PlayerState3D {
         }
 
     }
+    private bool IsMoveNotAllowed() {
+        return convertMode.Any(item => item.blockObjects.Count > 0);
+    }
 
     private bool CheckBlockObjectZPosition(ConvertMode convertMode) {
-        foreach (var block in convertMode.blockObjects) {
-            if (block.transform.position.z >= Control3D.PlayerRigid.position.z) {
-                return true; // 차단됨
-            }
-        }
-        return false; // 차단되지 않음
+        //foreach (var block in convertMode.blockObjects) {
+        //    if (block.transform.position.z >= Control3D.PlayerRigid.position.z) {
+        //        return true; // 차단됨
+        //    }
+        //}
+        //return false; // 차단되지 않음
+
+        return convertMode.blockObjects.Any(block => block.transform.position.z >= Control3D.transform.position.z);
     }
 
     private void MoveSectionLine(bool up) {
@@ -183,6 +189,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
         ChangeBlockObjectMaterial(convertMode[0]);
         ChangeBlockObjectMaterial(convertMode[2]);
+        ChangeBlockObjectMaterial(convertMode[3]);
     }
 
 
@@ -215,16 +222,15 @@ public class PlayerState3D_Skill : PlayerState3D {
     public void ResetSelectObject() {
         if (convertMode[0].SelectObjects == null) return;
         if (convertMode[2].SelectObjects == null) return;
+        if (convertMode[3].SelectObjects == null) return;
 
         ResetBlock(convertMode[0]);
         ResetBlock(convertMode[2]);
-
-        for (int i = 0; i < convertMode.Length; i++) {
-            convertMode[i].SelectObjects.Clear();
-        }
+        ResetBlock(convertMode[3]);
 
         foreach (ConvertMode item in convertMode) {
-            item.ChangeLayerAllActiveTrue();
+            item.ChangeLayerAllActiveTrue(); 
+            item.SelectObjects.Clear();
         }
 
         playerManage.StartSection = Vector3.zero;

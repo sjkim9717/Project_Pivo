@@ -36,9 +36,7 @@ public class ConvertMode_Tile : ConvertMode {
 
     public override void AddSelectObjects(GameObject selectCheck) {
         Transform parent = selectCheck.transform.parent;
-        if (!SelectObjects.Contains(parent.gameObject)) {
-            SelectObjects.Add(parent.gameObject);
-        }
+        AddIfNotSelected(SelectObjects, parent.gameObject);
     }
 }
 
