@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ConvertMode_MoveTile : ConvertMode {
-    private string[] parentName = { "BombSpawn", "MoveSwitch", "MagicStone", "Tile", "Bomb", "Biscuit"};
+    private string[] parentName = { "BombSpawn", "MoveSwitch", "MagicStone"};
 
     protected override void Start() {
         InitParentObjectWithTag(ConvertItem.MoveTile);
@@ -21,12 +21,21 @@ public class ConvertMode_MoveTile : ConvertMode {
                 GameObject parentObject = item.transform.parent?.gameObject; // null 조건부 연산자 사용
                 if (parentObject != null) {
 
-                    if (!parentObject.name.Contains("3D")) {
+                    if (parentObject.name.Contains("Models")) {
+                        // magic ston
+                        GameObject findMagic = parentObject.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
+                        if (!AllObjects.Contains(findMagic)) {
+                            AllObjects.Add(findMagic);
+                        }
+                    }
+                    else if (!parentObject.name.Contains("3D")) {
+                        // 일반 오브젝트 - tile, object 등
                         if (!AllObjects.Contains(parentObject)) {
                             AllObjects.Add(parentObject);
                         }
                     }
                     else {
+                        // move switch
                         if (!AllObjects.Contains(parentObject.transform.parent.gameObject)) {
                             AllObjects.Add(parentObject.transform.parent.gameObject);
                         }
@@ -35,19 +44,6 @@ public class ConvertMode_MoveTile : ConvertMode {
                 }
             }
         }
-    }
-
-    // 부모 오브젝트의 이름에 따라 추가 여부를 결정하는 메서드
-    private bool ShouldAddToAllObjects(GameObject parentObject) {
-        string[] keywords = { "Tile", "Bomb", "BombSpawn", "Object", "MoveSwitch" };
-
-        foreach (string keyword in keywords) {
-            if (parentObject.name.Contains(keyword)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public override void ChangeLayerActiveFalseInSelectObjects() {
@@ -85,21 +81,45 @@ public class ConvertMode_MoveTile : ConvertMode {
 
             each.layer = activeTrueLayerIndex;
 
-            if (each.name.Contains("BombSpawn") || each.name.Contains("MoveSwitch")) {
+            if (HasMatchName(each)) {
                 ChangeLayerActiveWithAllChild(each.transform, activeTrueLayerIndex);
             }
             else {
-                // 하위 객체의 레이어 변경 => Ground로 바꿔서 지나갈 수 있어야함
-                foreach (Transform child in each.transform) {
-                    child.gameObject.layer = groundLayerIndex;
+                // 하위 객체의 레이어 변경 => tile만 Ground로 바꿔서 지나갈 수 있어야함
+                if (each.name.Contains("Tile")) {
+                    foreach (Transform child in each.transform) {
+                        child.gameObject.layer = groundLayerIndex;
+                    }
+
+                }
+                else { // 그 외 그냥 보이기만 하면됨
+                    ChangeLayerActiveWithAllChild(each.transform, activeTrueLayerIndex);
                 }
             }
         }
     }
 
     public override void AddSelectObjects(GameObject selectCheck) {
-        if (!SelectObjects.Contains(selectCheck)) {
-            SelectObjects.Add(selectCheck);
+
+        Transform parent = selectCheck.transform.parent;
+        if (parent.name.Contains("Models")) {
+            // magic ston
+            GameObject findMagic = parent.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
+            if (!SelectObjects.Contains(findMagic)) {
+                SelectObjects.Add(findMagic);
+            }
+        }
+        else if (!parent.name.Contains("3D")) {
+            // 일반 오브젝트 - tile, object 등
+            if (!SelectObjects.Contains(parent.gameObject)) {
+                SelectObjects.Add(parent.gameObject);
+            }
+        }
+        else {
+            // move switch
+            if (!SelectObjects.Contains(parent.transform.parent.gameObject)) {
+                SelectObjects.Add(parent.transform.parent.gameObject);
+            }
         }
     }
 }

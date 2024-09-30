@@ -20,6 +20,7 @@ TagManager:
   - Puzzle
   - Stage_Clear
   - Objects_2
+  - MoveTile
   layers:
   - Default
   - TransparentFX

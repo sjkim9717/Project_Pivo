@@ -67,10 +67,20 @@ public class ConvertMode_Item : ConvertMode {
     }
 
     public override void AddSelectObjects(GameObject selectCheck) {
-        if (!SelectObjects.Contains(selectCheck)) {
-            SelectObjects.Add(selectCheck);
+        Transform parent = selectCheck.transform.parent;
+        if (parent.name.Contains("Group")) {
+            if (!SelectObjects.Contains(parent.gameObject)) {
+                SelectObjects.Add(parent.gameObject);
+            }
         }
-
+        else {
+            // 부모의 두 번째 레벨까지 확인
+            Transform targetTransform = parent?.parent != null
+                && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
+            if (!SelectObjects.Contains(targetTransform.gameObject)) {
+                SelectObjects.Add(targetTransform.gameObject);
+            }
+        }
     }
 }
 

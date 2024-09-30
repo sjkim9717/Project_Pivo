@@ -26,6 +26,12 @@ public class PipeManager : MonoBehaviour {
         playerManage = FindObjectOfType<PlayerManage>();
 
         playerManage.IsSwitchMode += ChangeMonsterMode;
+
+        // moving object에 있는 magic Stone만 해당함
+        if (magicStone != null) {
+            MovingWaypoints movingWaypoints = magicStone.GetComponentInParent<MovingWaypoints>();
+            if(movingWaypoints !=null ) movingWaypoints.IsMoved += ChangeMonsterMode;
+        }
     }
 
     private void ChangeMonsterMode() {
@@ -33,7 +39,6 @@ public class PipeManager : MonoBehaviour {
     }
 
     private void Update() {
-
 
         if (isFinished && !isChangeState) {
             isChangeState = true;

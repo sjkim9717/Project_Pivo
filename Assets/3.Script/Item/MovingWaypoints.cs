@@ -15,6 +15,7 @@ public class WaypointGroup {
 public class MovingWaypoints : MonoBehaviour {
     public List<WaypointGroup> waypointGroups = new List<WaypointGroup>();
     private float moveSpeed = 1f;
+    public Action IsMoved;
 
 
     public IEnumerator StartMove(Vector3 waypoint) {
@@ -32,5 +33,6 @@ public class MovingWaypoints : MonoBehaviour {
             yield return null;
         }
         transform.position = waypoint;
+        IsMoved?.Invoke();
     }
 }

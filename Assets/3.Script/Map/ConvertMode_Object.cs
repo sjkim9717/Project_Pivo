@@ -5,11 +5,52 @@ using UnityEngine;
 
 
 public class ConvertMode_Object : ConvertMode {
+    private string[] parentName = { "Cube"};
+    private string[] exception = { "start", "end", "text"};
+
 
     protected override void Start() {
         InitParentObjectWithTag(ConvertItem.Objects);
 
         ChangeLayerAllActiveTrue();
+    }
+
+    protected override void InitParentObjectWithTag(ConvertItem tagName) {
+        parentObject = GameObject.FindGameObjectsWithTag($"{tagName}");
+
+        foreach (GameObject each in parentObject) {
+            Renderer[] allChildRenderers = each.GetComponentsInChildren<Renderer>();
+
+            foreach (Renderer item in allChildRenderers) {
+                GameObject parentObject = item.transform.parent?.gameObject; // null 조건부 연산자 사용
+                if (parentObject != null) {
+                    if (!HasExceptionName(parentObject)) {
+                        if (!parentObject.name.Contains("3D")) {
+                            if (!AllObjects.Contains(parentObject)) {
+                                AllObjects.Add(parentObject);
+                            }
+                        }
+                        else {
+                            if (!AllObjects.Contains(parentObject.transform.parent.gameObject)) {
+                                AllObjects.Add(parentObject.transform.parent.gameObject);
+                            }
+                        }
+                    }                    
+                }
+            }
+        }
+    }
+
+    private bool HasExceptionName(GameObject item) {
+        // 하위 객체의 레이어 변경 => Root3D가 안보여야함
+        string itemNameLower = item.name.ToLower(); // 소문자로 변환
+
+        foreach (string name in exception) {
+            if (itemNameLower.Contains(name.ToLower())) { // 소문자로 변환하여 비교
+                return true;
+            }
+        }
+        return false;
     }
 
     public void DeleteDestroiedObject(GameObject deleteObject) {
@@ -29,35 +70,49 @@ public class ConvertMode_Object : ConvertMode {
         }
     }
 
+
+
     public override void AddSelectObjects(GameObject selectCheck) {
-        if (selectCheck.name.Contains("Tree")) {
-            BoxCollider boxcol = selectCheck.GetComponentInChildren<BoxCollider>();
-            if (boxcol !=null) {
-                // 선택한 object가 나무일 경우에 중심부가 skill section안에 들어오는지 확인
-                Bounds bounds = boxcol.bounds;
-
-                float minSectionZ = Mathf.Min(playerManage.StartSection.z, playerManage.FinishSection.z);
-                float maxSectionZ = Mathf.Max(playerManage.StartSection.z, playerManage.FinishSection.z);
-
-                bool isBoundInside = (bounds.center.z >= minSectionZ && bounds.center.z <= maxSectionZ);
-
-                if (isBoundInside) {
-                    if (!SelectObjects.Contains(selectCheck)) {
-                        SelectObjects.Add(selectCheck);
-                    }
-                }
-            }
-        }
-        else {
+        // cube 
+        if (selectCheck.name.Contains("Cube")) {
             if (!SelectObjects.Contains(selectCheck)) {
                 SelectObjects.Add(selectCheck);
             }
         }
+        else {
+            Transform parent = selectCheck.transform.parent;
+
+            if (parent.name.Contains("Tree")) {
+                BoxCollider boxcol = selectCheck.GetComponentInChildren<BoxCollider>();
+                if (boxcol != null) {
+                    // 선택한 object가 나무일 경우에 중심부가 skill section안에 들어오는지 확인
+                    Bounds bounds = boxcol.bounds;
+
+                    float minSectionZ = Mathf.Min(playerManage.StartSection.z, playerManage.FinishSection.z);
+                    float maxSectionZ = Mathf.Max(playerManage.StartSection.z, playerManage.FinishSection.z);
+
+                    bool isBoundInside = (bounds.center.z >= minSectionZ && bounds.center.z <= maxSectionZ);
+
+                    if (isBoundInside) {
+                        if (!SelectObjects.Contains(parent.gameObject)) {
+                            SelectObjects.Add(parent.gameObject);
+                        }
+                    }
+                }
+            }
+            else {
+                if (!SelectObjects.Contains(parent.gameObject)) {
+                    SelectObjects.Add(parent.gameObject);
+                }
+
+            }
+        }
+
     }
 }
 
 /* 삭제 되지않는 타일이 아닌 오브젝트 
  - 해당하는 오브젝트들 
 1. object
-
+2. cube 
 */

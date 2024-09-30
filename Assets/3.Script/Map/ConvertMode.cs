@@ -165,6 +165,21 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
+    //TODO: 시간 나면 바꿀 것
+    protected void AddParentOfParent(List<GameObject> listObject, Transform parent) {
+        Transform targetTransform = parent.parent;
+        if (targetTransform != null) {
+            AddIfNotSelected(listObject, targetTransform.gameObject);
+        }
+    }
+
+    // Adds the object to the selection list if it's not already in the list
+    protected void AddIfNotSelected(List<GameObject> listObject, GameObject addObject) {
+        if (!listObject.Contains(addObject)) {
+            listObject.Add(addObject);
+        }
+    }
+
     #region 수정 전 object로 잡음
     /*
     protected void InitParentObjectWithTag(ConvertItem tagName) {

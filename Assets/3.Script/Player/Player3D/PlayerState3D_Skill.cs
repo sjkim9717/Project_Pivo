@@ -45,6 +45,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         convertMode[1] = FindObjectOfType<ConvertMode_Object>();
         convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
         convertMode[3] = FindObjectOfType<ConvertMode_Item>();
+        convertMode[4] = FindObjectOfType<ConvertMode_MoveTile>();
 
     }
 
@@ -251,26 +252,11 @@ public class PlayerState3D_Skill : PlayerState3D {
                 currentTransform = currentTransform.parent;
             }
 
-            // 최상위 부모가 select object에 잡히는 이유를 모르겠음 
-            if (currentTransform == hit.transform) continue;
-
             // 최상위 부모의 태그 확인
             string tagName = currentTransform.tag;
 
             if (Enum.TryParse(tagName, out ConvertItem tagEnum)) {
-
-                Transform parent = hit.transform.parent;
-                if (parent.name.Contains("Group")) {
-                    AddSelectObjectsWithTag(tagEnum, hit.collider.gameObject);
-
-                }
-                else {
-                    // 부모의 두 번째 레벨까지 확인
-                    Transform targetTransform = parent?.parent != null
-                        && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
-
-                    AddSelectObjectsWithTag(tagEnum, targetTransform.gameObject);
-                }
+                AddSelectObjectsWithTag(tagEnum, hit.collider.gameObject);
             }
         }
     }
@@ -289,6 +275,9 @@ public class PlayerState3D_Skill : PlayerState3D {
                 break;
             case ConvertItem.Objects_2:
                 convertMode[3].AddSelectObjects(parent);
+                break;
+            case ConvertItem.MoveTile:
+                convertMode[4].AddSelectObjects(parent);
                 break;
             default:
                 break;
