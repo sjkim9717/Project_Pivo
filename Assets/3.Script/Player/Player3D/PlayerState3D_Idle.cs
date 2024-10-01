@@ -14,7 +14,7 @@ public class PlayerState3D_Idle : PlayerState3D {
 
     public override void EnterState() {
         //Control3D.Ani3D.Play("Idle");
-        playerManage.IsChangingModeTo3D = false;
+        //playerManage.IsChangingModeTo3D = false;
     }
 
     private void Update() {
@@ -37,8 +37,14 @@ public class PlayerState3D_Idle : PlayerState3D {
                 if (playerManage.IsBombOnGround) {
                     bomb.IBombMoveEnd();
                 }
-                Debug.Log(Vector3.Distance(Control3D.PlayerRigid.position, playerManage.Respawnposition.position));
-                Control3D.ChangeState(PlayerState.Falling);
+
+                if (playerManage.IsChangingModeTo3D) {
+                    Control3D.ChangeState(PlayerState.Holding);
+                }
+                else {
+                    Debug.Log(Vector3.Distance(Control3D.PlayerRigid.position, playerManage.Respawnposition.position));
+                    Control3D.ChangeState(PlayerState.Falling);
+                }
             }
         }
 

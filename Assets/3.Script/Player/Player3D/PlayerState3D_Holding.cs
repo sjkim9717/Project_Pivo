@@ -25,6 +25,7 @@ public class PlayerState3D_Holding : PlayerState3D {
         convertMode[1] = FindObjectOfType<ConvertMode_Object>();
         convertMode[2] = FindObjectOfType<ConvertMode_Destroy>();
         convertMode[3] = FindObjectOfType<ConvertMode_Item>();
+        convertMode[4] = FindObjectOfType<ConvertMode_MoveTile>();
     }
 
     public override void EnterState() {

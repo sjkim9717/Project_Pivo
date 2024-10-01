@@ -80,8 +80,6 @@ public abstract class ConvertMode : MonoBehaviour {
         }
     }
 
-    public abstract void ChangeLayerAllActiveTrue();
-
     public virtual void ChangeLayerActiveTrueWhen3DModeCancle() {
         foreach (GameObject each in AllObjects) {
             if (SelectObjects.Contains(each)) {
@@ -102,6 +100,7 @@ public abstract class ConvertMode : MonoBehaviour {
             }
         }
     }
+    public abstract void ChangeLayerAllActiveTrue();
 
     // 자식을 전부 돌아서 레이어를 변경해야함
     protected virtual void ChangeLayerActiveWithAllChild(Transform parent, int layerIndex) {

@@ -22,6 +22,7 @@ public class StaticManager : MonoBehaviour {
     public GameObject HoldingGroup;
     public GameObject PanelGroup;
     public GameObject PauseGroup;
+    public GameObject[] ActiveCheck;
 
     private PlayerManage playerManager;
     private List<Biscuit> biscuitControllers = new List<Biscuit>();
@@ -35,7 +36,12 @@ public class StaticManager : MonoBehaviour {
         PanelGroup = transform.GetChild(3).gameObject;
         PauseGroup = transform.GetChild(4).gameObject;
 
-        for(int i =1; i<HPGroup.transform.GetChild(0).childCount; i++) {
+        ActiveCheck = new GameObject[3];
+        for (int i = 5; i < transform.childCount; i++) {
+            ActiveCheck[i - 5] = transform.GetChild(i).gameObject;
+        }
+
+        for (int i =1; i<HPGroup.transform.GetChild(0).childCount; i++) {
             HpImgaes[i-1] = HPGroup.transform.GetComponentsInChildren<Image>()[i];
         }
         biscuitCountText = biscuitGroup.GetComponentInChildren<Text>();
@@ -59,7 +65,13 @@ public class StaticManager : MonoBehaviour {
 
         if (isPauseCanShow) {
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                PauseGroup.SetActive(true);
+                foreach (GameObject item in ActiveCheck) {
+                    if(item.activeSelf) {
+                        item.SetActive(false);
+                        return;
+                    }
+                }
+                PauseGroup.SetActive(!PauseGroup.activeSelf);
             }
         }
 

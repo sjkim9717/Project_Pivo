@@ -63,6 +63,36 @@ public class ConvertMode_Item : ConvertMode {
         }
     }
 
+    public override void ChangeLayerActiveTrueWhen3DModeCancle() {
+        foreach (GameObject item in AllObjects) {
+            if (SelectObjects.Contains(item)) {
+                item.layer = activeTrueLayerIndex;
+
+                if (item.name.Contains("BombSpawn")) {              // Bomb Spawner는 bomb만 빼고 바꿈
+                    for (int i = 0; i < item.transform.childCount - 1; i++) {
+                        ChangeLayerActiveWithAllChild(item.transform.GetChild(i), activeTrueLayerIndex);
+                    }
+                }
+                else {
+                    ChangeLayerActiveWithAllChild(item.transform, activeTrueLayerIndex);
+                }
+            }
+            else {
+                item.layer = activeFalseLayerIndex;
+
+                if (item.name.Contains("BombSpawn")) {              // Bomb Spawner는 bomb만 빼고 
+                    for (int i = 0; i < item.transform.childCount - 1; i++) {
+                        ChangeLayerActiveWithAllChild(item.transform.GetChild(i), activeFalseLayerIndex);
+                    }
+                }
+                else {
+                    // 하위 객체의 레이어 변경 => Root3D가 안보여야함
+                    ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
+                }
+            }
+        }
+    }
+
     public override void ChangeLayerAllActiveTrue() {
         foreach (GameObject item in AllObjects) {
             item.layer = activeTrueLayerIndex;

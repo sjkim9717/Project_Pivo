@@ -76,7 +76,6 @@ public class PlayerBase : MonoBehaviour {
     }
 
     public virtual void Change3D() {
-        //TODO: player 사망시 player2d가 파괴되어있는 상태
         if (player2D != null) {
             moveposition = player2D.transform.position;
         }

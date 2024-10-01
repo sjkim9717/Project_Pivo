@@ -76,6 +76,26 @@ public class ConvertMode_Object : ConvertMode {
             }
         }
     }
+    public override void ChangeLayerActiveTrueWhen3DModeCancle() {
+        foreach (GameObject each in AllObjects) {
+            if (SelectObjects.Contains(each)) {
+                each.layer = activeTrueLayerIndex;
+
+                // 하위 객체의 레이어 변경 => Ground로 바꿔서 지나갈 수 있어야함
+                foreach (Transform child in each.transform) {
+                    child.gameObject.layer = activeTrueLayerIndex;
+                }
+            }
+            else {
+                each.layer = activeFalseLayerIndex;
+
+                // 하위 객체의 레이어 변경 => Root3D가 안보여야함
+                foreach (Transform child in each.transform) {
+                    child.gameObject.layer = activeFalseLayerIndex;
+                }
+            }
+        }
+    }
 
     public override void ChangeLayerAllActiveTrue() {
         foreach (GameObject each in AllObjects) {
