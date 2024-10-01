@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ConvertMode_MoveTile : ConvertMode {
-    private string[] parentName = { "BombSpawn", "MoveSwitch", "MagicStone"};
+    private string[] parentName = { "BombSpawn", "Bomb", "MoveSwitch", "MagicStone"};
 
     protected override void Start() {
         InitParentObjectWithTag(ConvertItem.MoveTile);
@@ -13,6 +13,9 @@ public class ConvertMode_MoveTile : ConvertMode {
 
     protected override void InitParentObjectWithTag(ConvertItem tagName) {
         parentObject = GameObject.FindGameObjectsWithTag($"{tagName}");
+        for (int i = 0; i < parentObject.Length; i++) {
+            parentObject[i] = GameObject.FindGameObjectsWithTag($"{tagName}")[i];
+        }
 
         foreach (GameObject each in parentObject) {
             Renderer[] allChildRenderers = each.GetComponentsInChildren<Renderer>();
@@ -24,15 +27,22 @@ public class ConvertMode_MoveTile : ConvertMode {
                     if (parentObject.name.Contains("Models")) {
                         // magic ston
                         GameObject findMagic = parentObject.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
-                        AddIfNotSelected(AllObjects, findMagic);
+                        AddListIfNotSelected(AllObjects, findMagic);
                     }
                     else if (!parentObject.name.Contains("3D")) {
-                        // 일반 오브젝트 - tile, object 등
-                        AddIfNotSelected(AllObjects, parentObject);
+                        // 일반 오브젝트 - tile, object 등 + Bombspawner
+                        AddListIfNotSelected(AllObjects, parentObject);
+
+                        if (parentObject.name.Contains("BombSpawn")) {      // Bomb이 비활성화라 따로 담아야함
+                            // BombSpawner일 경우 Bomb 추가
+                            GameObject bomb = parentObject.transform.GetChild(2).gameObject;
+                            AddListIfNotSelected(AllObjects, bomb);
+                        }
                     }
                     else {
+                        GameObject mainObject = parentObject.transform.parent.gameObject;
                         // move switch
-                        AddIfNotSelected(AllObjects, parentObject.transform.parent.gameObject);
+                        AddListIfNotSelected(AllObjects, mainObject);
                     }
 
                 }
@@ -46,7 +56,14 @@ public class ConvertMode_MoveTile : ConvertMode {
                 item.layer = activeFalseLayerIndex;
 
                 if (HasMatchName(item, parentName)) {
-                    ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
+                    if (item.name.Contains("BombSpawn")) {              // Bomb Spawner는 bomb만 빼고 
+                        for (int i = 0; i < item.transform.childCount - 1; i++) {
+                            ChangeLayerActiveWithAllChild(item.transform.GetChild(i), activeFalseLayerIndex);
+                        }
+                    }
+                    else {
+                        ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
+                    }
                 }
                 else {
                     // 부모 이름이 일치하지 않을 경우 하위 객체의 레이어 변경
@@ -65,7 +82,14 @@ public class ConvertMode_MoveTile : ConvertMode {
             each.layer = activeTrueLayerIndex;
 
             if (HasMatchName(each, parentName)) {
-                ChangeLayerActiveWithAllChild(each.transform, activeTrueLayerIndex);
+                if (each.name.Contains("BombSpawn")) {              // Bomb Spawner는 bomb만 빼고 바꿈
+                    for (int i = 0; i < each.transform.childCount -1; i++) {
+                        ChangeLayerActiveWithAllChild(each.transform.GetChild(i), activeTrueLayerIndex);
+                    }
+                }
+                else {
+                    ChangeLayerActiveWithAllChild(each.transform, activeTrueLayerIndex);
+                }
             }
             else {
                 // 하위 객체의 레이어 변경 => tile만 Ground로 바꿔서 지나갈 수 있어야함
@@ -82,23 +106,30 @@ public class ConvertMode_MoveTile : ConvertMode {
         }
     }
 
+    // 선택된 오브젝트 리스트에 담음
     public override void AddSelectObjects(GameObject selectCheck) {
-
-        Transform parent = selectCheck.transform.parent;
-        if (parent.name.Contains("Models")) {
-            // magic ston
-            GameObject findMagic = parent.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
-            AddIfNotSelected(SelectObjects, findMagic);
-        }
-        else if (!parent.name.Contains("3D")) {
-            // 일반 오브젝트 - tile, object 등
-            AddIfNotSelected(SelectObjects, parent.gameObject);
+        if (selectCheck.name.Contains("Bomb")) {
+            AddListIfNotSelected(SelectObjects, selectCheck);
         }
         else {
-            // move switch
-            AddIfNotSelected(SelectObjects, parent.transform.parent.gameObject);
+            Transform parent = selectCheck.transform.parent;
+            if (parent.name.Contains("Models")) {
+                // magic ston
+                GameObject findMagic = parent.transform.parent?.parent?.gameObject; // null 조건부 연산자 사용
+                AddListIfNotSelected(SelectObjects, findMagic);
+            }
+            else if (!parent.name.Contains("3D")) {
+                // 일반 오브젝트 - tile, object 등
+                AddListIfNotSelected(SelectObjects, parent.gameObject);
+            }
+            else {
+                // move switch
+                AddListIfNotSelected(SelectObjects, parent.transform.parent.gameObject);
+            }
         }
+
     }
+
 }
 
 /*

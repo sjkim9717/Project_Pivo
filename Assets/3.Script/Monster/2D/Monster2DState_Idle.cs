@@ -7,7 +7,6 @@ public class Monster2DState_Idle : IMonsterStateBase {
     private GameObject monster;
 
     private float radius;
-    private float moveSpeed = 0.01f;
     private float iconDistance = 5f;
     private Vector3 originPos;
     private Vector3 emotionPos;

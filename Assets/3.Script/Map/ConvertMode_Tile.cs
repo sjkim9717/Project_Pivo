@@ -36,7 +36,7 @@ public class ConvertMode_Tile : ConvertMode {
 
     public override void AddSelectObjects(GameObject selectCheck) {
         Transform parent = selectCheck.transform.parent;
-        AddIfNotSelected(SelectObjects, parent.gameObject);
+        AddListIfNotSelected(SelectObjects, parent.gameObject);
     }
 }
 

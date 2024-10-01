@@ -189,7 +189,7 @@ public class PlayerMovement : MonoBehaviour {
 }
 
 /*
-//TODO: 플레이어가 자동으로 경로점으로 이동 -> y좌표 일정하게 가다가 오르막이 있을 경우 climb모션
+// 플레이어가 자동으로 경로점으로 이동 -> y좌표 일정하게 가다가 오르막이 있을 경우 climb모션
 private IEnumerator MoveToNextWaypoint(Transform nextWaypoint) {
     isMoving = true;
 

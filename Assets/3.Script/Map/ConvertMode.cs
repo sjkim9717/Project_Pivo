@@ -137,8 +137,6 @@ public abstract class ConvertMode : MonoBehaviour {
             MeshRenderer tileRenderer = blockObjects[i].GetComponentInChildren<MeshRenderer>();
             Material[] newMaterials = new Material[tileRenderer.materials.Length];
 
-            MeshRenderer defaultRenderer = blockObjects[i].GetComponentInChildren<MeshRenderer>();
-            
             for (int j = 0; j < newMaterials.Length; j++) {
                 newMaterials[j] = defaltMaterial[i]; // 각 블록에 대해 기본 머티리얼 설정
             }
@@ -169,12 +167,12 @@ public abstract class ConvertMode : MonoBehaviour {
     protected void AddParentOfParent(List<GameObject> listObject, Transform parent) {
         Transform targetTransform = parent.parent;
         if (targetTransform != null) {
-            AddIfNotSelected(listObject, targetTransform.gameObject);
+            AddListIfNotSelected(listObject, targetTransform.gameObject);
         }
     }
 
     // Adds the object to the selection list if it's not already in the list
-    protected void AddIfNotSelected(List<GameObject> listObject, GameObject addObject) {
+    protected void AddListIfNotSelected(List<GameObject> listObject, GameObject addObject) {
         if (!listObject.Contains(addObject)) {
             listObject.Add(addObject);
         }

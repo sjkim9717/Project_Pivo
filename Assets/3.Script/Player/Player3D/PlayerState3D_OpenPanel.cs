@@ -34,9 +34,14 @@ public class PlayerState3D_OpenPanel : PlayerState3D {
 
     public override void EnterState() {
         PanelGroup.SetActive(true);
-        if (sceneNum <=7) {
+        if (sceneNum <= 7) {
             snow.SetActive(true);
-            frame.transform.GetChild(sceneNum + 1).gameObject.SetActive(true);
+            if (sceneNum == 7) {
+                frame.transform.GetChild(5).gameObject.SetActive(true);
+            }
+            else {
+                frame.transform.GetChild(sceneNum + 1).gameObject.SetActive(true);
+            }
         }
         else {
             temple.SetActive(true);
@@ -47,14 +52,18 @@ public class PlayerState3D_OpenPanel : PlayerState3D {
         if (!PanelGroup.activeSelf) Control3D.ChangeState(PlayerState.Idle);
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape)) {
             PanelGroup.SetActive(false);
-            Control3D.ChangeState(PlayerState.Idle);
         }
     }
 
     public override void ExitState() {
         if (sceneNum <= 7) {
             snow.SetActive(false);
-            frame.transform.GetChild(sceneNum + 1).gameObject.SetActive(false);
+            if (sceneNum == 7) {
+                frame.transform.GetChild(5).gameObject.SetActive(false);
+            }
+            else {
+                frame.transform.GetChild(sceneNum + 1).gameObject.SetActive(false);
+            }
         }
         else {
             temple.SetActive(false);

@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Bomb : MonoBehaviour, IBomb {
+    private float t = 0f;
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float distance = 1.5f;
+    [SerializeField] private float distance = 2f;
     [SerializeField] private float height = 2.5f;
+    private int activeFalseLayerIndex;
+    private int layerMask;
+
+    private bool IsMoveEnd;
     private Rigidbody playerRigid;
     private Rigidbody bombRigid;
     private Vector3 originPos;
@@ -32,6 +37,8 @@ public class Bomb : MonoBehaviour, IBomb {
 
         effect = Instantiate(EffectPrefab, transform);
         effect.SetActive(false);
+        activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
+        layerMask = 1 << LayerMask.NameToLayer("ActiveTrue");
     }
 
     private void Start() {
@@ -45,57 +52,76 @@ public class Bomb : MonoBehaviour, IBomb {
         originPos = initPos;
     }
 
+    private void Update() {
+        if (gameObject.layer == activeFalseLayerIndex) {
+            bombRigid.constraints = RigidbodyConstraints.FreezeAll;
+        }
+    }
+
     private void FixedUpdate() {
         // 바닥 밑으로 떨어짐
-        if (bombRigid.position.y <= -20f) {
+        if (bombRigid.position.y <= -10f) {
             gameObject.SetActive(false);
+            UIBomb.SetActive(false);    
         }
-        if (testEndFlag) return;
+
+        if (IsMoveEnd) return;
+        
         // 목표 위치로 이동
         if (Vector3.Distance(bombRigid.position, BombToMove) >= 0.1f) {
-            bombRigid.MovePosition(Vector3.Lerp(bombRigid.position, BombToMove, Time.fixedDeltaTime * moveSpeed));
+            t += moveSpeed * Time.fixedDeltaTime;
+            t = Mathf.Clamp01(t);
+            bombRigid.MovePosition(Vector3.Lerp(bombRigid.position, BombToMove, t));
+        }
+        else {
+            bombRigid.constraints = RigidbodyConstraints.FreezeRotation;
         }
     }
 
     public void IBombMoveStart() {
-        testEndFlag = false;
+        IsMoveEnd = false;
         bombRigid.isKinematic = true;
         bombRigid.useGravity = false;
         foreach (var each in bombRigid.GetComponentsInChildren<Collider>()) each.isTrigger = true;
 
         UIBomb.SetActive(true);
         bombRigid.constraints = RigidbodyConstraints.FreezeRotation & RigidbodyConstraints.FreezePositionX & RigidbodyConstraints.FreezePositionZ;
-        // Bomb의 목표 위치를 설정 (현재 위치에서 위로 1.5 유닛 이동)
-        BombToMove = new Vector3(bombRigid.position.x, playerRigid.position.y + height, bombRigid.position.z);
 
+        // Bomb의 목표 위치를 설정 (현재 위치에서 플레이어 위로 2f 이동)
+        BombToMove = new Vector3(bombRigid.position.x, playerRigid.position.y + height, bombRigid.position.z);
     }
 
     public void IBombMoving() {
-        // Bomb의 이동을 위해 Y축 고정
-        bombRigid.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
+        t = 0f;
 
-        // 플레이어의 회전 축을 기반으로 폭탄의 위치 업데이트
-        // 플레이어의 로컬 좌표계에서 폭탄의 상대적인 위치 계산
-        Vector3 localBombPosition = playerRigid.transform.forward;
-        localBombPosition = localBombPosition + new Vector3(0, 0, distance);
+        bombRigid.isKinematic = false;
+        bombRigid.useGravity = false;
 
-        // 폭탄을 플레이어의 위치에서 로컬 위치만큼 떨어진 곳으로 이동
-        Vector3 BombToCalPos = playerRigid.position + localBombPosition;
-        BombToCalPos = new Vector3(Mathf.Round(BombToCalPos.x / 2) * 2, BombToCalPos.y, Mathf.Round(BombToCalPos.z / 2) * 2);
+        // 플레이어의 앞쪽 방향 확인 후 해당 방향에 distance 더해서 움직여야한는 위치 설정
+        Vector3 direction = playerRigid.transform.forward;
+        Vector3 BombToCalPos = playerRigid.position + direction * distance;
 
-        BombToMove = BombToCalPos;
+        BombToMove = SetPosition(ref BombToCalPos);
     }
 
-    private bool testEndFlag;
+    private Vector3 SetPosition(ref Vector3 BombToCalPos) {
+        float xFloor = Mathf.Floor(BombToCalPos.x * 10) / 10;
+        float zFloor = Mathf.Floor(BombToCalPos.z * 10) / 10;
+
+        float yFloor = Mathf.RoundToInt(playerRigid.position.y);
+         yFloor = Mathf.Floor(yFloor + height);
+
+        Vector3 _calPos = new Vector3(Mathf.RoundToInt(xFloor * 0.5f) * 2, yFloor, Mathf.RoundToInt(zFloor * 0.5f) * 2);
+        BombToCalPos = _calPos;
+        return BombToCalPos;
+    }
     public void IBombMoveEnd() {
         bombRigid.isKinematic = false;
         bombRigid.useGravity = true;
         foreach (var each in bombRigid.GetComponentsInChildren<Collider>()) each.isTrigger = false;
 
-
-        testEndFlag = true;
+        IsMoveEnd = true;
         bombRigid.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
-
         bombRigid.velocity = new Vector3(0, bombRigid.velocity.y, 0);
     }
 
@@ -103,7 +129,7 @@ public class Bomb : MonoBehaviour, IBomb {
         UIBomb.SetActive(false);
         if (playerManage.CurrentMode == PlayerMode.Player3D) {
             Vector3 boxSize = new Vector3(2f, 2f, 2f);
-            RaycastHit[] hits = Physics.BoxCastAll(transform.position, boxSize, transform.up, Quaternion.identity, 0);
+            RaycastHit[] hits = Physics.BoxCastAll(transform.position, boxSize, transform.up, Quaternion.identity, 0, layerMask);
 
             foreach (RaycastHit item in hits) {
                 if (!item.collider.name.Contains("Root3D")) {
@@ -119,7 +145,7 @@ public class Bomb : MonoBehaviour, IBomb {
         }
         else if (playerManage.CurrentMode == PlayerMode.Player2D) {
             Vector2 boxSize = new Vector3(4f, 4f, 2f);
-            RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, boxSize, 0, transform.up, 0);
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(transform.position, boxSize, 0, transform.up, 0, layerMask);
 
             Debug.Log(" 2D 모드 hits length | " + hits.Length);
             foreach (RaycastHit2D item in hits) {
@@ -141,8 +167,6 @@ public class Bomb : MonoBehaviour, IBomb {
         gameObject.SetActive(false);
     }
 
-
-
     private void OnCollisionStay(Collision collision) {
         if (collision.transform.parent != null) {
             if (collision.transform.parent.parent != null) {
@@ -154,9 +178,7 @@ public class Bomb : MonoBehaviour, IBomb {
                 }
             }
         }
-
     }
-
 
     private void OnDisable() {
         bombRigid.isKinematic = true;
@@ -167,7 +189,6 @@ public class Bomb : MonoBehaviour, IBomb {
     }
 
     private void OnDrawGizmos() {
-        // Draw a Gizmo representation of the box size
         Gizmos.color = Color.grey;
         Vector3 boxSize = new Vector3(2f, 2f, 2f);
 

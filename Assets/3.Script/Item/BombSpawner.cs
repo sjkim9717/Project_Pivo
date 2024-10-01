@@ -50,7 +50,9 @@ public class BombSpawner : MonoBehaviour {
 
         return false;
     }
-
+    private void OnDisable() {
+        Debug.Log($" spawner false? | {gameObject.activeSelf}");
+    }
     private void InitBomb() {
         originPos = new Vector3(transform.position.x, transform.position.y + 2, transform.position.z);
         bomb.transform.position = originPos;

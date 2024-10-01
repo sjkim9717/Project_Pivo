@@ -99,7 +99,7 @@ public class ConvertMode_Object : ConvertMode {
     public override void AddSelectObjects(GameObject selectCheck) {
         // cube 
         if (selectCheck.name.Contains("Cube")) {
-            AddIfNotSelected(SelectObjects, selectCheck);
+            AddListIfNotSelected(SelectObjects, selectCheck);
         }
         else {
             Transform parent = selectCheck.transform.parent;
@@ -116,12 +116,12 @@ public class ConvertMode_Object : ConvertMode {
                     bool isBoundInside = (bounds.center.z >= minSectionZ && bounds.center.z <= maxSectionZ);
 
                     if (isBoundInside) {
-                        AddIfNotSelected(SelectObjects, parent.gameObject);
+                        AddListIfNotSelected(SelectObjects, parent.gameObject);
                     }
                 }
             }
             else {
-                AddIfNotSelected(SelectObjects, parent.gameObject);
+                AddListIfNotSelected(SelectObjects, parent.gameObject);
             }
         }
 

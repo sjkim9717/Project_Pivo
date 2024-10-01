@@ -25,14 +25,20 @@ public class ConvertMode_Item : ConvertMode {
                     if (parentObj.CompareTag("PushBox") || parentObj.CompareTag("Climb")|| parentObj.name.Contains("Pipe")) {
                         GameObject pushbox = parentObj.transform.parent.gameObject;
                         if (pushbox.CompareTag("Untagged")) {
-                            AddIfNotSelected(AllObjects, parentObj);
+                            AddListIfNotSelected(AllObjects, parentObj);
                         }
                         else {
-                            AddIfNotSelected(AllObjects, pushbox);
+                            AddListIfNotSelected(AllObjects, pushbox);
                         }
                     }
                     else {
-                        AddIfNotSelected(AllObjects, parentObj);
+                        AddListIfNotSelected(AllObjects, parentObj);
+
+                        if (parentObj.name.Contains("BombSpawn")) {    // Bomb이 비활성화라 따로 담아야함
+                            // BombSpawner일 경우 Bomb 추가
+                            GameObject bomb = parentObj.transform.GetChild(2).gameObject;
+                            AddListIfNotSelected(AllObjects, bomb);
+                        }
                     }
                 }
             }
@@ -44,8 +50,15 @@ public class ConvertMode_Item : ConvertMode {
 
                 item.layer = activeFalseLayerIndex;
 
-                // 하위 객체의 레이어 변경 => Root3D가 안보여야함
-                ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
+                if (item.name.Contains("BombSpawn")) {              // Bomb Spawner는 bomb만 빼고 
+                    for (int i = 0; i < item.transform.childCount - 1; i++) {
+                        ChangeLayerActiveWithAllChild(item.transform.GetChild(i), activeFalseLayerIndex);
+                    }
+                }
+                else {
+                    // 하위 객체의 레이어 변경 => Root3D가 안보여야함
+                    ChangeLayerActiveWithAllChild(item.transform, activeFalseLayerIndex);
+                }
             }
         }
     }
@@ -54,21 +67,32 @@ public class ConvertMode_Item : ConvertMode {
         foreach (GameObject item in AllObjects) {
             item.layer = activeTrueLayerIndex;
 
-            // 하위 객체의 레이어 변경 
-            ChangeLayerActiveWithAllChild(item.transform, activeTrueLayerIndex);
+            if (item.name.Contains("BombSpawn")) {              // Bomb Spawner는 bomb만 빼고 바꿈
+                for (int i = 0; i < item.transform.childCount - 1; i++) {
+                    ChangeLayerActiveWithAllChild(item.transform.GetChild(i), activeTrueLayerIndex);
+                }
+            }
+            else {
+                ChangeLayerActiveWithAllChild(item.transform, activeTrueLayerIndex);
+            }
         }
     }
 
     public override void AddSelectObjects(GameObject selectCheck) {
-        Transform parent = selectCheck.transform.parent;
-        if (parent.name.Contains("Group")) {
-            AddIfNotSelected(SelectObjects, selectCheck);
+        if (selectCheck.name.Contains("Bomb")) {
+            AddListIfNotSelected(SelectObjects, selectCheck);
         }
         else {
-            // 부모의 두 번째 레벨까지 확인
-            Transform targetTransform = parent?.parent != null
-                && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
-            AddIfNotSelected(SelectObjects, targetTransform.gameObject);
+            Transform parent = selectCheck.transform.parent;
+            if (parent.name.Contains("Group")) {
+                AddListIfNotSelected(SelectObjects, selectCheck);
+            }
+            else {
+                // 부모의 두 번째 레벨까지 확인
+                Transform targetTransform = parent?.parent != null
+                    && parent.parent.CompareTag("PushBox") ? parent.parent : parent;
+                AddListIfNotSelected(SelectObjects, targetTransform.gameObject);
+            }
         }
     }
 

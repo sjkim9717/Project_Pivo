@@ -28,7 +28,7 @@ public class ConvertMode_Destroy : ConvertMode {
 
     public override void AddSelectObjects(GameObject selectCheck) {
         Transform parent = selectCheck.transform.parent;
-        AddIfNotSelected(SelectObjects, parent.gameObject);
+        AddListIfNotSelected(SelectObjects, parent.gameObject);
     }
 }
 
