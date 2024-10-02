@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour {
 
     private StageClearControl[] stageClearController;
 
+    public AudioSource InGameAudio;
+
     public readonly Dictionary<string, StageLevel> stageMap = new Dictionary<string, StageLevel>() {
         { "GrassStage_Stage1", StageLevel.GrassStageLevel_1 },
         { "GrassStage_Stage5", StageLevel.GrassStageLevel_5 },
@@ -52,7 +54,7 @@ public class GameManager : MonoBehaviour {
         fadeGroup = transform.GetChild(4).gameObject;
         loadingGroup = transform.GetChild(5).gameObject;
         //UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
-
+        InGameAudio = GetComponent<AudioSource>();
     }
 
     private void OnEnable() {
@@ -73,6 +75,28 @@ public class GameManager : MonoBehaviour {
         Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
 
         if (currentStage != StageLevel.StageSelect) PreviousGameStage = currentStage;
+
+        string[] include = null; // 초기화
+
+        // 오디오 BGM
+        if (sceneName.Contains("Snow")) {
+            include = new string[] { "Snow", "Loop" }; // 배열 초기화
+        }
+        else if (sceneName.Contains("Grass")) {
+            include = new string[] { "Grass", "Loop" }; // 배열 초기화
+        }
+
+
+        if (include != null) {
+            string playBgm = AudioManager.instance.GetDictionaryKey<string, AudioClip>(AudioManager.BGM, include);
+
+            if (playBgm != null) { // playBgm이 null이 아닐 경우에만 재생
+                AudioManager.instance.BGM_Play(AudioManager.instance.WorldAudio, playBgm);
+            }
+            else {
+                Debug.LogWarning("No matching BGM found for the given scene.");
+            }
+        }
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
@@ -119,6 +143,8 @@ public class GameManager : MonoBehaviour {
 
     // StageClear 이벤트가 호출될 때 실행될 메서드
     private void OnStageClear() {
+        
+
         playerManage.CurrentMode = PlayerMode.AutoMode;
 
         foreach (ConvertMode item in convertMode) {
@@ -140,7 +166,6 @@ public class GameManager : MonoBehaviour {
 
         Debug.LogWarning("save Data | " + Save.instance.GameData);
         Save.instance.SaveGame();
-
     }
 
     // scene이 로드될경우 해당씬 확인

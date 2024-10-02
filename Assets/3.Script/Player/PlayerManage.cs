@@ -39,7 +39,6 @@ public class PlayerManage : PlayerBase {
 
     private void Start() {
         Init();
-
         onPlayerEnterTile.AddListener(UpdateRespawnPosition);
 
         // restart 초기화 값 - diecount, 플레이어 위치, 플레이어 모드

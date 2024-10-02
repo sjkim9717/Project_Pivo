@@ -20,10 +20,6 @@ public class StageClearControl : MonoBehaviour {
         }
     }
 
-    //TODO: stage clear test 지울것
-    public void StageClearTest() {
-        StageClear?.Invoke();
-    }
 }
 
 /*

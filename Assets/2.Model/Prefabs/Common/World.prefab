@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4709332854558530072}
   - component: {fileID: 915776911}
   - component: {fileID: 367686219}
+  - component: {fileID: 6047564028838437806}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -222,3 +223,15 @@ MonoBehaviour:
   SelectObjects: []
   blockObjects: []
   defaltMaterial: []
+--- !u!114 &6047564028838437806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3544576992570228265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ac8d067061f6f44a2c736ae25c75ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

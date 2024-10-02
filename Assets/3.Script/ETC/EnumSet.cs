@@ -29,3 +29,8 @@ public enum TutorialTriggerSprite {
     Climb,
     ViewChange
 }
+
+public enum Audio {
+    BGM,
+    SFX
+}
