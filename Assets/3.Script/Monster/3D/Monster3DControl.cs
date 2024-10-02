@@ -22,21 +22,17 @@ public class Monster3DControl : MonsterControl {
         ChangeState(Idle3DState);
     }
     private void OnEnable() {
-        currentState?.CurrentEmotionUI(true);
         if (mManager.IsPassOutCalled) ChangeState(PassOut3DState);
     }
-    private void OnDisable() {
-        currentState?.CurrentEmotionUI(false);
-    }
+
     protected override void Update() {
         currentState?.UpdateState(this);
     }
 
     public override void ChangeState(IMonsterStateBase newState) {
-        Debug.LogWarning("monster state change");
-        Debug.LogWarning("current State | " + currentState + " | new State | " + newState);
+        Debug.LogWarning("monster state change | current State | " + currentState + " | new State | " + newState);
 
-        if (currentState == newState) return; // 동일 상태 체크
+        //if (currentState == newState) return; // 동일 상태 체크
         currentState?.ExitState(this);
         currentState = newState;
         currentState.EnterState(this);

@@ -20,29 +20,26 @@ public class Monster2DControl : MonsterControl {
         ChangeState(Idle2DState);
     }
     private void OnEnable() {
-        currentState?.CurrentEmotionUI(true);
         if (mManager.IsPassOutCalled) {
             Debug.LogWarning($" {Monster.name} | ispassout called");
             ChangeState(PassOut2DState);
         }
     }
-    private void OnDisable() {
-        currentState?.CurrentEmotionUI(false);
-    }
+
 
     protected override void Update() {
         currentState?.UpdateState(this);
     }
 
     public override void ChangeState(IMonsterStateBase newState) {
-        Debug.LogWarning("monster 2D state change");
-        Debug.LogWarning("current 2D State | " + currentState + " | new State | " + newState);
+        Debug.LogWarning("monster 2D state change | current State | " + currentState + " | new State | " + newState);
 
-        if (currentState == newState) return; // 동일 상태 체크
+        //if (currentState == newState) return; // 동일 상태 체크
         currentState?.ExitState(this);
         currentState = newState;
         currentState.EnterState(this);
     }
+
     private void OnDrawGizmos() {
 
         Gizmos.color = Color.blue; // 파란색으로 설정

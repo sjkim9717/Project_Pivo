@@ -87,7 +87,6 @@ public class PlayerManage : PlayerBase {
     }
 
     public void SwitchMode() {
-        IsSwitchMode?.Invoke();
 
         ConvertMode[] convertModes = FindObjectsOfType<ConvertMode>();
 
@@ -107,6 +106,7 @@ public class PlayerManage : PlayerBase {
             Change2D();
         }
 
+        IsSwitchMode?.Invoke();
     }
 
     // respawn 위치 맞추기

@@ -12,6 +12,7 @@ public class MonsterManager : MonsterBase {
         Change3D();
         // 모드 변경
         playerManage.IsSwitchMode += SwitchMode;
+        playerManage.IsSwitchMode += ChangeEmotion;
         //TODO: IMonsterStateBase 초기값 지정
     }
 
@@ -76,6 +77,18 @@ public class MonsterManager : MonsterBase {
         }
         return true;
     }
+
+    private void ChangeEmotion() {
+        if(monster2D.layer == activeTrueLayerIndex || monster3D.layer== activeTrueLayerIndex) {
+            Debug.Log(" 뭐지 진짜 | " + currentState);
+        }
+        else {
+            foreach (Transform item in emotion.transform) {
+                item.gameObject.SetActive(false);   
+            }
+        }
+    }
+
 
     private void OnDrawGizmos() {
         if (Monster3D == null || playerManage == null) return;

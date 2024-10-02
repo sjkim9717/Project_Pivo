@@ -21,6 +21,7 @@ public class Monster2DState_PassOut : IMonsterStateBase {
     }
 
     public void EnterState(MonsterControl MControl) {
+        Debug.Log(" 2d enter state true | ");
         emotionOriginPos.gameObject.SetActive(true);
         mManager.Ani2D.SetBool("IsDead", true);
     }
@@ -30,6 +31,7 @@ public class Monster2DState_PassOut : IMonsterStateBase {
     }
 
     public void ExitState(MonsterControl MControl) {
+        Debug.Log(" 2d exit state false | " );
         emotionOriginPos.gameObject.SetActive(false);
         mManager.Ani2D.SetBool("IsDead", false);
     }

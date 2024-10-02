@@ -8,18 +8,20 @@ public class MonsterBase : MonoBehaviour {
     public bool IsPassOutCalled { get { return isPassOutInvoked; } }
     private bool isPassOutInvoked;
 
+    protected int activeTrueLayerIndex;
+    protected int activeFalseLayerIndex;
 
-    private GameObject monster2D;
-    private GameObject monster3D;
+    protected GameObject monster2D;
+    protected GameObject monster3D;
     private GameObject effect;
-    private GameObject emotion;
+    protected GameObject emotion;
     private Transform putPoint;
     private Transform emotionPoint2D;
     private Transform emotionPoint3D;
 
     private Animator ani2D;
     private Animator ani3D;
-    private IMonsterStateBase currentState;
+    protected IMonsterStateBase currentState;
     public GameObject Monster2D { get { return monster2D; } }
     public GameObject Monster3D { get { return monster3D; } }
     public GameObject Effect { get { return effect; } }
@@ -49,6 +51,9 @@ public class MonsterBase : MonoBehaviour {
         emotionPoint3D = base.transform.GetChild(4);
 
         effect = base.transform.GetChild(5).gameObject;
+
+        activeTrueLayerIndex = LayerMask.NameToLayer("ActiveTrue");
+        activeFalseLayerIndex = LayerMask.NameToLayer("ActiveFalse");
     }
 
     public virtual void Change2D() {

@@ -20,6 +20,7 @@ public class Monster3DState_PassOut : IMonsterStateBase {
         emotionOriginPos = mManager.Emotion.transform.GetChild(2).GetComponent<RectTransform>();
     }
     public void EnterState(MonsterControl MControl) {
+        Debug.Log(" 3d enter state true | ");
         emotionOriginPos.gameObject.SetActive(true);
         mManager.Ani3D.SetBool("IsDead", true);
     }
@@ -28,6 +29,7 @@ public class Monster3DState_PassOut : IMonsterStateBase {
         else emotionOriginPos.gameObject.SetActive(false);
     }
     public void ExitState(MonsterControl MControl) {
+        Debug.Log(" 3d exit state false | " );
         emotionOriginPos.gameObject.SetActive(false);
         mManager.Ani3D.SetBool("IsDead", false);
     }
