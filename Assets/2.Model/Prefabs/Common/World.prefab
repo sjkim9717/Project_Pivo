@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 4709332854558530072}
   - component: {fileID: 915776911}
   - component: {fileID: 367686219}
-  - component: {fileID: 6047564028838437806}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -46,7 +45,7 @@ AudioSource:
   m_GameObject: {fileID: 3544576992570228265}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300000, guid: af636874c4ef16e47825e124c88eae98, type: 2}
+  OutputAudioMixerGroup: {fileID: -7166698844870723215, guid: 435c2f35047de3c41bc1023411eb067f, type: 2}
   m_audioClip: {fileID: 8300000, guid: fd673db2804620145bef95ef01715e1b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -223,15 +222,3 @@ MonoBehaviour:
   SelectObjects: []
   blockObjects: []
   defaltMaterial: []
---- !u!114 &6047564028838437806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3544576992570228265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5ac8d067061f6f44a2c736ae25c75ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -10,6 +10,7 @@ public class PlayerState3D_Climb : PlayerState3D {
 
     public override void EnterState() {
         Control3D.Ani3D.SetTrigger("IsClimb");
+        AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "climb");
     }
 
     private void Update() {

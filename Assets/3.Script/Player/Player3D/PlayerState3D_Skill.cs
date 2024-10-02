@@ -79,12 +79,26 @@ public class PlayerState3D_Skill : PlayerState3D {
 
             // 각 화살표 키가 눌렸는지 확인
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {  // 막힌 오브젝트의 위치를 비교함
-                if (!IsMoveNotAllowed())
+                if (!IsMoveNotAllowed()) {
+                    AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "movetile");
                     MoveSectionLine(true);
+                }
+                else {
+                    string[] include = { "ViewChane", "Block" };
+                    string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
+                    AudioManager.instance.SFX_Play(playerManage.PlayerAudio, key);
+                }
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
-                if (!IsMoveNotAllowed())
+                if (!IsMoveNotAllowed()) {
+                    AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "movetile");
                     MoveSectionLine(false);
+                }
+                else {
+                    string[] include = { "ViewChange", "Block" };
+                    string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
+                    AudioManager.instance.SFX_Play(playerManage.PlayerAudio, key);
+                }
             }
         }
 
@@ -140,16 +154,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         return convertMode.Any(item => item.blockObjects.Count > 0);
     }
 
-    private bool CheckBlockObjectZPosition(ConvertMode convertMode) {
-        //foreach (var block in convertMode.blockObjects) {
-        //    if (block.transform.position.z >= Control3D.PlayerRigid.position.z) {
-        //        return true; // 차단됨
-        //    }
-        //}
-        //return false; // 차단되지 않음
 
-        return convertMode.blockObjects.Any(block => block.transform.position.z >= Control3D.transform.position.z);
-    }
 
     private void MoveSectionLine(bool up) {
         float direction = up ? 1f : -1f;
@@ -184,7 +189,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
         playerManage.StartSection = startSection;                  //TODO: [기억] 몬스터 mode switch시에 사용 
         playerManage.FinishSection = finishSection;
-        
+
         ChangeSelectObjectLayer(startSection, finishSection);                   // Raycast를 넣어서  
 
         ChangeBlockObjectMaterial(convertMode[0]);
@@ -229,7 +234,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         ResetBlock(convertMode[3]);
 
         foreach (ConvertMode item in convertMode) {
-            item.ChangeLayerAllActiveTrue(); 
+            item.ChangeLayerAllActiveTrue();
             item.SelectObjects.Clear();
         }
 

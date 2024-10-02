@@ -31,9 +31,7 @@ public abstract class ConvertMode : MonoBehaviour {
 
         playerManage = FindObjectOfType<PlayerManage>();
     }
-
     protected abstract void Start();
-
 
     // Tile이 들어간 tag는 자기 자신외 자식객체에서 tile이 포함되어있는지 확인하고 해당 오브젝트를 담음
     protected virtual void InitParentObjectWithTag(ConvertItem tagName) {

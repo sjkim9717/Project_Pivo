@@ -38,6 +38,8 @@ public class ConvertMode_Tile : ConvertMode {
         Transform parent = selectCheck.transform.parent;
         AddListIfNotSelected(SelectObjects, parent.gameObject);
     }
+
+
 }
 
 /* 삭제 되지않는 타일이 아닌 오브젝트 

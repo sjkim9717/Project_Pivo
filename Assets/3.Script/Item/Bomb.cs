@@ -126,6 +126,9 @@ public class Bomb : MonoBehaviour, IBomb {
     }
 
     public void IBombExplosion() {
+
+        AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, "Boom");
+
         UIBomb.SetActive(false);
         if (playerManage.CurrentMode == PlayerMode.Player3D) {
             Vector3 boxSize = new Vector3(2f, 2f, 2f);
@@ -138,6 +141,7 @@ public class Bomb : MonoBehaviour, IBomb {
 
                         item.collider.gameObject.SetActive(false);
                         destroyComponent.DeleteDestroiedObject(item.collider.gameObject);
+                        AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, "BrokenTile");
                     }
                 }
 
@@ -151,8 +155,10 @@ public class Bomb : MonoBehaviour, IBomb {
             foreach (RaycastHit2D item in hits) {
                 if (item.transform.parent.CompareTag("Destroy")) {
                     Debug.Log(" 2D 모드 Destroy item | " + item.transform.parent.name);
+
                     item.transform.parent.gameObject.SetActive(false);
                     destroyComponent.DeleteDestroiedObject(item.transform.parent.gameObject);
+                    AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, "BrokenTile");
                 }
             }
         }

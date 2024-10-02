@@ -9,6 +9,7 @@ public class PlayerState2D_Climb : PlayerState2D {
 
     public override void EnterState() {
         Control2D.Ani2D.SetTrigger("IsClimb");
+        AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "climb");
     }
 
     private void Update() {

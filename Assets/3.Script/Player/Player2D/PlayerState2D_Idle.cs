@@ -14,7 +14,6 @@ public class PlayerState2D_Idle : PlayerState2D {
     }
     protected override void OnEnable() {
         base.OnEnable();
-        Debug.Log("!!!2DIdle!!!");
         Input.ResetInputAxes();
     }
     public override void EnterState() {
@@ -35,15 +34,6 @@ public class PlayerState2D_Idle : PlayerState2D {
         if (Control2D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인
 
             Control2D.ChangeState(PlayerState.Falling);
-
-            //float distance = Control2D.PlayerRigid.position.y - PlayerManage.instance.Respawnposition.position.y;
-            //if (distance <= 0.1f) {
-            //    return;
-            //}
-            //else {
-            //    Debug.Log(distance);
-            //    Control2D.ChangeState(PlayerState.Falling);
-            //}
         }
 
         ChangeState();
@@ -55,9 +45,11 @@ public class PlayerState2D_Idle : PlayerState2D {
             Control2D.ChangeState(PlayerState.Move);
         }
         else if (skillSectionInput != 0) {
-            if (!playerManage.IsChangingModeTo3D) {
-                Control2D.ChangeState(PlayerState.Skill);
-            }
+
+            Control2D.ChangeState(PlayerState.Skill);
+            //if (!playerManage.IsChangingModeTo3D) {
+            //    Control2D.ChangeState(PlayerState.Skill);
+            //}
         }
         else if (interactionInput != 0) {
             interactionObj = Control2D.CheckInteractObject();

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour {
     public static AudioManager instance { get; private set; }
-
-    public AudioMixer audiomixer;
-    public AudioSource WorldAudio;
 
     // BGM을 위한 Dictionary
     public static readonly Dictionary<string, AudioClip> BGM = new Dictionary<string, AudioClip>();
@@ -19,6 +19,22 @@ public class AudioManager : MonoBehaviour {
     // Corgi 효과음을 위한 Dictionary
     public static readonly Dictionary<string, List<AudioClip>> Corgi = new Dictionary<string, List<AudioClip>>();
 
+    // Audio
+    public AudioMixer audiomixer;
+    public AudioSource InGameAudio { get; private set; }    // SFX
+    public AudioSource WorldAudio { get; private set; }     // BGM 
+
+    public float BGMValue { get; private set; }
+    public float SFXValue { get; private set; }
+    public Vector3 BGMPosition { get; private set; }
+    public Vector3 SFXPosition { get; private set; }
+
+    [SerializeField] private float maxX;
+    [SerializeField] private float minX;
+    private Image audioUIScroll;
+    private GameObject selectScrollButton;
+    private GameObject AudioUIScrollParent;
+
     private void Awake() {
         if (instance == null) {
             instance = this;
@@ -28,13 +44,75 @@ public class AudioManager : MonoBehaviour {
             Destroy(gameObject);
         }
 
-        WorldAudio = GetComponent<AudioSource>();
-
         Init_BGM();
         Init_SFX();
         Init_Corgi();
+        InGameAudio = FindObjectOfType<GameManager>().GetComponent<AudioSource>();
+
+
+        // position init
+        BGMPosition = new Vector3(170, 0, 0);
+        SFXPosition = new Vector3(170, 0, 0);
+        BGMValue = 1;
+        SFXValue = 1;
+    }
+    private void OnEnable() {
+        SceneManager.sceneLoaded += FindScenLevelWhenLevelChange;
     }
 
+
+    private void OnDisable() {
+        SceneManager.sceneLoaded -= FindScenLevelWhenLevelChange;
+    }
+
+    private void FindScenLevelWhenLevelChange(Scene arg0, LoadSceneMode arg1) {
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        /*
+        AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+
+        foreach (AudioSource audioSource in audioSources) {
+            // BGM 그룹에 할당
+            if (audioSource.name.Contains("BGM")) {
+                audioSource.outputAudioMixerGroup = audiomixer.FindMatchingGroups("BGM")[0];
+            }
+            // SFX 그룹에 할당
+            else if (audioSource.name.Contains("SFX")) {
+                audioSource.outputAudioMixerGroup = audiomixer.FindMatchingGroups("SFX")[0];
+            }
+        }
+        */
+
+
+        if (GameManager.instance.currentStage != StageLevel.StageSelect) {
+
+            WorldAudio = FindObjectOfType<ConvertMode>().GetComponent<AudioSource>();
+
+            // 오디오 BGM
+            string[] include = null; // 초기화
+            if (sceneName.Contains("Snow")) {
+                include = new string[] { "Snow", "Loop" };
+            }
+            else {
+                include = new string[] { "Grass", "Loop" };
+            }
+
+            if (include != null) {
+                string playBgm = GetDictionaryKey<string, AudioClip>(AudioManager.BGM, include);
+
+                if (playBgm != null) { // playBgm이 null이 아닐 경우에만 재생
+                    BGM_Play(WorldAudio, playBgm);
+                }
+                else {
+                    Debug.LogWarning($"No matching BGM found for {include}.");
+                }
+            }
+        }
+        else {
+            WorldAudio = GameObject.Find("BGM").GetComponent<AudioSource>();
+            WorldAudio.Play();
+        }
+    }
 
     private void Init_BGM() {
         AudioClip[] bgms = Resources.LoadAll<AudioClip>("Sounds/bgm");
@@ -107,10 +185,10 @@ public class AudioManager : MonoBehaviour {
     }
 
     public void SFX_Play(AudioSource audioSource, string key) {
-        if (SFX.TryGetValue(key, out List< AudioClip > clips)) {
+        if (SFX.TryGetValue(key, out List<AudioClip> clips)) {
             // 현재 클립이 동일하고 재생 중이라면 아무 것도 하지 않고 메서드를 종료
-            if (audioSource.isPlaying) {
-                Debug.Log("The clip is already playing.");
+            if (audioSource.clip != null && audioSource.clip.name == key && audioSource.isPlaying) {
+                // 현재 클립이 동일하고 재생 중이면 아무것도 하지 않고 메서드를 종료
                 return;
             }
 
@@ -125,7 +203,6 @@ public class AudioManager : MonoBehaviour {
         if (Corgi.TryGetValue(key, out List<AudioClip> clips)) {
             // 현재 클립이 동일하고 재생 중이라면 아무 것도 하지 않고 메서드를 종료
             if (audioSource.isPlaying) {
-                Debug.Log("The clip is already playing.");
                 return;
             }
 
@@ -160,6 +237,66 @@ public class AudioManager : MonoBehaviour {
     }
 
 
+    // Audio Mixer
+    // TODO: 해당 스크롤에 연결
+    public void Audio_OnPointerDown(GameObject gameObject) {
+        selectScrollButton = gameObject;
+        Debug.Log(" 버튼위치 확인 | " + gameObject.name + " | position | " + gameObject.GetComponent<RectTransform>().anchoredPosition);
+
+        AudioUIScrollParent = selectScrollButton.transform.parent.gameObject;
+        audioUIScroll = AudioUIScrollParent.GetComponentsInChildren<Image>()[1];
+
+        RectTransform scrollRect = audioUIScroll.GetComponent<RectTransform>();
+
+        float width = scrollRect.rect.width;
+        float pivotX = scrollRect.pivot.x;
+        float anchoredX = scrollRect.anchoredPosition.x;
+
+        minX = anchoredX - (width * pivotX);
+        maxX = anchoredX + (width * (1 - pivotX));
+    }
+
+    public void Audio_OnPointerUp() {
+        AudioUIScrollParent = null;
+        audioUIScroll = null;
+        selectScrollButton = null;
+    }
+
+    public void Audio_OnDrag() {
+
+        RectTransform audioUIRect = selectScrollButton.GetComponent<RectTransform>();
+
+        if (audioUIRect != null) {
+
+            Vector2 localPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle( audioUIScroll.GetComponent<RectTransform>(), Input.mousePosition, null, out localPoint);
+
+            Vector3 newPos = audioUIRect.anchoredPosition;
+            newPos.x = localPoint.x;
+            newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+
+            audioUIRect.anchoredPosition = newPos;
+
+            float sliderValue = (newPos.x <= minX) ? 0 : Mathf.Clamp01((newPos.x - minX) / (maxX - minX));
+
+            audioUIScroll.fillAmount = sliderValue;
+
+            if (AudioUIScrollParent.transform.parent.name.Contains("BGM")) {
+                BGMPosition = newPos;
+                SetBGMVolume(sliderValue);
+            }
+            else {
+                SFXPosition = newPos;
+                SetSFXVolume(sliderValue);
+            }
+        }
+    }
+    public void SetBGMVolume(float volume) {
+        audiomixer.SetFloat("BGM_Volume", volume == 0 ? -80f : Mathf.Log10(volume) * 20);
+    }
+    public void SetSFXVolume(float volume) {
+        audiomixer.SetFloat("SFX_Volume", volume == 0 ? -80f : Mathf.Log10(volume) * 20);
+    }
 }
 
 /*

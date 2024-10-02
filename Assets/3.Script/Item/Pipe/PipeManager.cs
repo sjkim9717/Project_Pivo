@@ -30,7 +30,7 @@ public class PipeManager : MonoBehaviour {
         // moving object에 있는 magic Stone만 해당함
         if (magicStone != null) {
             MovingWaypoints movingWaypoints = magicStone.GetComponentInParent<MovingWaypoints>();
-            if(movingWaypoints !=null ) movingWaypoints.IsMoved += ChangeMonsterMode;
+            if (movingWaypoints != null) movingWaypoints.IsMoved += ChangeMonsterMode;
         }
     }
 
@@ -79,6 +79,10 @@ public class PipeManager : MonoBehaviour {
     }
 
     private void ChangeMaterialWhenFinish() {
+        string[] include = { "Magic" };
+        string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
+        AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, key);
+
         isFinished = true;
 
         Renderer[] renderers = magicStone.GetComponentsInChildren<Renderer>();

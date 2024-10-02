@@ -16,6 +16,7 @@ public class PlayerBase : MonoBehaviour {
     private Animator ani3D;
 
     private GameObject effect;
+    private AudioSource playerAudio;
 
     public PlayerMode CurrentMode { get { return currentMode; } set { currentMode = value; } }
     public PlayerState CurrentState { get { return currentState; } set { currentState = value; } }
@@ -29,6 +30,7 @@ public class PlayerBase : MonoBehaviour {
     public Animator Ani2D { get { return ani2D; } }
     public Animator Ani3D { get { return ani3D; } }
     public GameObject Effect { get { return effect; } }
+    public AudioSource PlayerAudio { get { return playerAudio; } }
 
 
     protected Vector3 moveposition = Vector3.zero;
@@ -54,6 +56,7 @@ public class PlayerBase : MonoBehaviour {
         effect = base.transform.GetChild(5).gameObject;
 
         currentState = PlayerState.Idle;
+        playerAudio = GetComponent<AudioSource>();
     }
 
     private void OnEnable() {

@@ -33,12 +33,22 @@ public class OptionManager : MonoBehaviour {
     private int[] selectScreenSize = new int[2]; // 사용자 설정 너비
     private int[] currentScreenSize = new int[2]; // 현재 화면 설정 너비
 
+    private Image BGMScrollValue;
+    private Image SFXScrollValue;
+    private RectTransform BGMrect;
+    private RectTransform SFXrect;
+
     private void Awake() {
         mainGroup = transform.parent.GetChild(0).gameObject;
         windowModeText = transform.GetChild(2).Find("WindowModeValueText").GetComponent<Text>();
         windowSizeText = transform.GetChild(3).Find("ResoultionValueText").GetComponent<Text>();
         selectActive = transform.GetChild(6).Find("ApplyActive").gameObject;
-        Debug.LogWarning("Awake First| " + selectActive.name);
+
+        BGMScrollValue = transform.Find("BGMGroup/Scroll/ScrollDefault").GetComponent<Image>();
+        SFXScrollValue = transform.Find("SFXGroup/Scroll/ScrollDefault").GetComponent<Image>();
+
+        BGMrect = transform.Find("BGMGroup/Scroll/ScrollButton").GetComponent<RectTransform>();
+        SFXrect = transform.Find("SFXGroup/Scroll/ScrollButton").GetComponent<RectTransform>();
 
         currentScreenMode = Save.instance.GameData.ScreenMode;
         currentScreenSize = Save.instance.GameData.ScreenSize;
@@ -61,6 +71,13 @@ public class OptionManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    private void OnEnable() {
+        BGMrect.anchoredPosition = AudioManager.instance.BGMPosition;
+        SFXrect.anchoredPosition = AudioManager.instance.SFXPosition;
+        BGMScrollValue.fillAmount = AudioManager.instance.BGMValue;
+        SFXScrollValue.fillAmount = AudioManager.instance.SFXValue;
     }
 
     // 사이즈 혹은 모드가 변경됬는지 확인

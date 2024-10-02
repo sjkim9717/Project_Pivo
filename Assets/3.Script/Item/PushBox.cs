@@ -20,6 +20,8 @@ public class PushBox : MonoBehaviour, IPushBox {
     private Vector3 pipestartPos = Vector3.zero;
     private Vector3 pipefinishPos = Vector3.zero;
 
+    private AudioSource pushboxAudio;
+
     private void Awake() {
         foreach (Transform child in transform) {
             if (child.tag == "PushBox") {
@@ -35,6 +37,7 @@ public class PushBox : MonoBehaviour, IPushBox {
 
         isPushBoxXMoving(ref isMoveXpos);
         SavePosition(isMoveXpos);
+        pushboxAudio = GetComponentInChildren<AudioSource>();
     }
     private void Start() {
         FindMinMaxCount();
@@ -116,6 +119,8 @@ public class PushBox : MonoBehaviour, IPushBox {
         if (horizontal == 0 && vertical == 0) return;
 
         float up = (horizontal > 0 || vertical > 0) ? 1 : -1;
+
+        if (!pushboxAudio.isPlaying) pushboxAudio.Play();
 
         if (PipeObject != null) {
 

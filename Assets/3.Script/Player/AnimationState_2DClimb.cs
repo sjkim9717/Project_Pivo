@@ -13,7 +13,7 @@ public class AnimationState_2DClimb : StateMachineBehaviour {
         player2D = animator.transform.gameObject;
         player2DTranform = player2D.transform;
 
-        movingPosition = new Vector3(player2DTranform.localScale.x * 1f, 2f, 0f);
+        movingPosition = new Vector3(player2DTranform.localScale.x * 1.5f, 2f, 0f);
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

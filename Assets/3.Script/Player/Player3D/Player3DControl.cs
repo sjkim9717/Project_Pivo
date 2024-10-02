@@ -9,28 +9,26 @@ public class Player3DControl : MonoBehaviour {
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
 
+    private Vector3 positionToMove = Vector3.zero;
     public Animator Ani3D { get; private set; }
     public GameObject Player { get; private set; }
     public Rigidbody PlayerRigid { get; private set; }
 
-    private PlayerManage playerManager;
-
-    private Vector3 positionToMove = Vector3.zero;
+    private PlayerManage playerManage;
 
     private Dictionary<PlayerState, PlayerState3D> stateDic;
     private PlayerState3D currentStateComponent;
 
     private GameObject groundPoint;
     public GameObject InteractionObject;
-
     public GameObject GroundPoint { get { return groundPoint; } }
 
     private void Awake() {
-        playerManager = transform.parent.GetComponent<PlayerManage>();
+        playerManage = transform.parent.GetComponent<PlayerManage>();
 
-        Ani3D = playerManager.Ani3D;
-        Player = playerManager.Player3D;
-        PlayerRigid = playerManager.PlayerRigid3D;
+        Ani3D = playerManage.Ani3D;
+        Player = playerManage.Player3D;
+        PlayerRigid = playerManage.PlayerRigid3D;
 
         groundPoint = Player.transform.GetChild(1).gameObject;
 
@@ -126,7 +124,7 @@ public class Player3DControl : MonoBehaviour {
         }
         // 새로운 상태를 가져와서 활성화
         if (stateDic.TryGetValue(newState, out PlayerState3D newStateComponent)) {
-            playerManager.CurrentState = newState;
+            playerManage.CurrentState = newState;
 
             currentStateComponent = newStateComponent;
             currentStateComponent.enabled = true;
@@ -139,12 +137,13 @@ public class Player3DControl : MonoBehaviour {
 
 
     public void Move(float horizontalInput, float verticalInput) {
-
+       
         PlayerRigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
 
         if (dir != Vector3.zero) {
+            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "move");
 
             // player rotation
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.fixedDeltaTime * moveSpeed);

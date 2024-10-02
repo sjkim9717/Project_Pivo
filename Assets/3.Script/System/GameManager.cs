@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour {
 
     private StageClearControl[] stageClearController;
 
-    public AudioSource InGameAudio;
+
 
     public readonly Dictionary<string, StageLevel> stageMap = new Dictionary<string, StageLevel>() {
         { "GrassStage_Stage1", StageLevel.GrassStageLevel_1 },
@@ -54,7 +54,6 @@ public class GameManager : MonoBehaviour {
         fadeGroup = transform.GetChild(4).gameObject;
         loadingGroup = transform.GetChild(5).gameObject;
         //UI_Title = FindObjectOfType<MainTitleManager>().gameObject;
-        InGameAudio = GetComponent<AudioSource>();
     }
 
     private void OnEnable() {
@@ -74,28 +73,8 @@ public class GameManager : MonoBehaviour {
         currentStage = SelectSceneLevelWithSceneName(sceneName);
         Debug.LogWarning($"Game Manager Scene loaded SceneName : {sceneName}");
 
-        if (currentStage != StageLevel.StageSelect) PreviousGameStage = currentStage;
-
-        string[] include = null; // 초기화
-
-        // 오디오 BGM
-        if (sceneName.Contains("Snow")) {
-            include = new string[] { "Snow", "Loop" }; // 배열 초기화
-        }
-        else if (sceneName.Contains("Grass")) {
-            include = new string[] { "Grass", "Loop" }; // 배열 초기화
-        }
-
-
-        if (include != null) {
-            string playBgm = AudioManager.instance.GetDictionaryKey<string, AudioClip>(AudioManager.BGM, include);
-
-            if (playBgm != null) { // playBgm이 null이 아닐 경우에만 재생
-                AudioManager.instance.BGM_Play(AudioManager.instance.WorldAudio, playBgm);
-            }
-            else {
-                Debug.LogWarning("No matching BGM found for the given scene.");
-            }
+        if (currentStage != StageLevel.StageSelect) {
+            PreviousGameStage = currentStage;
         }
     }
 
@@ -143,7 +122,17 @@ public class GameManager : MonoBehaviour {
 
     // StageClear 이벤트가 호출될 때 실행될 메서드
     private void OnStageClear() {
-        
+
+        // 오디오 SFX
+        string[] include = { "StageClear" };
+        string playSFX = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
+
+        if (playSFX != null) { // playBgm이 null이 아닐 경우에만 재생
+            AudioManager.instance.BGM_Play(AudioManager.instance.InGameAudio, playSFX);
+        }
+        else {
+            Debug.LogWarning($"No matching SFX found for {include}.");
+        }
 
         playerManage.CurrentMode = PlayerMode.AutoMode;
 
