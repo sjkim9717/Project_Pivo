@@ -86,6 +86,7 @@ public class Monster2DState_Attack : IMonsterStateBase {
     }
 
     public void SettingEmotion() {
+        if (!emotionOriginPos.gameObject.activeSelf) emotionOriginPos.gameObject.SetActive(true);
         Vector3 wantToMovePos = camera.WorldToScreenPoint(emotionPos);                             // 3D 공간의 원하는 위치를 스크린 좌표로 변환
 
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);

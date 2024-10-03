@@ -84,6 +84,7 @@ public class Monster3DState_Idle : IMonsterStateBase {
 
     public void SettingEmotion() {
         // emotion position 
+        if (!emotionOriginPos.gameObject.activeSelf) emotionOriginPos.gameObject.SetActive(true);
         Vector3 targetPos = monster.transform.position - emoDirection * iconDistance;
         emotionPos = targetPos;
 
