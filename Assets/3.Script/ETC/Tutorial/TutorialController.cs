@@ -42,7 +42,7 @@ public class TutorialController : MonoBehaviour {
         tutorialImg = canvas.GetComponentsInChildren<Image>()[1];
         tutorialText = canvas.GetComponentInChildren<Text>();
 
-        if (!GameManager.isLoadTitle || GameManager.instance.IsIntroCompleted) {
+        if (!GameManager.isLoadTitle) {
             StopTutorial();
         }
         else {  // title을 불러오는 경우 스테이지가 끝나야만 tutorial 종료됨
