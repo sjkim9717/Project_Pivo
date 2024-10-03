@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d76c86bfa182e84690897e7e38c7d31, type: 3}
+  m_Name: GateData_Grass_1-1
+  m_EditorClassIdentifier: 
+  StageLevel: 0
+  IsBlueColor: 1
+  DoorData: {fileID: 11400000, guid: bbf90330715ef584c9ed8be771770025, type: 2}
+  RequreKeyNum: 2
+  DoorPosition: {x: 27.6, y: -0.97, z: -4.3}
+  KeyData: {fileID: 11400000, guid: 57967969f26512f46b99662e78068ccd, type: 2}
+  KeyPosition:
+  - {x: 5.82, y: 5.17, z: 6.7}
+  - {x: 10.9, y: -7.83, z: -21.15}
+  KeyRotation:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}

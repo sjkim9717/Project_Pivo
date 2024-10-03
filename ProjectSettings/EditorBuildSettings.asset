@@ -4,5 +4,29 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/1.Scene/GrassStage_Stage1.unity
+    guid: 52d6aa69061506140a6ec69d37d61a2a
+  - enabled: 1
+    path: Assets/1.Scene/GrassStage_Stage5.unity
+    guid: fd39f19ff79116a4697cb3e14737b393
+  - enabled: 1
+    path: Assets/1.Scene/GrassStage_Stage7.unity
+    guid: fae531c8c3beaae449e0c5b3ffcac021
+  - enabled: 1
+    path: Assets/1.Scene/SnowStage_Stage3.unity
+    guid: 60206c4aab912f54ab56820b0a88d05b
+  - enabled: 1
+    path: Assets/1.Scene/SnowStage_Stage4.unity
+    guid: 19be17e49e1626d4c8511d1277d53d47
+  - enabled: 1
+    path: Assets/1.Scene/SnowStage_Stage6.unity
+    guid: e230d93278be5194f8850164d5801ad7
+  - enabled: 1
+    path: Assets/1.Scene/SnowStage_Stage7.unity
+    guid: d0dbbf39855551147852cc8569cbad51
+  - enabled: 1
+    path: Assets/1.Scene/StageSelect_Grass.unity
+    guid: cd8f551cad7a87f4788229a337af3214
   m_configObjects: {}

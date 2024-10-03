@@ -3,7 +3,24 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Climb
+  - ParentTile
+  - Objects
+  - Tutorial
+  - PushBox
+  - PushSwitch
+  - PushTile
+  - BombSpawner
+  - Bomb
+  - Destroy
+  - OpenPanel
+  - Tree
+  - Triggers
+  - Puzzle
+  - Stage_Clear
+  - Objects_2
+  - MoveTile
   layers:
   - Default
   - TransparentFX
@@ -11,12 +28,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - 3DPlayer
+  - 2DPlayer
+  - ActiveTrue
+  - ActiveFalse
+  - Destroy
+  - Ground
   - 
   - 
   - 

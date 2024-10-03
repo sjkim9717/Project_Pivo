@@ -9,38 +9,38 @@ public class FindMissingScripts : MonoBehaviour
     [MenuItem("Utility/Remove Missing Script")]
     private static void RemoveAllMissingScripts() {
 
-        // ÇöÀç È°¼ºÈ­µÈ ¾ÀÀÇ ¸ðµç ·çÆ®(GameObject) ¿ÀºêÁ§Æ®¸¦ °¡Á®¿É´Ï´Ù.
+        // í˜„ìž¬ í™œì„±í™”ëœ ì”¬ì˜ ëª¨ë“  ë£¨íŠ¸(GameObject) ì˜¤ë¸Œì íŠ¸ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
         GameObject[] rootGameObjects = EditorSceneManager.GetActiveScene().GetRootGameObjects();
 
-        // ·çÆ® ¿ÀºêÁ§Æ®µé ¾Æ·¡¿¡ ÀÖ´Â ¸ðµç ¿ÀºêÁ§Æ®¸¦ ¼öÁýÇÕ´Ï´Ù.
+        // ë£¨íŠ¸ ì˜¤ë¸Œì íŠ¸ë“¤ ì•„ëž˜ì— ìžˆëŠ” ëª¨ë“  ì˜¤ë¸Œì íŠ¸ë¥¼ ìˆ˜ì§‘í•©ë‹ˆë‹¤.
         Object[] allObjectsInHierarchy = EditorUtility.CollectDeepHierarchy(rootGameObjects);
 
-        int componentCount = 0;  // Á¦°ÅµÈ ¹Ì½Ì ½ºÅ©¸³Æ® ÄÄÆ÷³ÍÆ®ÀÇ ÃÑ °³¼ö¸¦ ±â·ÏÇÏ±â À§ÇÑ º¯¼ö
-        int gameObjectCount = 0; // ¹Ì½Ì ½ºÅ©¸³Æ® ÄÄÆ÷³ÍÆ®¸¦ °¡Áö°í ÀÖ´ø °ÔÀÓ ¿ÀºêÁ§Æ®ÀÇ ¼ö¸¦ ±â·ÏÇÏ±â À§ÇÑ º¯¼ö
+        int componentCount = 0;  // ì œê±°ëœ ë¯¸ì‹± ìŠ¤í¬ë¦½íŠ¸ ì»´í¬ë„ŒíŠ¸ì˜ ì´ ê°œìˆ˜ë¥¼ ê¸°ë¡í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
+        int gameObjectCount = 0; // ë¯¸ì‹± ìŠ¤í¬ë¦½íŠ¸ ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì§€ê³  ìžˆë˜ ê²Œìž„ ì˜¤ë¸Œì íŠ¸ì˜ ìˆ˜ë¥¼ ê¸°ë¡í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
 
-        // ÇÏÀÌ¾î¶óÅ°¿¡ ÀÖ´Â ¸ðµç ¿ÀºêÁ§Æ®¸¦ ¼øÈ¸ÇÕ´Ï´Ù.
+        // í•˜ì´ì–´ë¼í‚¤ì— ìžˆëŠ” ëª¨ë“  ì˜¤ë¸Œì íŠ¸ë¥¼ ìˆœíšŒí•©ë‹ˆë‹¤.
         foreach (Object obj in allObjectsInHierarchy) {
-            // ¿ÀºêÁ§Æ®°¡ °ÔÀÓ ¿ÀºêÁ§Æ®ÀÎÁö È®ÀÎÇÕ´Ï´Ù.
+            // ì˜¤ë¸Œì íŠ¸ê°€ ê²Œìž„ ì˜¤ë¸Œì íŠ¸ì¸ì§€ í™•ì¸í•©ë‹ˆë‹¤.
             if (obj is GameObject go) {
-                // ÇØ´ç °ÔÀÓ ¿ÀºêÁ§Æ®¿¡ ÀÖ´Â ¹Ì½Ì ½ºÅ©¸³Æ® ÄÄÆ÷³ÍÆ®ÀÇ ¼ö¸¦ °¡Á®¿É´Ï´Ù.
+                // í•´ë‹¹ ê²Œìž„ ì˜¤ë¸Œì íŠ¸ì— ìžˆëŠ” ë¯¸ì‹± ìŠ¤í¬ë¦½íŠ¸ ì»´í¬ë„ŒíŠ¸ì˜ ìˆ˜ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
                 int count = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(go);
 
-                // ¹Ì½Ì ½ºÅ©¸³Æ® ÄÄÆ÷³ÍÆ®°¡ ÇÏ³ª ÀÌ»ó ÀÖÀ» °æ¿ì
+                // ë¯¸ì‹± ìŠ¤í¬ë¦½íŠ¸ ì»´í¬ë„ŒíŠ¸ê°€ í•˜ë‚˜ ì´ìƒ ìžˆì„ ê²½ìš°
                 if (count > 0) {
-                    // ÀÛ¾÷À» µÇµ¹¸± ¼ö ÀÖµµ·Ï ÇØ´ç °ÔÀÓ ¿ÀºêÁ§Æ®¿¡ ´ëÇÑ Undo¸¦ µî·ÏÇÕ´Ï´Ù.
+                    // ìž‘ì—…ì„ ë˜ëŒë¦´ ìˆ˜ ìžˆë„ë¡ í•´ë‹¹ ê²Œìž„ ì˜¤ë¸Œì íŠ¸ì— ëŒ€í•œ Undoë¥¼ ë“±ë¡í•©ë‹ˆë‹¤.
                     Undo.RegisterCompleteObjectUndo(go, "Remove Missing Scripts");
 
-                    // ¹Ì½Ì ½ºÅ©¸³Æ® ÄÄÆ÷³ÍÆ®¸¦ Á¦°ÅÇÕ´Ï´Ù.
+                    // ë¯¸ì‹± ìŠ¤í¬ë¦½íŠ¸ ì»´í¬ë„ŒíŠ¸ë¥¼ ì œê±°í•©ë‹ˆë‹¤.
                     GameObjectUtility.RemoveMonoBehavioursWithMissingScript(go);
 
-                    // Ä«¿îÅÍ¸¦ ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
+                    // ì¹´ìš´í„°ë¥¼ ì—…ë°ì´íŠ¸í•©ë‹ˆë‹¤.
                     componentCount += count;
                     gameObjectCount++;
                 }
             }
         }
 
-        // ÄÜ¼Ö¿¡ °á°ú¸¦ Ãâ·ÂÇÕ´Ï´Ù.
-        Debug.Log($"ÃÑ {gameObjectCount}°³ÀÇ °ÔÀÓ ¿ÀºêÁ§Æ®¿¡¼­ {componentCount}°³ÀÇ ¹Ì½Ì ½ºÅ©¸³Æ® ÄÄÆ÷³ÍÆ®¸¦ Á¦°Å.");
+        // ì½˜ì†”ì— ê²°ê³¼ë¥¼ ì¶œë ¥í•©ë‹ˆë‹¤.
+        Debug.Log($"ì´ {gameObjectCount}ê°œì˜ ê²Œìž„ ì˜¤ë¸Œì íŠ¸ì—ì„œ {componentCount}ê°œì˜ ë¯¸ì‹± ìŠ¤í¬ë¦½íŠ¸ ì»´í¬ë„ŒíŠ¸ë¥¼ ì œê±°.");
     }
 }
