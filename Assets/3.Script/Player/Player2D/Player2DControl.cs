@@ -92,13 +92,13 @@ public class Player2DControl : MonoBehaviour {
     }
 
     public void Move(float horizontalInput) {
-        AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "move");
 
         PlayerRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         Vector3 dir = new Vector3(horizontalInput, 0, 0).normalized;
 
         if (horizontalInput != 0) {
+            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "move");
 
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
             transform.localScale = new Vector3(moveDirection, 1f, 1f);

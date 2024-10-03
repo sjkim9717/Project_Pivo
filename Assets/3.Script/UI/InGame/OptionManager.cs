@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,8 +18,8 @@ public class OptionManager : MonoBehaviour {
     // 해상도 변경
     private List<int[]> screenSizeList = new List<int[]>
     {
-        new int[] { 960, 540 },
-        new int[] { 1024, 576 },
+        //new int[] { 960, 540 },
+        //new int[] { 1024, 576 },
         new int[] { 1152, 648 },
         new int[] { 1366, 768 },
         new int[] { 1280, 720 },
@@ -94,22 +95,12 @@ public class OptionManager : MonoBehaviour {
         int maxCount = Enum.GetValues(typeof(ScreenMode)).Length;
 
         if (RightArrow) {
-            if ((int)selectScreenMode < maxCount - 1) {
-                selectScreenMode = (ScreenMode)((int)selectScreenMode + 1);
-            }
-            else {
-                selectScreenMode = (ScreenMode)0;  // 최대값일 경우 0번째 값으로
-            }
+            selectScreenMode = (ScreenMode)(((int)selectScreenMode + 1) % maxCount);
         }
         else {
-            if ((int)selectScreenMode > 0) {
-                selectScreenMode = (ScreenMode)((int)selectScreenMode - 1);
-            }
-            else {
-                selectScreenMode = (ScreenMode)(maxCount - 1);  // 0번째일 경우 최대값으로
-            }
+            selectScreenMode = (ScreenMode)(((int)selectScreenMode - 1 + maxCount) % maxCount);
         }
-        //windowModeText.text = selectScreenMode.ToString();
+
         windowModeText.text = (string)Enum.GetName(typeof(ScreenMode), selectScreenMode);
     }
 
@@ -117,23 +108,14 @@ public class OptionManager : MonoBehaviour {
     // screen size 설정 버튼 눌릴 경우 변경
     public void ButtonOnClick_ScreenSize(bool RightArrow) {
         int maxCount = screenSizeList.Count;
+
         if (RightArrow) {
-            if (selectScreenSizeIndex < maxCount - 1) {
-                selectScreenSizeIndex++;
-            }
-            else {
-                selectScreenSizeIndex = 0;
-            }
+            selectScreenSizeIndex = (selectScreenSizeIndex + 1) % maxCount;
         }
         else {
-            if (selectScreenSizeIndex > 0) {
-                selectScreenSizeIndex--;
-            }
-            else {
-                selectScreenSizeIndex = maxCount -1;
-            }
-
+            selectScreenSizeIndex = (selectScreenSizeIndex - 1 + maxCount) % maxCount;
         }
+
         selectScreenSize = screenSizeList[selectScreenSizeIndex];
         windowSizeText.text = string.Format($"{selectScreenSize[0]} * {selectScreenSize[1]}");
     }
@@ -164,15 +146,13 @@ public class OptionManager : MonoBehaviour {
                 break;
             case ScreenMode.FullScreen:
                 Screen.SetResolution(width, height, FullScreenMode.ExclusiveFullScreen);
-                UpdateCameraScaler(width, height);
                 break;
             case ScreenMode.FullScreenWindow:
                 Screen.SetResolution(width, height, FullScreenMode.FullScreenWindow);
-                UpdateCameraScaler(width, height);
                 break;
         }
 
-        UpdateCanvasScaler();
+        StartCoroutine(UpdateScalersNextFrame(width, height));
 
         currentScreenMode = selectScreenMode;
         currentScreenSize = selectScreenSize;
@@ -180,6 +160,19 @@ public class OptionManager : MonoBehaviour {
         Save.instance.SaveWindow(selectScreenMode, selectScreenSize);
 
         Debug.Log(" Window Mode | " + selectScreenMode + "currentScreenSize | " + currentScreenSize[0] + " | " + currentScreenSize[1]);
+
+    }
+
+    private IEnumerator UpdateScalersNextFrame(float width, float height) {
+        // 한 프레임 대기
+        yield return null;
+
+        UpdateCanvasScaler();
+
+        // 창 모드가 아닌 경우에만 카메라 스케일 업데이트
+        if (selectScreenMode == ScreenMode.FullScreen || selectScreenMode == ScreenMode.FullScreenWindow) {
+            UpdateCameraScaler(width, height);
+        }
 
     }
 
@@ -191,29 +184,37 @@ public class OptionManager : MonoBehaviour {
         CanvasScaler[] allCanvasScalers = FindObjectsOfType<CanvasScaler>();
 
         foreach (CanvasScaler canvasScaler in allCanvasScalers) {
-            // 현재 해상도 가로 비율이 더 길 경우
-            if (currentAspectRatio > fixedAspectRatio) {
-                canvasScaler.matchWidthOrHeight = 1;
-            }
-            // 현재 해상도의 세로 비율이 더 길 경우
-            else if (currentAspectRatio < fixedAspectRatio) {
-                canvasScaler.matchWidthOrHeight = 0;
+
+            // 비율에 따라 matchWidthOrHeight 값을 계산
+            float ratioDifference = currentAspectRatio / fixedAspectRatio;
+
+            // 비율이 동일한 경우
+            if (Mathf.Approximately(currentAspectRatio, fixedAspectRatio)) {
+                canvasScaler.matchWidthOrHeight = 0.5f; // 중앙에 맞춤
             }
             else {
-                canvasScaler.matchWidthOrHeight = 0.5f;
+                if (currentAspectRatio > fixedAspectRatio) {
+                    // 현재 가로 비율이 더 긴 경우, 높이에 맞춤
+                    canvasScaler.matchWidthOrHeight = Mathf.Clamp(1 - ratioDifference, 0, 1);
+                }
+                else {
+                    // 현재 세로 비율이 더 긴 경우, 너비에 맞춤
+                    canvasScaler.matchWidthOrHeight = Mathf.Clamp(ratioDifference, 0, 1);
+                }
             }
+
         }
     }
 
     private void UpdateCameraScaler(float width, float height) {
         Camera mainCam = Camera.main;
-        if(mainCam != null) {
+        if (mainCam != null) {
             Rect rect = mainCam.rect;
 
             float currentAspectRatio = width / height;
             float scaleHeight = currentAspectRatio / fixedAspectRatio;
 
-            if( scaleHeight < 1.0f) {
+            if (scaleHeight < 1.0f) {
                 rect.height = scaleHeight;                 // 비율에 맞춰 높이 조정
                 rect.y = (1.0f - scaleHeight) / 2.0f;      // 중앙 정렬
             }

@@ -52,6 +52,7 @@ public class PlayerState3D_Skill : PlayerState3D {
 
     public override void EnterState() {
         Control3D.Ani3D.SetBool("IsTryUseSkill", true);
+        AudioManager.instance.SFX_Play(playerManage.PlayerAudio, "ViewChange_ChangStart");
     }
     private void Update() {
         skillSectionInput = Input.GetAxis("SkillSection");
@@ -80,7 +81,7 @@ public class PlayerState3D_Skill : PlayerState3D {
             // 각 화살표 키가 눌렸는지 확인
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow)) {  // 막힌 오브젝트의 위치를 비교함
                 if (!IsMoveNotAllowed()) {
-                    AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "movetile");
+                    AudioManager.instance.SFX_Play(playerManage.PlayerAudio, "ViewChange_Cast");
                     MoveSectionLine(true);
                 }
                 else {
@@ -91,7 +92,7 @@ public class PlayerState3D_Skill : PlayerState3D {
             }
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
                 if (!IsMoveNotAllowed()) {
-                    AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "movetile");
+                    AudioManager.instance.SFX_Play(playerManage.PlayerAudio, "ViewChange_Cast");
                     MoveSectionLine(false);
                 }
                 else {
@@ -127,6 +128,8 @@ public class PlayerState3D_Skill : PlayerState3D {
 
             sectionLine.SetActive(false);
             sectionLine_First.SetActive(false);
+
+            AudioManager.instance.SFX_Play(playerManage.PlayerAudio, "ViewChange_ChangeEnd");
         }
 
 

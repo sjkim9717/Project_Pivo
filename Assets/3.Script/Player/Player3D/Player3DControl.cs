@@ -143,9 +143,7 @@ public class Player3DControl : MonoBehaviour {
         Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
 
         if (dir != Vector3.zero) {
-            string[] include = { "move" };
-            string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.Corgi, include);
-            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, key);
+            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "move");
 
             // player rotation
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.fixedDeltaTime * moveSpeed);

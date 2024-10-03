@@ -79,7 +79,7 @@ public class PipeManager : MonoBehaviour {
     }
 
     private void ChangeMaterialWhenFinish() {
-        string[] include = { "Magic" };
+        string[] include = { "Magic", "Activate" };
         string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
         AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, key);
 

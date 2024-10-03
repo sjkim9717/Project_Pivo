@@ -17,6 +17,10 @@ public class MovingSwitch : MonoBehaviour {
         if (other.CompareTag("Player") && !isPushed) {
             isPushed = true;
             movingObject.OderToMoveObjects(Password);
+
+            string[] include = { "TileButton" };
+            string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
+            AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, key);
         }
     }
 

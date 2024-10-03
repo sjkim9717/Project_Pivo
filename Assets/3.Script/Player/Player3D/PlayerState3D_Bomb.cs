@@ -59,6 +59,8 @@ public class PlayerState3D_Bomb : PlayerState3D {
                 bomb.IBombMoveEnd();
                 playerManage.SetPlantBomb(bomb);
                 Control3D.ChangeState(PlayerState.Idle);
+
+                AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, "Boom");
             }
         }
     }

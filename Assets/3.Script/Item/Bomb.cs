@@ -50,6 +50,8 @@ public class Bomb : MonoBehaviour, IBomb {
         BombToMove = bombRigid.position;
         Vector3 initPos = new Vector3(transform.parent.position.x + transform.parent.position.y + 2, transform.parent.position.z);
         originPos = initPos;
+
+        AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, "BombFire");
     }
 
     private void Update() {

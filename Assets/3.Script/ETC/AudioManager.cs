@@ -159,9 +159,9 @@ public class AudioManager : MonoBehaviour {
     }
 
     private void Init_Corgi() {
-        string[] subFolder = Directory.GetDirectories(Application.dataPath + "/Resources/Sounds/corgi");
-        foreach (var folder in subFolder) {
-            string folderName = Path.GetFileName(folder);
+        string[] subFolder = { "climb", "move", "putend" };
+
+        foreach (var folderName in subFolder) {
             AudioClip[] clips = Resources.LoadAll<AudioClip>($"Sounds/corgi/{folderName}");
 
             if (clips.Length > 0) {
@@ -186,12 +186,6 @@ public class AudioManager : MonoBehaviour {
 
     public void SFX_Play(AudioSource audioSource, string key) {
         if (SFX.TryGetValue(key, out List<AudioClip> clips)) {
-            // 현재 클립이 동일하고 재생 중이라면 아무 것도 하지 않고 메서드를 종료
-            if (audioSource.clip != null && audioSource.clip.name == key && audioSource.isPlaying) {
-                // 현재 클립이 동일하고 재생 중이면 아무것도 하지 않고 메서드를 종료
-                return;
-            }
-
             int randomIndex = Random.Range(0, clips.Count);
 
             // 클립이 다르거나 재생 중이지 않다면 클립을 변경하고 재생
@@ -202,7 +196,7 @@ public class AudioManager : MonoBehaviour {
     public void Corgi_Play(AudioSource audioSource, string key) {
         if (Corgi.TryGetValue(key, out List<AudioClip> clips)) {
             // 현재 클립이 동일하고 재생 중이라면 아무 것도 하지 않고 메서드를 종료
-            if (audioSource.isPlaying) {
+            if (audioSource.isPlaying && clips.Contains(audioSource.clip)) {
                 return;
             }
 
@@ -214,6 +208,12 @@ public class AudioManager : MonoBehaviour {
         }
     }
 
+    public void StopPlaying(AudioSource audioSource) {
+        if (audioSource.isPlaying) {
+            audioSource.Stop();
+            audioSource.clip = null;
+        }
+    }
     public string GetDictionaryKey<TKey, Tvalue>(Dictionary<TKey, Tvalue> dictionary, string[] include) {
         TKey[] keys = new TKey[dictionary.Keys.Count];
         dictionary.Keys.CopyTo(keys, 0);
@@ -237,8 +237,7 @@ public class AudioManager : MonoBehaviour {
     }
 
 
-    // Audio Mixer
-    // TODO: 해당 스크롤에 연결
+    // Audio Mixer 해당 스크롤에 연결
     public void Audio_OnPointerDown(GameObject gameObject) {
         selectScrollButton = gameObject;
         Debug.Log(" 버튼위치 확인 | " + gameObject.name + " | position | " + gameObject.GetComponent<RectTransform>().anchoredPosition);

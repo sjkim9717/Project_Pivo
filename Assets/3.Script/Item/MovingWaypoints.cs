@@ -20,6 +20,10 @@ public class MovingWaypoints : MonoBehaviour {
 
     public IEnumerator StartMove(Vector3 waypoint) {
 
+        string[] include = { "Movetile" };
+        string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
+        AudioManager.instance.SFX_Play(AudioManager.instance.InGameAudio, key);
+
         Vector3 startPosition = transform.position;
         Vector3 endPosition = waypoint;
 
@@ -28,11 +32,12 @@ public class MovingWaypoints : MonoBehaviour {
             elapsedTime += Time.deltaTime * moveSpeed;
             transform.position = Vector3.Slerp(startPosition, endPosition, elapsedTime);
 
-            //Debug.Log("StartMove | " + transform.name);
-            //Debug.Log("StartMove | " + transform.position);
             yield return null;
         }
         transform.position = waypoint;
+
+        AudioManager.instance.StopPlaying(AudioManager.instance.InGameAudio);
+
         IsMoved?.Invoke();
     }
 }

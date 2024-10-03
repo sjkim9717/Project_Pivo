@@ -28,7 +28,8 @@ public class PlayerState2D_Skill : PlayerState2D {
             playerManage.IsChangingModeTo3D = true;
             Control2D.ChangeState(PlayerState.Idle);
             playerManage.SwitchMode();
-               
+
+            AudioManager.instance.SFX_Play(playerManage.PlayerAudio, "ViewChange_ChangeEnd");
         }
 
         if (skillSectionInput == 0 && isSkillButtonPressed) {                           // 스킬 버튼이 해제되었는지 감지
