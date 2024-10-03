@@ -58,11 +58,10 @@ public class PlayerState3D_Holding : PlayerState3D {
                 }
                 else if (skillSectionInput != 0) {
                     playerManage.IsChangingModeTo3D = true;
-                    //TODO: 2D로 변경되면 잘려있는 친구들은 남아있어야함
+                                        
                     playerManage.CurrentMode = PlayerMode.Player2D;
-                    foreach (ConvertMode item in convertMode) {
+                    foreach (ConvertMode item in convertMode) {                     // 2D로 변경되면 잘려있는 친구들은 남아있어야함
                         item.ChangeLayerActiveTrueWhen3DModeCancle();
-                        //item.ChangeActiveWithLayer();
                     }
                     playerManage.Change2D();
                     Debug.Log("2D 모드로 전환됨");

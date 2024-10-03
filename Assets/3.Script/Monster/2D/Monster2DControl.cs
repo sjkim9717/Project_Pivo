@@ -21,7 +21,6 @@ public class Monster2DControl : MonsterControl {
     }
     private void OnEnable() {
         if (mManager.IsPassOutCalled) {
-            Debug.LogWarning($" {Monster.name} | ispassout called");
             ChangeState(PassOut2DState);
         }
     }
@@ -32,7 +31,7 @@ public class Monster2DControl : MonsterControl {
     }
 
     public override void ChangeState(IMonsterStateBase newState) {
-        Debug.LogWarning("monster 2D state change | current State | " + currentState + " | new State | " + newState);
+        //Debug.LogWarning("monster 2D state change | current State | " + currentState + " | new State | " + newState);
 
         //if (currentState == newState) return; // 동일 상태 체크
         currentState?.ExitState(this);

@@ -39,9 +39,10 @@ public class PipeObject : MonoBehaviour {
     private void Start() {
         SwitchMode();
     }
+
+    // 가운데는 모드가 변경될 경우 연결되어있는지 확인해서 불 밝혀야함
     private void Update() {
         if (playerManage.CurrentMode == PlayerMode.Player2D) {
-            //TODO: 가운데는 모드가 변경될 경우 연결되어있는지 확인해서 불 밝혀야함
             if (gameObject.activeSelf) {
                 if (Waypoint.IsStartConnect) {
                     if (State is Terminal.Mid) {
@@ -149,7 +150,7 @@ public class PipeObject : MonoBehaviour {
     }
 
 
-    //TODO: [수정 필요] 문제가 있구만
+    // 현재 파이프가 스킬 섹션안에 있는지 확인
     private bool IsInSelectArea() {
         if (playerManage.StartSection.z >= playerManage.FinishSection.z) {
             if (transform.position.z <= playerManage.StartSection.z && transform.position.z >= playerManage.FinishSection.z) return true;
@@ -163,7 +164,7 @@ public class PipeObject : MonoBehaviour {
     #endregion
 
     #region collision check
-    // TODO: x, y축으로 겹칠 수 있음 z축 -쪽을 우선 확인해야함 근데 동시 처리가 안 됨
+    // x, y축으로 겹칠 수 있음 z축 -쪽을 우선 확인해야함 근데 동시 처리가 안 됨
 
     private void OnTriggerEnter(Collider other) {
         if (other.transform.TryGetComponent(out PipeObject pipe)) {

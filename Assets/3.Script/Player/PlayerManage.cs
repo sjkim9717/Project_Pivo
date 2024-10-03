@@ -138,7 +138,7 @@ public class PlayerManage : PlayerBase {
 
     public void Falling() {     // SetPlayerDieCount 증가하고 
 
-        if (CurrentMode == PlayerMode.Player3D) {//TODO:[Test 필요] y값 위치 확인 후 떨어져야함
+        if (CurrentMode == PlayerMode.Player3D) {
 
             base.PlayerRigid3D.constraints = RigidbodyConstraints.FreezeRotation;
             if (CheckPlayerYPosition(Player3D)) { Respawn(); }

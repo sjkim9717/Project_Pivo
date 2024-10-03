@@ -32,7 +32,6 @@ public class PlayerState2D_Idle : PlayerState2D {
         }
 
         if (Control2D.CheckGroundPointsEmpty(10f)) {    // 플레이어가 떨어지는지확인
-
             Control2D.ChangeState(PlayerState.Falling);
         }
 

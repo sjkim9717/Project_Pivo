@@ -90,7 +90,6 @@ public class StaticManager : MonoBehaviour {
     private void FindObjectsWhenLevelChange(Scene scene, LoadSceneMode mode) {
         Debug.LogWarning($"Static Manager Scene loaded: {scene.name}");
 
-        //TODO: [수정]
         if (scene.name == "GrassStage_Stage1") {
             UI_Title = FindObjectOfType<UI_Title>(true).gameObject;
             if (UI_Title != null) {

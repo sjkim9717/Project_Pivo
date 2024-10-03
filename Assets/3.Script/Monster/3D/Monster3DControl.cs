@@ -30,7 +30,7 @@ public class Monster3DControl : MonsterControl {
     }
 
     public override void ChangeState(IMonsterStateBase newState) {
-        Debug.LogWarning("monster state change | current State | " + currentState + " | new State | " + newState);
+        //Debug.LogWarning("monster state change | current State | " + currentState + " | new State | " + newState);
 
         //if (currentState == newState) return; // 동일 상태 체크
         currentState?.ExitState(this);

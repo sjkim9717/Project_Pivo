@@ -38,7 +38,6 @@ public class MonsterManager : MonsterBase {
     }
 
     // 플레이어가 선택한 범위 안에 있는지 
-    //TODO: 활성화는 따로임
     private bool IsInSelectArea() {
         float min = Mathf.Min(playerManage.StartSection.z, playerManage.FinishSection.z);
         float max = Mathf.Max(playerManage.StartSection.z, playerManage.FinishSection.z);
@@ -79,12 +78,9 @@ public class MonsterManager : MonsterBase {
     }
 
     private void ChangeEmotion() {
-        if(monster2D.layer == activeTrueLayerIndex || monster3D.layer== activeTrueLayerIndex) {
-            Debug.Log(" 뭐지 진짜 | " + currentState);
-        }
-        else {
+        if(monster2D.layer == activeFalseLayerIndex || monster3D.layer== activeFalseLayerIndex) {
             foreach (Transform item in emotion.transform) {
-                item.gameObject.SetActive(false);   
+                item.gameObject.SetActive(false);
             }
         }
     }

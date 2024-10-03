@@ -19,11 +19,9 @@ public class RandomTileManager : MonoBehaviour {
         tileGroups.Sort((x, y) => GetNumberFromName(x.name).CompareTo(GetNumberFromName(y.name)));
     }
 
-    //TODO: palyable director - random tile 활성화 타임 + signal 추가해서 메소드 연결해야함 
+    // palyable director - random tile 활성화 타임 + signal 추가해서 메소드 연결
     public void MoveRandomTile() {
-
         StartCoroutine(MoveTilesSequentially());
-
     }
 
 

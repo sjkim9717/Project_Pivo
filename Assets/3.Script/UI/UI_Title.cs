@@ -39,7 +39,7 @@ public class UI_Title : MonoBehaviour {
         }
     }
 
-    //TODO: escape 시 각종 UI 원위치
+    // escape 시 각종 UI 원위치
     private void Update() {
 
         if (Input.GetKeyDown(KeyCode.Escape)) Escape();

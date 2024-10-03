@@ -19,7 +19,7 @@ public class BombSpawner : MonoBehaviour {
         bomb = Instantiate(BombPrefab, transform);
         bomb.SetActive(false);
         bomb.name = BombPrefab.name;
-        //TODO: bomb 생성 위치 변경할 것
+
         originPos = new Vector3(transform.position.x, transform.position.y + 2, transform.position.z);
         bomb.transform.position = originPos;
     }

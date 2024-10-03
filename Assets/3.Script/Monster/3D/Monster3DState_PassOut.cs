@@ -20,7 +20,6 @@ public class Monster3DState_PassOut : IMonsterStateBase {
         emotionOriginPos = mManager.Emotion.transform.GetChild(2).GetComponent<RectTransform>();
     }
     public void EnterState(MonsterControl MControl) {
-        Debug.Log(" 3d enter state true | ");
         emotionOriginPos.gameObject.SetActive(true);
         mManager.Ani3D.SetBool("IsDead", true);
     }
@@ -29,7 +28,6 @@ public class Monster3DState_PassOut : IMonsterStateBase {
         else emotionOriginPos.gameObject.SetActive(false);
     }
     public void ExitState(MonsterControl MControl) {
-        Debug.Log(" 3d exit state false | " );
         emotionOriginPos.gameObject.SetActive(false);
         mManager.Ani3D.SetBool("IsDead", false);
     }
@@ -37,7 +35,6 @@ public class Monster3DState_PassOut : IMonsterStateBase {
 
     public bool CheckMonsterInCamera(GameObject gameObject) {
         if (camera == null) return false;
-        //if (PlayerManage.instance.CurrentMode != PlayerMode.Player3D) return false;
 
         Vector3 screenPoint = camera.WorldToViewportPoint(gameObject.transform.position);
         bool isInScreen = screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
@@ -45,6 +42,7 @@ public class Monster3DState_PassOut : IMonsterStateBase {
     }
 
     public void SettingEmotion() {
+        if(!emotionOriginPos.gameObject.activeSelf) emotionOriginPos.gameObject.SetActive(true);
         Vector3 wantToMovePos = camera.WorldToScreenPoint(emotionPos);                             // 3D 공간의 원하는 위치를 스크린 좌표로 변환
 
         emotionOriginPos.position = new Vector2(wantToMovePos.x, wantToMovePos.y + iconDistance);
