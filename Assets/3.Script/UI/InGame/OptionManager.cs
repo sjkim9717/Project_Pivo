@@ -21,8 +21,8 @@ public class OptionManager : MonoBehaviour {
         //new int[] { 960, 540 },
         //new int[] { 1024, 576 },
         new int[] { 1152, 648 },
-        new int[] { 1366, 768 },
         new int[] { 1280, 720 },
+        new int[] { 1366, 768 },
         new int[] { 1600, 900 },
         new int[] { 1920, 1080 }
     };
