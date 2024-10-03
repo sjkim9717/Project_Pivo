@@ -98,7 +98,9 @@ public class Player2DControl : MonoBehaviour {
         Vector3 dir = new Vector3(horizontalInput, 0, 0).normalized;
 
         if (horizontalInput != 0) {
-            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, "move");
+            string[] include = { "move" };
+            string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.Corgi, include);
+            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, key);
 
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
             transform.localScale = new Vector3(moveDirection, 1f, 1f);

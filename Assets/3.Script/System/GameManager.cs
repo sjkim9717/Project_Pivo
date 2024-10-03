@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour {
         if (currentStage != StageLevel.StageSelect) {
             PreviousGameStage = currentStage;
         }
+
     }
 
     // 씬이 변경될때마다 스테이지 클리어 조건 확인
@@ -198,6 +199,8 @@ public class GameManager : MonoBehaviour {
             fadeAlpha.a += Time.deltaTime * 0.6f; // Adjust speed if needed
             fadeAlpha.a = Mathf.Clamp01(0.2f + fadeAlpha.a); // Clamp between 0 and 1
             fade.color = fadeAlpha;
+
+            //Debug.LogWarning("로드 진행 상황: " + asyncLoad.progress);  // 0에서 1로 증가
 
             loadingAlpha.a = Mathf.PingPong(Time.time * 5, 0.2f) + 0.7f; // Pulses between 0.8 and 1.0
             loading.color = loadingAlpha;

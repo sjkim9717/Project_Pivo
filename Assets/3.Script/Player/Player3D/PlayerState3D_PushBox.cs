@@ -1,9 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 public class PlayerState3D_PushBox : PlayerState3D {
 
+    public bool isInitAnimationEnd = false;
+    public bool isEndAnimationEnd = false;
     private bool isButtonPressed = false;
     private IPushBox pushBox;
 
@@ -12,6 +14,8 @@ public class PlayerState3D_PushBox : PlayerState3D {
         Input.ResetInputAxes();
     }
     public override void EnterState() {
+        isInitAnimationEnd = false;
+        isEndAnimationEnd = false;
         SettingPlayerPosition();
         Control3D.Ani3D.SetBool("IsPushBox", true);
         isButtonPressed = false;
@@ -26,14 +30,13 @@ public class PlayerState3D_PushBox : PlayerState3D {
         verticalInput = Input.GetAxis("Vertical");
         interactionInput = Input.GetAxis("Interaction");
 
-        ChangeState();
+        if (isInitAnimationEnd) {
+            ChangeState();
+        }
+
     }
 
     private void ChangeState() {
-        if (playerManage.CurrentState == PlayerState.Dead) {
-            return;
-        }
-
         Control3D.Move(0, 0);
 
 
@@ -45,7 +48,8 @@ public class PlayerState3D_PushBox : PlayerState3D {
             }
         }
         else if (interactionInput != 0) {
-            Control3D.ChangeState(PlayerState.Idle);
+            isInitAnimationEnd = false;
+            StartCoroutine(ChangeStateToIdle());
         }
 
         if ((horizontalInput == 0 && verticalInput == 0) && isButtonPressed) {                           // 스킬 버튼이 해제되었는지 감지
@@ -68,9 +72,14 @@ public class PlayerState3D_PushBox : PlayerState3D {
         Control3D.PlayerRigid.MoveRotation(targetRotation);
     }
 
-
-    public override void ExitState() {
+    private IEnumerator ChangeStateToIdle() {
         Control3D.Ani3D.SetBool("IsPushBox", false);
+        while (!isEndAnimationEnd) {
+            yield return null;
+        }
+        Control3D.ChangeState(PlayerState.Idle);
+    }
+    public override void ExitState() {
         pushBox = null;
     }
 }

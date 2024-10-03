@@ -85,7 +85,7 @@ public class PlayerState3D_Skill : PlayerState3D {
                     MoveSectionLine(true);
                 }
                 else {
-                    string[] include = { "ViewChane", "Block" };
+                    string[] include = { "ViewChange", "Block" };
                     string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.SFX, include);
                     AudioManager.instance.SFX_Play(playerManage.PlayerAudio, key);
                 }
