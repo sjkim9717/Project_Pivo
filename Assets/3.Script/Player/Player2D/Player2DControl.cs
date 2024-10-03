@@ -8,6 +8,9 @@ public class Player2DControl : MonoBehaviour {
     [SerializeField] private float gravityAddSpeed = 2f;
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
+    private float moveAudioTime = 0f;
+    private float moveAudioCooldown = 0.2f;  // 오디오가 재생될 간격
+
     protected int activeFalseLayerIndex;
     private LayerMask layerMaskIndex;
 
@@ -98,9 +101,13 @@ public class Player2DControl : MonoBehaviour {
         Vector3 dir = new Vector3(horizontalInput, 0, 0).normalized;
 
         if (horizontalInput != 0) {
-            string[] include = { "move" };
-            string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.Corgi, include);
-            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, key);
+            moveAudioTime -= Time.deltaTime;
+            if (moveAudioTime <= 0f) {
+                string[] include = { "move" };
+                string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.Corgi, include);
+                AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, key);
+                moveAudioTime = moveAudioCooldown;
+            }
 
             float moveDirection = horizontalInput > 0 ? 1f : -1f;
             transform.localScale = new Vector3(moveDirection, 1f, 1f);
@@ -113,6 +120,7 @@ public class Player2DControl : MonoBehaviour {
             PlayerRigid.MovePosition(PlayerRigid.position + (Vector2)positionToMove);
         }
         else {
+            moveAudioTime = moveAudioCooldown;
             Vector3 currentVelocity = PlayerRigid.velocity;
             PlayerRigid.velocity = new Vector3(0, currentVelocity.y, 0);
         }

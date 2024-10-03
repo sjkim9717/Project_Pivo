@@ -8,6 +8,8 @@ public class Player3DControl : MonoBehaviour {
     [SerializeField] private float gravityAddSpeed = 2f;
     public float moveSpeed = 7f;
     private float gravity = -9.8f;
+    private float moveAudioTime = 0f;
+    private float moveAudioCooldown = 0.2f;  // 오디오가 재생될 간격
 
     private Vector3 positionToMove = Vector3.zero;
     public Animator Ani3D { get; private set; }
@@ -135,7 +137,6 @@ public class Player3DControl : MonoBehaviour {
         }
     }
 
-
     public void Move(float horizontalInput, float verticalInput) {
        
         PlayerRigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -143,9 +144,13 @@ public class Player3DControl : MonoBehaviour {
         Vector3 dir = new Vector3(horizontalInput, 0, verticalInput).normalized;
 
         if (dir != Vector3.zero) {
-            string[] include = { "move" };
-            string key = AudioManager.instance.GetDictionaryKey<string, List< AudioClip>>(AudioManager.Corgi, include);
-            AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, key);
+            moveAudioTime -= Time.deltaTime;
+            if (moveAudioTime <= 0f) {
+                string[] include = { "move" };
+                string key = AudioManager.instance.GetDictionaryKey<string, List<AudioClip>>(AudioManager.Corgi, include);
+                AudioManager.instance.Corgi_Play(playerManage.PlayerAudio, key);
+                moveAudioTime = moveAudioCooldown;
+            }
 
             // player rotation
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.fixedDeltaTime * moveSpeed);
@@ -158,6 +163,7 @@ public class Player3DControl : MonoBehaviour {
             PlayerRigid.MovePosition(PlayerRigid.position + positionToMove);
         }
         else {
+            moveAudioTime = moveAudioCooldown;
             PlayerRigid.constraints = RigidbodyConstraints.FreezeRotation;
             // when player doesn't move
             Vector3 currentVelocity = PlayerRigid.velocity;
