@@ -45,8 +45,6 @@ public class StaticManager : MonoBehaviour {
             HpImgaes[i-1] = HPGroup.transform.GetComponentsInChildren<Image>()[i];
         }
         biscuitCountText = biscuitGroup.GetComponentInChildren<Text>();
-
-        //Restart += LevelInitWhenRestart;
     }
 
     private void OnEnable() {
@@ -140,15 +138,10 @@ public class StaticManager : MonoBehaviour {
         //씬 재로드 해보기
         GameManager.isLoadTitle = false;
         GameManager.instance.LoadSelectStage(GameManager.instance.currentStage);
-        
-        //Restart?.Invoke();
     }
 
     public void ButtonOnClick_StageSelect() {
         GameManager.instance.LoadSelectStage(StageLevel.StageSelect);
-
-        //TODO: StageSelect_Grass에서 플레이어가 서있는 위치 조정 필요함
-
     }
 }
 

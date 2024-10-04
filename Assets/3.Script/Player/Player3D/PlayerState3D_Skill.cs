@@ -61,7 +61,6 @@ public class PlayerState3D_Skill : PlayerState3D {
         ChangeState();
     }
 
-
     private void ChangeState() {
         if (playerManage.CurrentState == PlayerState.Dead) {
             return;
@@ -200,7 +199,7 @@ public class PlayerState3D_Skill : PlayerState3D {
         ChangeBlockObjectMaterial(convertMode[3]);
     }
 
-
+   
     private float SetZposition(ref float direction) {
         float zFloor = Mathf.Floor(Control3D.PlayerRigid.position.z * 10) / 10;      // 소숫점 2자리 이하 버림
         float zPosition = Mathf.RoundToInt(zFloor);
@@ -337,6 +336,10 @@ public class PlayerState3D_Skill : PlayerState3D {
     }
 
     public override void ExitState() {
+
+        sectionLine.SetActive(false);
+        sectionLine_First.SetActive(false);
+
         Control3D.Ani3D.SetBool("IsTryUseSkill", false);
     }
 }

@@ -175,9 +175,7 @@ public class GameManager : MonoBehaviour {
         string sceneName = GetSceneNameFromStageLevel(selectStageLevel);
 
         currentStage = selectStageLevel;
-        //Debug.LogWarning("GameManager current scene | LoadSelect Stage | " + currentStage);
 
-        //SceneManager.LoadScene(sceneName);
         StartCoroutine(LoadGameSceneAsync(sceneName));
     }
     IEnumerator LoadGameSceneAsync(string sceneName) {

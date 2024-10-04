@@ -34,6 +34,8 @@ public class Save : MonoBehaviour {
         GameData.ScreenMode = ScreenMode.FullScreen;
         GameData.ScreenSize = new int[] { 1920, 1080 };
 
+        Screen.SetResolution(GameData.ScreenSize[0], GameData.ScreenSize[1], FullScreenMode.ExclusiveFullScreen);
+
         GameData.GameSaveData.Clear();
         foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
             Debug.Log($"Adding level: {level}");

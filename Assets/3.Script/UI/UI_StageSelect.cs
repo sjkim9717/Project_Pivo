@@ -49,7 +49,11 @@ public class UI_StageSelect : UserData {
 
     public void SelectStageLevel_Stage(StageLevel stageLevel) {
         selectStageLevel = stageLevel;
-        stage.text = stageLevel.ToString();
+        string stageName = stageLevel.ToString();
+        if (stageName.Contains("Level")) {
+            stageName = stageName.Replace("Level", "");
+        }
+        stage.text = stageName;
     }
 
 

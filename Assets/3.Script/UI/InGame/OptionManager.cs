@@ -18,8 +18,6 @@ public class OptionManager : MonoBehaviour {
     // 해상도 변경
     private List<int[]> screenSizeList = new List<int[]>
     {
-        //new int[] { 960, 540 },
-        //new int[] { 1024, 576 },
         new int[] { 1152, 648 },
         new int[] { 1280, 720 },
         new int[] { 1366, 768 },
@@ -51,8 +49,20 @@ public class OptionManager : MonoBehaviour {
         BGMrect = transform.Find("BGMGroup/Scroll/ScrollButton").GetComponent<RectTransform>();
         SFXrect = transform.Find("SFXGroup/Scroll/ScrollButton").GetComponent<RectTransform>();
 
+        InitScreenSize();
+    }
+
+    private void InitScreenSize() {
         currentScreenMode = Save.instance.GameData.ScreenMode;
         currentScreenSize = Save.instance.GameData.ScreenSize;
+
+        for (int i = 0; i < screenSizeList.Count; i++) {
+
+            if (screenSizeList[i][0] == currentScreenSize[0]) {
+                selectScreenSizeIndex = i;
+            }
+        }
+
         selectScreenSize = currentScreenSize;
         selectScreenMode = currentScreenMode;
 
