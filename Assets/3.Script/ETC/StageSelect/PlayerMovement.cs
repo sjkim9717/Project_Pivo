@@ -33,15 +33,15 @@ public class PlayerMovement : MonoBehaviour {
         Debug.LogWarning($"PlayerMovement loaded currentLevel : {currentLevel}");
         if (GameManager.isLoadTitle) {
             int stagelength = Enum.GetValues(typeof(StageLevel)).Length;
-            for (int i = 0; i < stagelength; i++) {
-                if(Save.instance.TryGetStageClear((StageLevel)i, out bool isClear)) {
-                    if (!isClear) { 
+            for (int i = 0; i < stagelength - 1; i++) {
+                if (Save.instance.TryGetStageClear((StageLevel)i, out bool isClear)) {
+                    if (!isClear) {
                         transform.position = waypoint.FindCurrentPosition((StageLevel)i).position;
                         break;
                     }
                 }
             }
-            
+
         }
         else {
             transform.position = waypoint.FindCurrentPosition(currentLevel).position;

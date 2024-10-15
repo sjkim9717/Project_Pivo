@@ -56,7 +56,7 @@ public class PlayerManage : PlayerBase {
 
         if (isTest) Change3D();
         else {
-            if (GameManager.instance.IsTutorialCompleted && !GameManager.isLoadTitle) {
+            if (!GameManager.isLoadTitle) {
                 Change3D();
             }
             else {

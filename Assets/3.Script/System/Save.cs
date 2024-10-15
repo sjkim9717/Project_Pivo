@@ -83,21 +83,39 @@ public class Save : MonoBehaviour {
     // new play 클릭시 확인
     public bool GetSaveExist() {                            // saveData 있는지 확인하는 용도
         if (File.Exists(SaveJsonFilePath)) {
-            GameManager.instance.IsTutorialCompleted = true;
-            return true;
+            if(TryGetStageClear(StageLevel.GrassStageLevel_1, out bool isClear)) {
+                if (isClear) {
+                    GameManager.instance.IsTutorialCompleted = true;
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     public void MakeNewGame() {
         GameManager.instance.IsTutorialCompleted = false;
-        // 기존 데이터 삭제
+
         if (File.Exists(SaveJsonFilePath)) {
-            File.Delete(SaveJsonFilePath); // 기존 파일 삭제
+
+            GameData.GameSaveData.Clear();
+            foreach (StageLevel level in Enum.GetValues(typeof(StageLevel))) {
+                Debug.Log($"Adding level: {level}");
+                GameData.GameSaveData.Add(new StageLevelData {
+                    StageLevel = level,
+                    IsStageClear = false,
+                    StageScore = 0
+                });
+            }
+
+            SaveGame();
         }
-        GameData = new GameData();
-        InitializeData();
-        SaveGame();  // 새로 만든 데이터를 저장
+        else {
+            // Handle the case when no file exists
+            GameData = new GameData();
+            InitializeData();
+            SaveGame();
+        }
     }
 
     public void SaveGame() {
@@ -112,8 +130,7 @@ public class Save : MonoBehaviour {
 
     public void SaveWindow(ScreenMode screenMode, int[] screenSize) {
         if (!File.Exists(SaveJsonFilePath)) {
-            GameData = new GameData();
-            InitializeData();
+            SaveGame();
         }
 
         GameData.ScreenMode = screenMode;
